@@ -81,7 +81,7 @@ async function scan({ automatic = false, rescanDays = null, rescanPageToken = nu
     // Always check the first page for new mail, then continue the older backlog.
     const query = rescanJob?.query || searchQuery(jobs, rescanDays || 30);
     const context = matchingContext(jobs);
-    const params = new URLSearchParams({ q: query, maxResults: '5' });
+    const params = new URLSearchParams({ q: query, maxResults: rescanDays ? '25' : '5' });
     if (rescanDays && rescanPageToken) params.set('pageToken', rescanPageToken);
     const newest = await gmail(`messages?${params}`, accessToken);
     let page = newest;
@@ -108,19 +108,32 @@ async function scan({ automatic = false, rescanDays = null, rescanPageToken = nu
     let alreadySuggested = 0;
     let alreadyExamined = 0;
     const newSuggestions = [];
-    for (const item of candidates) {
+    const unread = candidates.filter(item => {
+      if (keys.has(`${current.email}:${item.id}`)) { skipped++; alreadySuggested++; return false; }
+      if (!rescanDays && examinedIds.has(item.id)) { skipped++; alreadyExamined++; return false; }
+      return true;
+    });
+    const analyzed = [];
+    // Limit concurrent Gmail requests; mutate the queue only after all reads succeed.
+    for (let offset = 0; offset < unread.length; offset += 5) {
+      const group = await Promise.allSettled(unread.slice(offset, offset + 5).map(async item => {
+        const raw = await gmail(`messages/${encodeURIComponent(item.id)}?format=metadata&metadataHeaders=Subject&metadataHeaders=From`, accessToken);
+        const message = summarize(raw);
+        let match = EmailMatcher.analyze(message, jobs);
+        if (match?.needsSelection || (!match && EmailMatcher.relevantCompany(message, jobs))) {
+          const full = await gmail(`messages/${encodeURIComponent(item.id)}?format=full`, accessToken);
+          message.bodyText = GmailMessage.bodyText(full.payload);
+          match = EmailMatcher.analyze(message, jobs);
+        }
+        return { item, message, match };
+      }));
+      const failed = group.find(result => result.status === 'rejected');
+      if (failed) throw failed.reason;
+      analyzed.push(...group.map(result => result.value));
+    }
+    for (const { item, message, match } of analyzed) {
       const key = `${current.email}:${item.id}`;
-      if (keys.has(key)) { skipped++; alreadySuggested++; continue; }
-      if (!rescanDays && examinedIds.has(item.id)) { skipped++; alreadyExamined++; continue; }
-      const raw = await gmail(`messages/${encodeURIComponent(item.id)}?format=metadata&metadataHeaders=Subject&metadataHeaders=From`, accessToken);
-      const message = summarize(raw);
       examined++;
-      let match = EmailMatcher.analyze(message, jobs);
-      if (match?.needsSelection || (!match && EmailMatcher.relevantCompany(message, jobs))) {
-        const full = await gmail(`messages/${encodeURIComponent(item.id)}?format=full`, accessToken);
-        message.bodyText = GmailMessage.bodyText(full.payload);
-        match = EmailMatcher.analyze(message, jobs);
-      }
       if (!match) unmatched++;
       if (match && !keys.has(key)) {
         const { bodyText, ...preview } = message;
@@ -169,7 +182,7 @@ async function scan({ automatic = false, rescanDays = null, rescanPageToken = nu
 async function ensureRescanAlarm() {
   const { emailRescan } = await chrome.storage.local.get('emailRescan');
   if (emailRescan?.status === 'running' && (await state()).connected) {
-    if (!await chrome.alarms.get(RESCAN_ALARM)) await chrome.alarms.create(RESCAN_ALARM, { delayInMinutes: 0.5, periodInMinutes: 0.5 });
+    if (!await chrome.alarms.get(RESCAN_ALARM)) await chrome.alarms.create(RESCAN_ALARM, { when: Date.now() + 100, periodInMinutes: 0.5 });
   } else await chrome.alarms.clear(RESCAN_ALARM);
 }
 async function rescanBatch() {
@@ -187,6 +200,8 @@ async function rescanBatch() {
       error: error.message, updatedAt: new Date().toISOString() } });
   }
   await ensureRescanAlarm();
+  const { emailRescan: latest } = await chrome.storage.local.get('emailRescan');
+  if (latest?.status === 'running') await chrome.alarms.create(RESCAN_ALARM, { when: Date.now() + 100, periodInMinutes: 0.5 });
 }
 
 async function review(id, decision, selection = {}) {

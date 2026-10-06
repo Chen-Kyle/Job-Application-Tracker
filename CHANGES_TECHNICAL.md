@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-06 — Speed up resumable rescans
+
+- Request: rescans became much slower; remove the dashboard-closing explanation.
+- `background.js`: restore 25-result rescan pages, read/analyze up to five messages concurrently with settled error handling, and request immediate initial/continuation alarms rather than waiting 30 seconds between quick batches. Preserve a recurring alarm for interruption recovery, saved cursors and atomic queue/checkpoint writes. Ordinary checks retain five-result pages.
+- `email-ui.js`: remove the running-state sentence about closing the dashboard.
+- Validation: portable rescan regression tests, existing mocked email regression harness, syntax/asset checks and diff checks. No live Gmail timing benchmark performed. Chrome can delay alarms; Gmail latency and quotas still affect duration.
+
 ## 2026-10-06 — Resumable rescans and clearer diagnostics
 
 - Request: implement review recommendations 1 and 3: resilient rescans and clearer email check feedback.

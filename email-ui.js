@@ -132,7 +132,7 @@ globalThis.EmailUI = (() => {
     el('#gmail-rescan').textContent = rescan?.status === 'running' ? 'Rescanning…' : rescan?.status === 'paused' ? 'Resume / restart rescan' : 'Rescan emails';
     const totals = rescan?.totals || {};
     el('#gmail-rescan-progress').hidden = demo || !rescan;
-    el('#gmail-rescan-progress').textContent = rescan ? `Rescan ${rescan.status}: ${rescan.days} days · ${totals.examined || 0} checked · ${totals.added || 0} new suggestions · ${totals.unmatched || 0} unmatched · ${totals.alreadySuggested || 0} already suggested or recorded.${rescan.status === 'running' ? ' Continues in the background; you can close this dashboard.' : rescan.error ? ` ${rescan.error}` : ' Finished visiting all search results in this range.'}` : '';
+    el('#gmail-rescan-progress').textContent = rescan ? `Rescan ${rescan.status}: ${rescan.days} days · ${totals.examined || 0} checked · ${totals.added || 0} new suggestions · ${totals.unmatched || 0} unmatched · ${totals.alreadySuggested || 0} already suggested or recorded.${rescan.status === 'running' ? '' : rescan.error ? ` ${rescan.error}` : ' Finished visiting all search results in this range.'}` : '';
     el('#gmail-disconnect').hidden = demo || !connector.connected;
     el('#gmail-check').disabled = el('#gmail-disconnect').disabled = busy;
     el('#gmail-auto').disabled = demo || !connector.connected || busy;

@@ -9,6 +9,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-06
 
+- Sped up rescans with larger batches, five concurrent email reads, and prompt continuation; shortened the progress text.
+
 - Email rescans now save progress and continue in background batches after closing the dashboard or restarting Chrome.
 - Email check results distinguish unmatched, previously checked, and already suggested emails, with live rescan progress and retry support.
 

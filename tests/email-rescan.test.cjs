@@ -4,7 +4,7 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.join(__dirname, '..');
-function worker(data, alarms = new Map(), fail = () => false) {
+function worker(data, alarms = new Map(), fail = () => false, requests = []) {
   const event = { addListener() {} };
   const context = vm.createContext({ console, URLSearchParams, Date, Map, Set, AbortSignal,
     importScripts() {}, navigator: { locks: { request: async (_, fn) => fn() } },
@@ -16,6 +16,7 @@ function worker(data, alarms = new Map(), fail = () => false) {
       storage: { onChanged: event, local: { get: async () => structuredClone(data), set: async values => Object.assign(data, structuredClone(values)) } },
       alarms: { get: async name => alarms.get(name), create: async (name, options) => alarms.set(name, options), clear: async name => alarms.delete(name), onAlarm: event } },
     fetch: async url => {
+      requests.push(url);
       if (fail()) return { ok: false, status: 429 };
       let body;
       if (url.endsWith('/profile')) body = { emailAddress: 'test@example.com' };
@@ -56,4 +57,16 @@ test('changed application identity starts a fresh range after pausing', async ()
   const data = fixture(), run = worker(data); await run("handle({action:'rescan',days:30})");
   data.jobs[0].company = 'Different'; await run('rescanBatch()'); assert.equal(data.emailRescan.status, 'paused');
   await run("handle({action:'rescan',days:30})"); assert.equal(data.emailRescan.cursor, null); assert.deepEqual(data.emailRescan.totals, {});
+});
+
+test('rescan requests larger pages and promptly schedules each next batch', async () => {
+  const data = fixture(), alarms = new Map(), requests = [];
+  const run = worker(data, alarms, () => false, requests);
+  await run("handle({action:'rescan',days:30})");
+  assert.ok(alarms.get('gmail-rescan').when <= Date.now() + 1000);
+  await run('rescanBatch()');
+  assert.equal(new URL(requests.find(url => url.includes('/messages?'))).searchParams.get('maxResults'), '25');
+  assert.equal(data.emailRescan.status, 'running');
+  assert.ok(alarms.get('gmail-rescan').when <= Date.now() + 1000);
+  assert.equal(alarms.get('gmail-rescan').periodInMinutes, 0.5);
 });
