@@ -76,6 +76,13 @@ footer { margin-top: 20px; }
 .email-workspace { margin-top: 28px; }
 .email-secondary { font-size: 14px; color: var(--muted); margin: 8px 0; overflow-wrap: anywhere; }
 .email-settings { padding: 0 24px 12px; font-size: 14px; }
+.email-info { max-width: none; margin-top: 12px; }
+.email-info summary { display: flex; align-items: center; gap: 6px; width: fit-content; color: var(--muted); font-size: 14px; list-style: none; }
+.email-info summary::-webkit-details-marker { display: none; }
+.email-info summary::after { content: '▸'; }
+.email-info[open] summary::after { content: '▾'; }
+.email-info-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border: 1px solid currentColor; border-radius: 50%; font-size: 12px; font-weight: 600; }
+.email-rescan-progress { margin: 8px 24px 12px; }
 .email-settings label { display: flex; align-items: flex-start; gap: 8px; }
 .email-settings input { margin-top: 4px; }
 .email-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }

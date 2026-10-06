@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-06 — Declutter Gmail section
+
+- Request: correct rescan progress margin and hide timer, check diagnostics and Gmail explanation behind a small clickable Info control.
+- `dashboard.html`: wrap the existing live timer, results and approval/privacy description in a default-collapsed native details/summary disclosure. Preserve their IDs and updates; keep periodic-check controls and rescan progress visible.
+- `dashboard.css`: compact Info label with decorative information icon and open/closed indicator; allow expanded content full width. Give rescan progress the same 24px horizontal inset as surrounding controls.
+- Validation: HTML structure/assets and existing email regression checks; diff checks. Native summary supports keyboard toggling without custom JavaScript. No live browser visual test performed.
+
 ## 2026-10-06 — Speed up resumable rescans
 
 - Request: rescans became much slower; remove the dashboard-closing explanation.
