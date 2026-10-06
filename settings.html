@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings · Job Tracker</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="themes.css">
+  <script src="theme.js" defer></script>
+  <script src="settings-sidebar.js" defer></script>
+  <script src="email-preferences.js" defer></script>
+  <script src="email-settings-ui.js" defer></script>
+  <script src="backup.js" defer></script>
+  <script src="backup-ui.js" defer></script>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand"><span class="mark">J</span> Job Tracker</div>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <a class="sidebar-link nav-item" href="dashboard.html#applications"><svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M9 5V3h6v2M4 11h16M10 11v3h4v-3"/></svg><span>Applications</span></a>
+        <a class="sidebar-link integration" href="dashboard.html#gmail-integration"><svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg><span>Gmail</span><span id="gmail-review-count" class="review-count" hidden>0</span><span id="gmail-review-summary" class="sr-only" aria-live="polite">No emails awaiting review.</span><span id="gmail-badge" hidden>Not connected</span></a>
+        <a class="sidebar-link integration sheets-nav" href="dashboard.html#sheets-integration"><svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6"/><path d="M8 13h8M8 17h8M12 13v4"/></svg><span>Google Sheets</span></a>
+      </nav>
+      <p class="nav-coming-soon">More coming soon</p>
+      <a class="settings-nav settings-icon" href="settings.html" aria-label="Open settings" title="Settings" aria-current="page"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.6 2.1-1.5.9-2.1-.5-2.5 4.3 1.5 1.6v1.7l-1.5 1.6 2.5 4.3 2.1-.5 1.5.9.6 2.1h5l.6-2.1 1.5-.9 2.1.5 2.5-4.3-1.5-1.6v-1.7l1.5-1.6-2.5-4.3-2.1.5-1.5-.9-.6-2.1z"/><circle cx="12" cy="12" r="3"/></svg></a>
+    </aside>
+  <main class="settings-page">
+    <header><div><span class="eyebrow">JOB TRACKER</span><h1>Settings</h1><p>Make your tracker feel like yours.</p></div></header>
+      <div id="settings" class="workspace settings-panel">
+        <section class="settings-row" aria-labelledby="settings-heading">
+          <div class="settings-description"><h2 id="settings-heading">Appearance</h2><p>Choose a color scheme for your dashboard and popup. Your choice saves automatically.</p></div>
+          <div class="settings-controls email-settings"><fieldset class="theme-picker"><legend>Color scheme</legend><div class="theme-options"><label class="theme-option"><input type="radio" name="color-scheme" value="terracotta" checked><span class="theme-swatch swatch-terracotta" aria-hidden="true"></span><span class="theme-name">Cream and terracotta <span class="theme-default">(Default)</span></span></label><label class="theme-option"><input type="radio" name="color-scheme" value="green"><span class="theme-swatch swatch-green" aria-hidden="true"></span><span class="theme-name">White and green</span></label><label class="theme-option"><input type="radio" name="color-scheme" value="violet"><span class="theme-swatch swatch-violet" aria-hidden="true"></span><span class="theme-name">Warm gray and violet</span></label><label class="theme-option"><input type="radio" name="color-scheme" value="blue"><span class="theme-swatch swatch-blue" aria-hidden="true"></span><span class="theme-name">Slate and blue</span></label><label class="theme-option"><input type="radio" name="color-scheme" value="dark"><span class="theme-swatch swatch-dark" aria-hidden="true"></span><span class="theme-name">Dark navy and lavender</span></label></div></fieldset><p id="theme-message" role="status" aria-live="polite"></p></div>
+        </section>
+        <section class="settings-row" aria-labelledby="email-settings-heading">
+          <div class="settings-description"><h2 id="email-settings-heading">Email updates</h2><p>Choose how Gmail suggestions update your applications and how often to check for new emails.</p><p>Automatic mode applies new, strong matches only. Uncertain matches still need review. Undo remains available.</p></div>
+          <div class="settings-controls email-settings">
+            <label for="email-approval-mode">Approval mode</label>
+            <select id="email-approval-mode"><option value="manual">Review manually (Default)</option><option value="automatic">Automatically approve strong matches</option></select>
+            <label class="backup-file-label" for="email-check-frequency">Check frequency</label>
+            <select id="email-check-frequency"><option value="15">Every 15 minutes (Default)</option><option value="30">Every 30 minutes</option><option value="60">Every 60 minutes</option><option value="0">Manual checks only</option></select>
+            <p class="email-secondary">Checks run while Chrome is open and Gmail is connected. Existing pending suggestions stay for manual review.</p>
+            <p id="email-settings-message" role="status" aria-live="polite"></p>
+          </div>
+        </section>
+        <section class="settings-row" aria-labelledby="backup-heading">
+          <div class="settings-description"><h2 id="backup-heading">Backup and restore</h2><p>Save your applications, dates, activity, and settings to a file, or restore a previous backup.</p><p>Gmail authorization and pending email suggestions are not included.</p></div>
+          <div class="settings-controls email-settings">
+            <button id="backup-export" type="button">Download backup</button>
+            <label class="backup-file-label" for="backup-file">Choose a backup to restore</label>
+            <input id="backup-file" type="file" accept=".json,application/json">
+            <div id="backup-preview" hidden>
+              <p id="backup-summary"></p>
+              <label><input id="backup-appearance" type="checkbox" checked> Restore backup's settings</label>
+              <div class="email-actions backup-controls"><button id="backup-restore" type="button" disabled>Restore backup</button><button id="backup-cancel" type="button">Cancel</button></div>
+            </div>
+            <p id="backup-message" role="status" aria-live="polite"></p>
+          </div>
+        </section>
+      </div>
+  </main>
+  </div>
+</body>
+</html>

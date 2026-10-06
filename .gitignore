@@ -1,0 +1,22 @@
+# Local application data and backups
+job-tracker-backup*.json
+backups/
+*.backup.json
+
+# Secrets and private signing keys (manifest public key is safe to track)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+credentials*.json
+client_secret*.json
+
+# Generated packages and local tools
+*.crx
+*.zip
+node_modules/
+.DS_Store
+.vscode/
+.idea/

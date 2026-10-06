@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Applications · Job Tracker</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="themes.css">
+  <script src="theme.js" defer></script>
+  <script src="store.js" defer></script>
+  <script src="email-links.js" defer></script>
+  <script src="dashboard.js" defer></script>
+  <script src="job-details.js" defer></script>
+  <script src="manual-entry.js" defer></script>
+  <script src="email-preferences.js" defer></script>
+  <script src="email-ui.js" defer></script>
+  <script src="sheets-ui.js" defer></script>
+  <script src="dashboard-navigation.js" defer></script>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand"><span class="mark">J</span> Job Tracker</div>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <a class="sidebar-link nav-item" href="#applications"><svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M9 5V3h6v2M4 11h16M10 11v3h4v-3"/></svg><span>Applications</span></a>
+        <a class="sidebar-link integration" href="#gmail-integration"><svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg><span>Gmail</span><span id="gmail-review-count" class="review-count" hidden>0</span><span id="gmail-review-summary" class="sr-only" aria-live="polite">No emails awaiting review.</span><span id="gmail-badge" hidden>Not connected</span></a>
+        <a class="sidebar-link integration sheets-nav" href="#sheets-integration"><svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6"/><path d="M8 13h8M8 17h8M12 13v4"/></svg><span>Google Sheets</span></a>
+      </nav>
+      <p class="nav-coming-soon">More coming soon</p>
+      <a class="settings-nav settings-icon" href="settings.html" aria-label="Open settings" title="Settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.6 2.1-1.5.9-2.1-.5-2.5 4.3 1.5 1.6v1.7l-1.5 1.6 2.5 4.3 2.1-.5 1.5.9.6 2.1h5l.6-2.1 1.5-.9 2.1.5 2.5-4.3-1.5-1.6v-1.7l1.5-1.6-2.5-4.3-2.1.5-1.5-.9-.6-2.1z"/><circle cx="12" cy="12" r="3"/></svg></a>
+    </aside>
+    <main>
+      <header id="applications"><div><span class="eyebrow">YOUR JOB SEARCH</span><h1>Applications</h1></div><div class="email-actions"><button id="demo" type="button">Explore sample dashboard</button></div></header>
+      <div id="notice" class="notice" hidden></div>
+      <p id="message" role="status" aria-live="polite"></p>
+      <section class="stats" aria-label="Application overview">
+        <article><span>Total saved</span><strong id="total">0</strong></article>
+        <article><span>Applied</span><strong id="applied">0</strong></article>
+        <article><span>Interviewing</span><strong id="interviewing">0</strong></article>
+        <article class="offer"><span>Offers</span><strong id="offers">0</strong></article>
+      </section>
+      <section class="workspace">
+        <div class="toolbar"><h2>Your opportunities <span id="result-count"></span></h2><div class="filters"><button id="add-application" class="approve-email add-application-button" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg><span>Add application</span></button><label class="sr-only" for="search">Search company or role</label><input id="search" type="search" placeholder="Search company or role"><label class="sr-only" for="filter">Filter by status</label><select id="filter"><option value="">All statuses</option></select></div></div>
+        <div class="table-wrap"><table><thead><tr><th scope="col">Role / Company</th><th scope="col">Status</th><th scope="col">Dates</th><th scope="col">Activity</th><th scope="col">Actions</th></tr></thead><tbody id="rows"></tbody></table></div>
+        <div id="empty" class="empty" hidden><h3>No applications yet</h3><p>Open a job listing and use the extension to save your first opportunity.</p><button id="empty-demo" type="button">Try sample applications</button></div>
+      </section>
+      <section id="gmail-integration" class="workspace email-workspace" aria-labelledby="email-heading" tabindex="-1">
+        <div class="toolbar"><div><h2 id="email-heading">Email suggestions <span id="email-review-count" class="review-count" hidden>0</span></h2><p id="gmail-account" class="email-secondary">Connect Gmail to check for application updates.</p></div><div class="email-actions"><button id="gmail-connect" type="button">Connect Gmail</button><button id="gmail-check" type="button" hidden>Check now</button><button id="gmail-disconnect" type="button" hidden>Disconnect</button></div></div>
+        <div class="email-settings"><label><input id="gmail-auto" type="checkbox" disabled> <span id="gmail-auto-label">Check every 15 minutes while Chrome is running</span></label><p id="gmail-auto-timer" class="email-secondary">Loading the next automatic check…</p><p id="gmail-last" class="email-secondary">No checks yet.</p><p class="email-secondary"><span id="gmail-approval-description">Suggestions need your approval.</span> Checks search job-related emails from the last 30 days, including archived messages. If a saved company's email preview is incomplete, the message text is read locally to find its role or job ID. Only sender details, subjects, and short excerpts are kept. Gmail access is read-only.</p></div>
+        <details id="gmail-setup" class="email-setup" hidden><summary>Set up Gmail access</summary><p>Create a Google Cloud project, enable Gmail API, and add yourself as a test user. Create a Chrome Extension OAuth client using this extension ID: <code id="extension-id"></code>.</p><p>Add the following top-level field to manifest.json, replace the client ID, and reload the extension:</p><pre><code>"oauth2": {
+  "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+  "scopes": ["https://www.googleapis.com/auth/gmail.readonly"]
+}</code></pre><p>See GMAIL_SETUP.md in the extension folder for the complete steps.</p></details>
+        <form id="gmail-rescan-form" class="email-actions email-settings" hidden>
+          <label for="gmail-rescan-days">Rescan last</label>
+          <input id="gmail-rescan-days" type="number" min="1" max="3650" step="1" value="30" required style="width: 90px" aria-label="Number of days to rescan">
+          <span>days</span><button id="gmail-rescan" type="submit">Rescan emails</button>
+        </form>
+        <p id="email-message" class="email-feedback" role="status" aria-live="polite"></p>
+        <div class="email-review-actions email-actions"><button id="email-undo" type="button" hidden disabled>Undo last email action</button></div>
+        <div id="email-suggestions" class="email-suggestions"></div>
+        <section id="automatic-email-section" class="email-settings" aria-labelledby="automatic-email-heading" hidden>
+          <h2 id="automatic-email-heading">Automatically added emails</h2>
+          <div id="automatic-emails" class="email-suggestions"></div>
+        </section>
+      </section>
+      <section id="sheets-integration" class="workspace email-workspace" aria-labelledby="sheets-heading" tabindex="-1">
+        <div class="toolbar"><div><h2 id="sheets-heading">Google Sheets export</h2><p class="email-secondary">Create a spreadsheet with all saved applications, statuses, links, and dates. Each export creates a new snapshot.</p></div><button id="sheets-export" type="button">Export to Google Sheets</button></div>
+        <div class="email-settings"><p class="email-secondary">Google will request permission to create and manage files used by this extension. Changes in the spreadsheet and dashboard are not synced.</p><details><summary>First-time setup</summary><p>In your existing Google Cloud project, enable <strong>Google Sheets API</strong>. In Google Auth Platform → Data Access, add <code>https://www.googleapis.com/auth/drive.file</code>. Keep your account listed as a test user. Your existing OAuth client ID works for this integration.</p></details><p id="sheets-message" role="status" aria-live="polite"></p><a id="sheets-link" target="_blank" rel="noopener noreferrer" hidden>Open exported spreadsheet</a></div>
+      </section>
+      <footer>Save listings with the extension. Change a status here as your application moves forward.</footer>
+    </main>
+  </div>
+  <dialog id="job-details" aria-labelledby="job-details-title">
+    <div class="job-details-header"><span class="eyebrow">APPLICATION DETAILS</span><div class="job-details-actions"><button id="job-details-edit" type="button" aria-label="Edit application details" title="Edit application details"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 4 4 4M4 20l4-1 12-12a2.8 2.8 0 0 0-4-4L4 15z"/></svg></button><button id="job-details-close" type="button" aria-label="Close application details">✕</button></div></div>
+    <form id="job-details-edit-form" hidden></form>
+    <h2 id="job-details-title"></h2>
+    <div id="job-role-editor" class="inline-job-editor" hidden><label for="edit-job-role">Role title</label><input id="edit-job-role" form="job-details-edit-form" required maxlength="300"></div>
+    <p id="job-details-company" class="email-secondary"></p>
+    <div id="job-company-editor" class="inline-job-editor" hidden><label for="edit-job-company">Company</label><input id="edit-job-company" form="job-details-edit-form" maxlength="200"></div>
+    <a id="job-description-link" target="_blank" rel="noopener noreferrer">Open job description ↗</a>
+    <div id="job-link-editor" class="inline-job-editor" hidden><label for="edit-job-url">Job description link</label><input id="edit-job-url" form="job-details-edit-form" type="url" required></div>
+    <section class="job-details-section"><h3>Next steps</h3><div id="job-next-steps"></div>
+      <details class="next-step-editor" hidden><summary>Add a next step</summary>
+        <form id="next-step-form">
+          <label for="next-step-title">Action</label><input id="next-step-title" required maxlength="300" placeholder="Complete assessment or schedule interview">
+          <label for="next-step-deadline">Deadline (optional)</label><input id="next-step-deadline" type="date">
+          <label for="next-step-email">Source email link (optional)</label><input id="next-step-email" type="url" placeholder="https://mail.google.com/…">
+          <button type="submit">Add next step</button>
+        </form>
+      </details>
+      <p id="next-step-message" role="status" aria-live="polite"></p>
+    </section>
+    <dl id="job-details-facts"></dl>
+    <div id="job-facts-editor" class="inline-facts-editor" hidden>
+      <label for="edit-job-status">Status</label><select id="edit-job-status" form="job-details-edit-form"></select>
+      <label for="edit-job-saved">Saved date and time</label><input id="edit-job-saved" form="job-details-edit-form" type="datetime-local" required step="1">
+      <label for="edit-job-applied">Applied date and time</label><input id="edit-job-applied" form="job-details-edit-form" type="datetime-local" step="1">
+    </div>
+    <section class="job-details-section"><h3>Email activity</h3><div id="job-details-emails"></div></section>
+    <section class="job-details-section"><h3>Other activity</h3><p id="job-notes"></p><div id="job-notes-editor" hidden><label for="edit-job-notes">Notes</label><textarea form="job-details-edit-form" id="edit-job-notes" maxlength="20000" rows="5" placeholder="Add your notes about this application"></textarea></div><div id="job-details-manual"></div></section>
+    <div id="job-details-edit-footer" hidden><p id="job-details-edit-message" role="status" aria-live="polite"></p><button id="job-details-edit-cancel" type="button">Cancel</button><button id="job-details-save" class="approve-email" type="submit" form="job-details-edit-form">Save changes</button></div>
+    <p id="activity-edit-message" role="status" aria-live="polite"></p><button id="undo-activity-deletion" type="button" hidden>Undo activity deletion (⌘Z)</button>
+  </dialog>
+  <dialog id="manual-entry" aria-labelledby="manual-entry-heading">
+    <form id="manual-entry-form">
+      <h2 id="manual-entry-heading">Add application</h2>
+      <p id="manual-entry-context" class="email-secondary"></p>
+      <label for="manual-role">Role</label><input id="manual-role" required maxlength="300" placeholder="Software Engineer">
+      <label for="manual-company">Company</label><input id="manual-company" required maxlength="200" placeholder="Company name">
+      <label for="manual-url">Job link</label><input id="manual-url" type="url" required placeholder="https://…">
+      <label for="manual-status">Status</label><select id="manual-status"></select>
+      <p id="manual-entry-message" role="status" aria-live="polite"></p>
+      <div class="email-actions"><button id="manual-entry-save" class="approve-email" type="submit">Save application</button><button id="manual-entry-cancel" type="button">Cancel</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

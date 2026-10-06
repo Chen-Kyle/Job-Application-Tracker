@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Job Application Tracker",
+  "version": "0.2.0",
+  "minimum_chrome_version": "120",
+  "description": "Save a job's company, role, link, and date from your current tab.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "identity",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://gmail.googleapis.com/*",
+    "https://sheets.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "oauth2": {
+    "client_id": "32741109323-t9pp5emts58btvhoaq9pgmlug90125n1.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/gmail.readonly"
+    ]
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Save a job"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvhBG6WU8ViB1hBAeyA8fsyHDyBlZ5bD20evajwCyk2sXdJ5RBXTLGfqkj6ea7E12geJovaYbZmrQOy0yJhAZxwCgAkXjGECsW+y6Trnz+gc8ChCzjizG29iQm+hzzHA/HTgRBzUMwFZgJwLbM2vr+yIsVmxKUMJ83JHk7yM4HLkEyjsUKKe6oN5kEMNEDaoeiwCH9JZgB5RAgF7vwOSzGSis+wBBg6PdNsG7EGp5YqjOcdzFcRPG9qj4risGzJG171vqz58q0Q8BYLkCJ/fhz4utj1IB/AlO43lPtHS8z0pM5HMXmul1QXTjvxySoZPhGqm02qPqvwyhf9Bsovps6wIDAQAB"
+}
