@@ -1,53 +1,71 @@
 # Job Application Tracker
 
-A simple Chrome extension that captures a job's role, company, link, and saved date. Open the popup on a job listing and click **Save job**. You can edit the captured details before saving.
+A Chrome extension that helps job seekers keep their applications organized—from saving a listing to reviewing email updates and planning their next step.
 
-## Install locally
+Built by **Kyle Chen**. This project is an actively developed prototype.
 
-1. Open `chrome://extensions` in Chrome.
-2. Turn on **Developer mode**.
-3. Click **Load unpacked** and select the `Job Application Tracker` folder on your Desktop.
-4. Pin the extension using Chrome's extensions menu.
-5. Visit a job listing, open the extension, and click **Save job**.
+## Why I built it
 
-Saved jobs appear below the form. Click a role to reopen the listing. Data stays in this Chrome profile using local extension storage; uninstalling the extension removes it.
+Applying to jobs often means switching between job boards, email, and spreadsheets. I built this extension to bring those pieces into one dashboard, with control over which email updates change an application's status.
 
-## Capture limitations
+## What it does
 
-The extension first looks for structured JobPosting metadata, then falls back to the page heading/title and site name. Some job boards omit this metadata or use their own name as the site name. Check the company and role before saving. On restricted pages, enter details manually. The date records when you saved the listing, not when you applied.
+- **Save jobs while browsing:** capture the role, company, and listing link, with editable fields when autofill needs a correction.
+- **Track applications:** search, filter, and update Saved, Applied, Interviewing, Offer, Rejected, or Withdrawn statuses. Add applications manually too.
+- **Keep details together:** open a job's side panel to view its listing, dates, notes, email activity, and next steps.
+- **Review Gmail updates:** suggest status changes and actions from job-related emails. Uncertain matches let you choose the application.
+- **Choose automatic updates:** automatically approve strong status matches while keeping uncertain matches and detected next-step actions available for review.
+- **Recover from mistakes:** undo email approvals and dismissals when safe; automatic updates have their own review section.
+- **Export and back up:** create Google Sheets snapshots or download a JSON backup of applications and settings.
+- **Customize the dashboard:** choose a color scheme and email-check frequency.
 
-Only the first job in structured metadata is captured on pages containing multiple jobs. Use an individual job listing for best results. Identical links are prevented from being saved twice; different URLs for the same role may still be saved.
+## Try the sample dashboard
 
-Handshake search/detail pages have a dedicated capture path: it pairs a visible job heading with the employer profile link above it, prioritizing the selected detail panel over neighboring results. It supports school subdomains of `joinhandshake.com` and removes search/filter parameters from individual job links. If the page layout cannot be identified, fields stay blank for manual entry instead of using a navigation heading as the role. Wait for the selected job to finish loading before opening the popup. Handshake markup changes may require adjusting this capture path.
+You can explore the interface without connecting Gmail or creating a Google Cloud project:
 
-No account, backend, or build step is needed. After editing these files, click the extension's reload button on `chrome://extensions`.
+1. Download or clone this repository.
+2. Open `dashboard.html` in Chrome.
+3. Try the fictional applications, email suggestion, automatic update, and job details panel. Use the gear icon to explore sample settings.
 
-## Dashboard
+In the installed extension, click **Explore sample dashboard**. Sample interactions do not change your real applications or settings. Sample applications reset when you reload.
 
-Reload the extension on `chrome://extensions`, open its popup, and click **Open dashboard**. This full-page view uses the same saved jobs as the popup. You can search by role/company, filter by status, change statuses, and expand each application's status history. Existing saved jobs start with the Saved status.
+## Install in Chrome
 
-Click **Explore sample dashboard** to try fictional applications without altering your real records. You can also open `dashboard.html` directly from this folder for a sample-only preview. Sample edits last only until the page is reloaded; they are never added to your applications.
+1. Download or clone the repository. If you download a ZIP, extract it first.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked** and select the folder containing `manifest.json`.
+4. Pin **Job Application Tracker** from Chrome's extensions menu.
+5. Open a job listing, click the extension, review the captured details, and choose **Save job**.
+6. Click **Open dashboard** to manage your applications.
 
-The dashboard is local to this Chrome profile. There is no hosted URL or Google Sheets sync. Gmail access requires the setup below.
+Saving jobs and using the dashboard work without a Google connection. Gmail and Sheets require the Google setup described in [GMAIL_SETUP.md](GMAIL_SETUP.md); access for testers must be configured by the project owner.
 
-## Export to Google Sheets
+## How email updates work
 
-Reload the extension and use **Google Sheets** in the sidebar, then **Export to Google Sheets**. Each click creates a new spreadsheet snapshot with all real saved applications (including ones hidden by dashboard filters). Sample jobs are never exported. Columns include Company, Role, Status, Job link, Saved date, Applied date, Last updated, and Application ID. Dates are exported as ISO timestamps, the header is frozen, and filters are enabled. Values are written explicitly as text rather than formulas.
+The extension searches job-related emails and matches them against saved applications using local rules. You can review suggestions yourself or enable automatic approval for strong matches. Background checks run while Chrome is running, even when the dashboard is closed. The dashboard also supports a manual check and a rescan for a chosen number of days.
 
-Before the first export, enable **Google Sheets API** in the same Google Cloud project, and add `https://www.googleapis.com/auth/drive.file` under Google Auth Platform → Data Access. The extension requests this scope only when exporting; it does not require permission to all your existing spreadsheets. No new OAuth client or secret is needed, and the Gmail scope in the manifest can remain unchanged. Approve the permission screen when exporting, then click the resulting spreadsheet link. Your last export link is retained locally.
+This is rule-based matching, not AI. It can miss unfamiliar wording or require help choosing the correct job. Always review important information and deadlines.
 
-This is an export, not live sync or a backup of email suggestions/history. Editing the sheet does not update the dashboard, and later dashboard changes do not update an existing export. Export again for a fresh snapshot.
+## Data and privacy
 
-Use **Delete** in a dashboard row to remove an application and its status history after confirming. Sample deletions affect only the sample view and reset on reload. Real deletions are saved in extension storage.
+Application records are stored locally in your Chrome profile. Gmail access is read-only: the extension does not send emails or change your mailbox. Matching runs locally, and approved email activity stores subjects, links, dates, and short excerpts rather than complete email bodies or attachments.
 
-You can also click **Remove** below a saved job in the extension popup to unsave it immediately. This removes the same record from the dashboard, including its status history, and lets you save the link again later. Saving again creates a new entry with a new saved date.
+Google Sheets exports create separate snapshots; they do not sync back to the dashboard. JSON backups preserve application data and settings, but exclude authorization tokens, pending/dismissed suggestion queues, and undo history. Download a backup before uninstalling or changing the extension's ID.
 
-## Gmail connector
+## Built with
 
-Follow **GMAIL_SETUP.md** to create a Google OAuth client and connect Gmail from the dashboard. The connector checks every 15 minutes while Chrome is running, with a **Check now** button and a switch to pause periodic checks. The sample dashboard includes a fictional email suggestion you can approve or dismiss without connecting an account.
+Plain **JavaScript, HTML, and CSS**, Chrome **Manifest V3**, Chrome storage and background alarms, and the **Gmail and Google Sheets APIs**. No build step or hosted backend is required.
 
-`email-matcher.js` uses general company normalization, employer tenant information from recruiting URLs, numeric/alphanumeric requisition IDs, full roles, and saved links. There are no company-specific exceptions. Emails with clear status wording but no unique application match appear with a **Choose an application** dropdown rather than being silently discarded. Saving a job makes it available for matching and selection; Gmail search itself uses general job-related terms. Emails without recognizable status wording are still skipped.
+## Project status and documentation
 
-When more detail is needed, `background.js` reads the message text locally and `gmail-message.js` extracts plain/HTML text and links without rendering the email or fetching attachments. Only a short excerpt is saved with the suggestion, not the full body. No external AI service is used. All status updates require approval. Stale suggestions/selections cannot override subsequent edits, and duplicate approvals are identified by a stable email event ID.
+The extension is still being tested before a public release. Autofill varies by website, and Google integration requires OAuth configuration. Public distribution and Google's applicable verification requirements remain follow-up work.
 
-`store.js` centralizes job access and uses a shared Web Lock for writes. Approval logs the email source in status history. An approved Applied suggestion records the email's received timestamp as the applied date when no applied date exists. This is an estimate based on receipt, not the time the application form was submitted.
+- [Setup guide](GMAIL_SETUP.md)
+- [Email test cases](EMAIL_TEST_CASES.md)
+- [Quick change log](CHANGES.md)
+- [Technical change log](CHANGES_TECHNICAL.md)
+- [Project notes and planned work](project_log.md)
+
+## License
+
+[MIT](LICENSE) — you may use, modify, and distribute the code while retaining the copyright and license notice.

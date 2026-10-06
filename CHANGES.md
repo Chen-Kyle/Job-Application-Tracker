@@ -9,6 +9,9 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-06
 
+- Added automatic commit-and-push instructions for completed requested changes, with checks and both logs updated first.
+- Rewrote the README with a clear project overview, features, sample walkthrough, installation steps, and privacy information for first-time readers.
+
 - Fixed the repository layout so Git tracks the actual extension code; added backup/secret exclusions.
 
 - Added a table of contents with links to the dated sections.

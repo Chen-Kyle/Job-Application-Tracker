@@ -10,6 +10,20 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-06 — Authorize commits and pushes
+
+- Request: after requested changes, update both logs, run appropriate checks, then commit and push automatically.
+- Added standing authorization and safeguards to `AGENTS.md`, targeting `Chen-Kyle/Job-Application-Tracker`. Verified the transferred remote exists and will update local origin accordingly.
+- Scope includes the outstanding assistant README/log edits from the preceding task; unrelated files are excluded.
+- Validation: read repository status, inspected outstanding documentation changes, and verified the remote HEAD. This entry records setup; actual commit/push outcome is reported separately.
+
+## 2026-10-06 — Rewrite README for first-time readers
+
+- Request: make the repository README clear and accessible to other people, especially hiring managers.
+- Replaced the outdated README with a product overview, motivation, feature summary, sample walkthrough, Chrome installation steps, email behavior, data/privacy details, technology summary, development status, documentation links, and MIT license link.
+- Corrected obsolete claims about mandatory manual approval, fixed check frequency, and skipped non-status emails. Avoided claiming universal autofill, production readiness, or live Sheets synchronization.
+- Updated both change logs. Validation: checked referenced local documents and license exist and compared key behavior against current implementation. Documentation-only change; no browser tests needed.
+
 ## 2026-10-06 — Put the extension inside the Git repository
 
 - Request: fix the newly created repository that did not contain the extension code.
