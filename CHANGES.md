@@ -9,6 +9,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-06
 
+- Added collapsible Info explanations to Email updates and Backup and restore in real and sample settings.
+
 - Moved the Gmail Info control to the right of “Email suggestions.”
 
 - Moved Gmail timing, check results, and explanatory text into a collapsed Info section; aligned rescan progress with the other content.

@@ -159,3 +159,11 @@ input, select { background: var(--card); color: var(--text); }
 
 #job-details.editing { padding-bottom: 110px; }
 #job-details-edit-footer { position: fixed; bottom: 0; right: 0; width: min(720px, 100%); display: flex; justify-content: flex-end; align-items: center; gap: 12px; padding: 16px 28px max(16px, env(safe-area-inset-bottom)); background: var(--card); border-top: 1px solid var(--border); box-shadow: 0 -4px 12px #0001; z-index: 1; }
+
+.settings-description { position: relative; }
+.settings-description:has(.settings-info) h2 { padding-right: 72px; }
+.settings-info { max-width: none; }
+.settings-info summary { position: absolute; top: 0; right: 0; display: inline-flex; align-items: center; gap: 6px; padding: 4px 0; font-size: 13px; list-style: none; }
+.settings-info summary::-webkit-details-marker { display: none; }
+.settings-info summary::after { content: '▸'; }
+.settings-info[open] summary::after { content: '▾'; }

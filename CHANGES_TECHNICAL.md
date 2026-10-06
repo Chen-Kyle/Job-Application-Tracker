@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-06 — Settings Info disclosures
+
+- Request: prioritize Info explanations for automatic email updates and backup/restore.
+- `settings.html`, `sample-settings.html`, `themes.css`: add compact native disclosures beside both section headings, replace the always-visible automatic-mode explanation, and describe eligibility/manual exceptions, conditional undo, backup contents/exclusions, merge behavior and optional settings restore. Keep essential form instructions, preview and errors visible. Sample settings explain the same features while retaining disabled backup controls.
+- Validation: inspected actual eligibility and backup serialization/merge logic; existing syntax/HTML asset regression checks and diff checks. No browser visual testing performed.
+
 ## 2026-10-06 — Move Info beside Gmail heading
 
 - Request: place Info to the right of Email suggestions.
