@@ -98,13 +98,13 @@ globalThis.EmailUI = (() => {
     try {
       const result = await chrome.runtime.sendMessage({ type: 'email-connector', action, ...extra });
       if (!result?.ok) throw new Error(result?.error || 'The connector did not respond. Reload the extension and try again.');
-      feedback(action === 'undo' ? 'Email action undone. The email is ready for review again.' : action === 'review' ? (extra.decision === 'approved' ? 'Email approved and added to the application.' : 'Suggestion dismissed.') : action === 'disconnect' ? 'Gmail disconnected. Email suggestions have been cleared.' : action === 'auto' ? (extra.enabled ? 'Periodic checks enabled.' : 'Periodic checks paused.') : 'Email check complete.');
+      feedback(action === 'undo' ? 'Email action undone. The email is ready for review again.' : action === 'review' ? (extra.decision === 'approved' ? 'Email approved and added to the application.' : 'Suggestion dismissed.') : action === 'disconnect' ? 'Gmail disconnected. Email suggestions have been cleared.' : action === 'auto' ? (extra.enabled ? 'Periodic checks enabled.' : 'Periodic checks paused.') : action === 'rescan' ? 'Rescan scheduled. Progress appears below and continues in the background.' : 'Email check complete.');
     } catch (error) { feedback(action === 'undo' && /Cannot undo|No email approvals to undo/.test(error.message) ? '' : error.message); }
     finally { busy = false; await render(); }
   }
   async function render() {
     const version = ++renderVersion;
-    const data = inExtension ? await chrome.storage.local.get(['emailConnector', 'emailSuggestions', 'jobs', 'emailApprovalUndo', 'emailPreferences']) : {};
+    const data = inExtension ? await chrome.storage.local.get(['emailConnector', 'emailRescan', 'emailSuggestions', 'jobs', 'emailApprovalUndo', 'emailPreferences']) : {};
     if (version !== renderVersion) return;
     renderAutomaticEmails(data);
     const connector = data.emailConnector || {};
@@ -126,7 +126,13 @@ globalThis.EmailUI = (() => {
     el('#gmail-connect').textContent = connector.connected ? 'Reconnect Gmail' : 'Connect Gmail';
     el('#gmail-check').hidden = demo || !connector.connected;
     el('#gmail-rescan-form').hidden = demo || !connector.connected;
-    el('#gmail-rescan').disabled = el('#gmail-rescan-days').disabled = busy;
+    const rescan = data.emailRescan;
+    el('#gmail-rescan').disabled = busy || rescan?.status === 'running';
+    el('#gmail-rescan-days').disabled = busy || rescan?.status === 'running';
+    el('#gmail-rescan').textContent = rescan?.status === 'running' ? 'Rescanning…' : rescan?.status === 'paused' ? 'Resume / restart rescan' : 'Rescan emails';
+    const totals = rescan?.totals || {};
+    el('#gmail-rescan-progress').hidden = demo || !rescan;
+    el('#gmail-rescan-progress').textContent = rescan ? `Rescan ${rescan.status}: ${rescan.days} days · ${totals.examined || 0} checked · ${totals.added || 0} new suggestions · ${totals.unmatched || 0} unmatched · ${totals.alreadySuggested || 0} already suggested or recorded.${rescan.status === 'running' ? ' Continues in the background; you can close this dashboard.' : rescan.error ? ` ${rescan.error}` : ' Finished visiting all search results in this range.'}` : '';
     el('#gmail-disconnect').hidden = demo || !connector.connected;
     el('#gmail-check').disabled = el('#gmail-disconnect').disabled = busy;
     el('#gmail-auto').disabled = demo || !connector.connected || busy;
@@ -262,7 +268,7 @@ globalThis.EmailUI = (() => {
     event.preventDefault();
     const days = Number(el('#gmail-rescan-days').value);
     if (!Number.isInteger(days) || days < 1 || days > 3650) { feedback('Enter a whole number of days between 1 and 3650.'); return; }
-    feedback(`Rescanning emails from the last ${days} days. Large ranges may take a few minutes…`);
+    feedback(`Rescan queued for the last ${days} days. Progress is saved between background batches.`);
     action('rescan', { days });
   });
   el('#gmail-disconnect').addEventListener('click', () => { action('disconnect'); });
@@ -276,7 +282,7 @@ globalThis.EmailUI = (() => {
     undo.click();
   });
   if (inExtension) chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && (changes.emailConnector || changes.emailSuggestions || changes.jobs || changes.emailApprovalUndo || changes.emailPreferences)) render().catch(() => feedback('Could not refresh email suggestions.'));
+    if (area === 'local' && (changes.emailConnector || changes.emailRescan || changes.emailSuggestions || changes.jobs || changes.emailApprovalUndo || changes.emailPreferences)) render().catch(() => feedback('Could not refresh email suggestions.'));
   });
   setInterval(updateAutomaticTimer, 1000);
   setInterval(() => { if (!document.hidden) refreshAutomaticSchedule(); }, 5000);

@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-06 — Resumable rescans and clearer diagnostics
+
+- Request: implement review recommendations 1 and 3: resilient rescans and clearer email check feedback.
+- `background.js`: persist account, application identity, fixed search range, cursor, totals, lifecycle and errors in `emailRescan`. A recurring 30-second alarm processes five results per batch, commits queue/cache/cursor together, and restores scheduling on worker/browser startup. Errors pause with saved progress; submitting the same range resumes, while changed application identity starts fresh. Disconnect clears the job; account changes invalidate it. Expired page tokens restart pagination with dedupe preserved.
+- `email-ui.js`, `dashboard.html`: show live cumulative progress and paused errors, disable duplicate starts, keep review available between batches, and explain that the dashboard can close. Separate normal diagnostics for unmatched, cached and already suggested/recorded emails; completion refers to search results, not the entire inbox.
+- `tests/email-rescan.test.cjs`: portable Node tests for restart/cursor/range preservation, pause/retry totals, cache-versus-recorded diagnostics, and application identity changes.
+- Validation: Node regression tests, JavaScript syntax, existing mocked email/matching/approval regression harness and HTML/manifest asset checks. No authenticated Chrome/Gmail session tested.
+- Limits: Chrome must be running for batches; alarms may be delayed. Rescans visit Gmail search results in the chosen range, excluding sent/spam/trash; totals reflect committed batches. Stale cursor restarts may count unmatched emails again, but suggestions remain deduplicated. Automatic approval is still governed by existing settings and matching safeguards.
+
 ## 2026-10-06 — Authorize commits and pushes
 
 - Request: after requested changes, update both logs, run appropriate checks, then commit and push automatically.

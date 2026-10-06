@@ -1,5 +1,6 @@
 importScripts('store.js', 'email-actions.js', 'email-matcher.js', 'gmail-message.js', 'google-sheets.js', 'email-preferences.js');
 const ALARM = 'gmail-check';
+const RESCAN_ALARM = 'gmail-rescan';
 const INTERVAL = 15;
 const SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
 function matchingContext(jobs) {
@@ -64,7 +65,7 @@ async function ensureAlarm() {
   } else await chrome.alarms.clear(ALARM);
 }
 
-async function scan({ automatic = false, rescanDays = null, rescanPageToken = null } = {}) {
+async function scan({ automatic = false, rescanDays = null, rescanPageToken = null, rescanJob = null } = {}) {
   const current = await state();
   if (!current.connected) throw new Error('Connect Gmail before checking email.');
   const jobs = await JobStore.list();
@@ -78,9 +79,9 @@ async function scan({ automatic = false, rescanDays = null, rescanPageToken = nu
     const profile = await gmail('profile', accessToken);
     if (profile.emailAddress !== current.email) throw new Error('The Google account changed. Disconnect and reconnect Gmail before checking again.');
     // Always check the first page for new mail, then continue the older backlog.
-    const query = searchQuery(jobs, rescanDays || 30);
+    const query = rescanJob?.query || searchQuery(jobs, rescanDays || 30);
     const context = matchingContext(jobs);
-    const params = new URLSearchParams({ q: query, maxResults: rescanDays ? '25' : '5' });
+    const params = new URLSearchParams({ q: query, maxResults: '5' });
     if (rescanDays && rescanPageToken) params.set('pageToken', rescanPageToken);
     const newest = await gmail(`messages?${params}`, accessToken);
     let page = newest;
@@ -104,10 +105,13 @@ async function scan({ automatic = false, rescanDays = null, rescanPageToken = nu
     let examined = 0;
     let unmatched = 0;
     let skipped = 0;
+    let alreadySuggested = 0;
+    let alreadyExamined = 0;
     const newSuggestions = [];
     for (const item of candidates) {
       const key = `${current.email}:${item.id}`;
-      if (keys.has(key) || (!rescanDays && examinedIds.has(item.id))) { skipped++; continue; }
+      if (keys.has(key)) { skipped++; alreadySuggested++; continue; }
+      if (!rescanDays && examinedIds.has(item.id)) { skipped++; alreadyExamined++; continue; }
       const raw = await gmail(`messages/${encodeURIComponent(item.id)}?format=metadata&metadataHeaders=Subject&metadataHeaders=From`, accessToken);
       const message = summarize(raw);
       examined++;
@@ -129,8 +133,17 @@ async function scan({ automatic = false, rescanDays = null, rescanPageToken = nu
       examinedIds.add(item.id);
       if (match) seen.add(key);
     }
+    const stats = { examined, unmatched, skipped, alreadySuggested, alreadyExamined, added };
+    let checkpoint = null;
+    if (rescanJob) {
+      const totals = { ...rescanJob.totals };
+      for (const field of Object.keys(stats)) totals[field] = (totals[field] || 0) + stats[field];
+      checkpoint = { ...rescanJob, totals, cursor: page.nextPageToken || null,
+        status: page.nextPageToken ? 'running' : 'complete', updatedAt: new Date().toISOString(), error: '' };
+    }
+    // Commit the cursor and queue together; an interrupted batch safely repeats.
     // A bounded dedupe cache covers ordinary personal job-search volumes.
-    await chrome.storage.local.set({ emailSuggestions, emailSeen: [...seen].slice(-10000),
+    await chrome.storage.local.set({ ...(checkpoint ? { emailRescan: checkpoint } : {}), emailSuggestions, emailSeen: [...seen].slice(-10000),
       emailExamined: { account: current.email, context, revision: 1, ids: [...examinedIds].slice(-10000) } });
     let autoApproved = 0;
     if ((await EmailPreferences.get()).approvalMode === 'automatic') {
@@ -142,13 +155,38 @@ async function scan({ automatic = false, rescanDays = null, rescanPageToken = nu
     }
     const at = new Date().toISOString();
     await patchState({ lastCheckedAt: at, ...(automatic ? { lastAutomaticCheckAt: at } : {}), error: '', ...(!rescanDays ? { nextPageToken: page.nextPageToken || null, matcherRevision: 5, searchQuery: query, matchingContext: context } : {}),
-      info: `${added} new ${added === 1 ? 'suggestion' : 'suggestions'}.${autoApproved ? ` ${autoApproved} automatically approved (Undo is available).` : ''} ${examined} emails examined; ${unmatched} had no clear status/application match. ${skipped} previously examined or queued emails skipped.${page.nextPageToken ? ' More messages remain; use Check now again or wait for the next check.' : ''}` });
-    return { nextPageToken: page.nextPageToken || null, examined, skipped, added };
+      lastScan: { ...stats, checkedAt: at, days: rescanDays || 30, moreRemaining: Boolean(page.nextPageToken) },
+      info: `${added} new suggestions${autoApproved ? `; ${autoApproved} automatically approved` : ''}. ${examined} emails checked; ${unmatched} could not be matched. Skipped ${alreadyExamined} previously checked and ${alreadySuggested} already suggested or recorded emails.${page.nextPageToken ? (rescanDays ? ' Older search results remain; the rescan will continue in background batches.' : ' Older search results remain. Check now or the next automatic check will continue them.') : ' All search results in this range have been visited.'}` });
+    return { nextPageToken: page.nextPageToken || null, ...stats };
+
   } catch (error) {
     // Restart pagination after an expired page token or other failed check.
-    await patchState({ error: error.message || 'Email check failed. Try again.', nextPageToken: null });
+    await patchState({ error: error.message || 'Email check failed. Try again.', ...(!rescanDays ? { nextPageToken: null } : {}) });
     throw error;
   }
+}
+
+async function ensureRescanAlarm() {
+  const { emailRescan } = await chrome.storage.local.get('emailRescan');
+  if (emailRescan?.status === 'running' && (await state()).connected) {
+    if (!await chrome.alarms.get(RESCAN_ALARM)) await chrome.alarms.create(RESCAN_ALARM, { delayInMinutes: 0.5, periodInMinutes: 0.5 });
+  } else await chrome.alarms.clear(RESCAN_ALARM);
+}
+async function rescanBatch() {
+  const { emailRescan: job } = await chrome.storage.local.get('emailRescan');
+  if (!job || job.status !== 'running') return ensureRescanAlarm();
+  try {
+    if (job.account !== (await state()).email || !((await state()).connected)) throw new Error('Reconnect the original Gmail account to resume this rescan.');
+    if (job.context !== matchingContext(await JobStore.list())) throw new Error('Application details changed. Start a new rescan to use those changes.');
+    await scan({ rescanDays: job.days, rescanPageToken: job.cursor, rescanJob: job });
+  } catch (error) {
+    const { emailRescan: latest } = await chrome.storage.local.get('emailRescan');
+    // A failure after the atomic checkpoint must not roll its cursor back.
+    if (latest?.status !== 'complete') await chrome.storage.local.set({ emailRescan: { ...(latest || job), status: 'paused',
+      ...(job.cursor && /HTTP 400/.test(error.message) ? { cursor: null } : {}),
+      error: error.message, updatedAt: new Date().toISOString() } });
+  }
+  await ensureRescanAlarm();
 }
 
 async function review(id, decision, selection = {}) {
@@ -221,7 +259,7 @@ async function handle(message) {
       const profile = await gmail('profile', accessToken);
       const previous = await state();
       if (previous.email && previous.email !== profile.emailAddress) {
-        await chrome.storage.local.set({ emailSuggestions: [], emailSeen: [], emailExamined: {}, emailApprovalUndo: [] });
+        await chrome.storage.local.set({ emailSuggestions: [], emailSeen: [], emailExamined: {}, emailApprovalUndo: [], emailRescan: null });
       }
       await patchState({ connected: true, email: profile.emailAddress, autoCheck: previous.autoCheck ?? true, ...(previous.email !== profile.emailAddress ? { lastAutomaticCheckAt: null } : {}), error: '', nextPageToken: null });
       await ensureAlarm();
@@ -231,6 +269,8 @@ async function handle(message) {
     case 'disconnect': {
       await patchState({ connected: false, autoCheck: false, email: '', nextPageToken: null, error: '', info: '', lastCheckedAt: null, lastAutomaticCheckAt: null });
       await chrome.alarms.clear(ALARM);
+      await chrome.alarms.clear(RESCAN_ALARM);
+      await chrome.storage.local.set({ emailRescan: null });
       await chrome.storage.local.set({ emailSuggestions: [], emailSeen: [], emailExamined: {}, emailApprovalUndo: [] });
       try { await chrome.identity.clearAllCachedAuthTokens(); } catch { /* Checks remain disabled. */ }
       return;
@@ -239,15 +279,20 @@ async function handle(message) {
     case 'rescan': {
       const days = message.days;
       if (!Number.isInteger(days) || days < 1 || days > 3650) throw new Error('Enter a whole number of days between 1 and 3650.');
-      if (!(await JobStore.list()).length) throw new Error('Save an application before rescanning.');
-      let cursor = null;
-      const totals = { examined: 0, skipped: 0, added: 0 };
-      do {
-        const batch = await scan({ rescanDays: days, rescanPageToken: cursor });
-        for (const field of Object.keys(totals)) totals[field] += batch[field];
-        cursor = batch.nextPageToken;
-        await patchState({ info: `Rescan ${cursor ? 'in progress' : 'complete'}: last ${days} days · ${totals.examined} emails reexamined · ${totals.skipped} already suggested emails skipped · ${totals.added} new suggestions.${cursor ? ' Continuing older messages…' : ''}` });
-      } while (cursor);
+      const current = await state();
+      if (!current.connected) throw new Error('Connect Gmail first.');
+      const jobs = await JobStore.list();
+      if (!jobs.length) throw new Error('Save an application before rescanning.');
+      const context = matchingContext(jobs);
+      const { emailRescan: previous } = await chrome.storage.local.get('emailRescan');
+      if (previous?.status === 'running') return;
+      const resume = previous?.status === 'paused' && previous.account === current.email && previous.days === days && previous.context === context;
+      const end = Math.floor(Date.now() / 1000);
+      const query = searchQuery(jobs, days).replace(`newer_than:${days}d`, `after:${end - days * 86400} before:${end}`);
+      await chrome.storage.local.set({ emailRescan: resume ? { ...previous, status: 'running', error: '' } : {
+        account: current.email, context, days, query, cursor: null, status: 'running',
+        startedAt: new Date().toISOString(), totals: {}, error: '' } });
+      await ensureRescanAlarm();
       return;
     }
     case 'auto': {
@@ -282,14 +327,17 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   return true;
 });
 chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === RESCAN_ALARM) navigator.locks.request('email-connector', rescanBatch).catch(() => {});
   if (alarm.name === ALARM) navigator.locks.request('email-connector', async () => {
     const current = await state();
     if (current.connected && current.autoCheck && (await EmailPreferences.get()).checkFrequency) await scan({ automatic: true });
   }).catch(() => {});
 });
-chrome.runtime.onStartup.addListener(() => { ensureAlarm().catch(() => {}); });
-chrome.runtime.onInstalled.addListener(() => { ensureAlarm().catch(() => {}); });
+chrome.runtime.onStartup.addListener(() => { ensureAlarm().catch(() => {}); ensureRescanAlarm().catch(() => {}); });
+chrome.runtime.onInstalled.addListener(() => { ensureAlarm().catch(() => {}); ensureRescanAlarm().catch(() => {}); });
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.emailPreferences) navigator.locks.request('email-connector', ensureAlarm).catch(() => {});
 });
 ensureAlarm().catch(() => {});
+
+ensureRescanAlarm().catch(() => {});
