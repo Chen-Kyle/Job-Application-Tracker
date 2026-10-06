@@ -9,6 +9,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-06
 
+- Moved the Gmail Info control to the right of “Email suggestions.”
+
 - Moved Gmail timing, check results, and explanatory text into a collapsed Info section; aligned rescan progress with the other content.
 
 - Sped up rescans with larger batches, five concurrent email reads, and prompt continuation; shortened the progress text.

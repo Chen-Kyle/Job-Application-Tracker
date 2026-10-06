@@ -262,6 +262,11 @@ globalThis.EmailUI = (() => {
     await render();
     feedback('Sample email action undone.');
   });
+  el('#gmail-info-toggle').addEventListener('click', event => {
+    const expanded = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+    event.currentTarget.setAttribute('aria-expanded', String(expanded));
+    el('#gmail-info').hidden = !expanded;
+  });
   el('#gmail-connect').addEventListener('click', () => { feedback('Connecting to Gmail…'); action('connect'); });
   el('#gmail-check').addEventListener('click', () => { feedback('Checking application emails…'); action('check'); });
   el('#gmail-rescan-form').addEventListener('submit', event => {

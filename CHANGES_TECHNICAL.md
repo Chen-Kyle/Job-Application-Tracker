@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-06 — Move Info beside Gmail heading
+
+- Request: place Info to the right of Email suggestions.
+- `dashboard.html`, `dashboard.css`, `email-ui.js`: place a compact native button beside the heading with wrapping on small screens. Toggle the existing details below the header using aria-expanded, aria-controls and hidden. The same live diagnostics remain available.
+- Validation: JavaScript syntax, existing mocked email regression and HTML/asset checks, diff check. No browser visual test performed.
+
 ## 2026-10-06 — Declutter Gmail section
 
 - Request: correct rescan progress margin and hide timer, check diagnostics and Gmail explanation behind a small clickable Info control.
