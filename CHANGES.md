@@ -9,6 +9,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-06
 
+- Removed the First-time setup dropdown from Google Sheets export.
+
 - Added collapsible Info explanations to Email updates and Backup and restore in real and sample settings.
 
 - Moved the Gmail Info control to the right of “Email suggestions.”

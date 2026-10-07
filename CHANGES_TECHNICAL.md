@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-06 — Remove Sheets setup dropdown
+
+- Request: remove the dropdown in Google Sheets export.
+- `dashboard.html`: remove the First-time setup disclosure and its content; retain export controls, permission explanation, feedback and spreadsheet link. Setup documentation remains in GMAIL_SETUP.md.
+- Validation: existing syntax/HTML asset checks and diff check. Export logic unchanged.
+
 ## 2026-10-06 — Settings Info disclosures
 
 - Request: prioritize Info explanations for automatic email updates and backup/restore.
