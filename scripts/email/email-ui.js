@@ -37,7 +37,7 @@ globalThis.EmailSuggestionOrder = (() => {
 globalThis.EmailUI = (() => {
   const el = (selector) => document.querySelector(selector);
   let busy = false;
-  let sampleReview = "pending";
+  const sampleReviews = new Map();
   const sampleUndo = [];
   let renderVersion = 0;
   let timerConnector = {};
@@ -318,28 +318,29 @@ globalThis.EmailUI = (() => {
     let suggestions;
     let currentJobs;
     if (demo) {
-      const job = samples.find((item) => item.id === "sample-2");
       currentJobs = samples;
-      suggestions =
-        job && sampleReview === "pending"
-          ? [
-              {
-                id: "sample-email",
-                jobId: job.id,
-                role: job.role,
-                company: job.company,
-                fromStatus: "Saved",
-                status: "Applied",
-                subject: "Application received: Data Analyst at Juniper Labs",
-                from: "Juniper Labs Recruiting <recruiting@example.com>",
-                snippet:
-                  "Thank you for applying for the Data Analyst position at Juniper Labs. We have received your application.",
-                receivedAt: new Date().toISOString(),
-                reason:
-                  "Company and full role match; the message confirms an application was received.",
-              },
-            ]
-          : [];
+      const examples = [
+        { id: "sample-email-application", jobId: "sample-2", fromStatus: "Saved", status: "Applied",
+          subject: "Application received: Data Analyst at Juniper Labs",
+          snippet: "Thank you for applying for the Data Analyst position at Juniper Labs. We have received your application." },
+        { id: "sample-email-interview", jobId: "sample-1", fromStatus: "Applied", status: "Interviewing",
+          subject: "Interview invitation: Software Engineer at Fieldwork",
+          snippet: "We would like to invite you to interview for the Software Engineer role at Fieldwork. Our recruiter will follow up with available times." },
+        { id: "sample-email-offer", jobId: "sample-0", fromStatus: "Interviewing", status: "Offer",
+          subject: "Your Product Designer offer from Northstar",
+          snippet: "We are pleased to offer you the Product Designer position at Northstar. Please review the offer details sent by our recruiting team." },
+        { id: "sample-email-activity", jobId: "sample-4", fromStatus: "Rejected", status: null,
+          subject: "A recruiting update from Beacon",
+          snippet: "Thank you for your interest in Beacon. We will keep your profile on file for future Product Manager opportunities." },
+      ];
+      suggestions = examples.filter(example => !sampleReviews.has(example.id))
+        .flatMap(example => {
+          const job = samples.find(item => item.id === example.jobId);
+          return job ? [{ ...example, role: job.role, company: job.company,
+            from: `${job.company} Recruiting <recruiting@example.com>`,
+            receivedAt: new Date(Date.now() - 3600000).toISOString(),
+            reason: "Fictional sample email. Try approving, dismissing, undoing, or choosing a different status." }] : [];
+        });
     } else {
       suggestions = (data.emailSuggestions || []).filter(
         (item) => item.review === "pending",
@@ -472,22 +473,29 @@ globalThis.EmailUI = (() => {
             ...(suggestion.needsSelection ? selections.get(suggestion.id) : {}),
           });
         sampleUndo.push({
+          suggestionId: suggestion.id,
           job: decision === "approved" ? structuredClone(job) : null,
         });
         if (decision === "approved") {
           const at = new Date().toISOString();
-          job.statusHistory.push({
+          if (proposedStatus) job.statusHistory.push({
             from: job.status,
             to: proposedStatus,
             at,
             source: "email",
             eventId: suggestion.id,
+            emailSubject: suggestion.subject,
           });
+          job.emailActivity ||= [];
+          job.emailActivity.push({ id: suggestion.id, subject: suggestion.subject,
+            from: suggestion.from, snippet: suggestion.snippet, receivedAt: suggestion.receivedAt,
+            approvedAt: at, fromStatus: job.status, toStatus: proposedStatus || job.status,
+            statusChanged: Boolean(proposedStatus && proposedStatus !== job.status), automatic: false });
           job.status = proposedStatus || job.status;
           job.updatedAt = at;
-          job.appliedAt ||= at;
+          if (job.status === "Applied") job.appliedAt ||= at;
         }
-        sampleReview = decision;
+        sampleReviews.set(suggestion.id, decision);
         await refresh();
         feedback(
           decision === "approved"
@@ -625,7 +633,7 @@ globalThis.EmailUI = (() => {
     if (!before) return;
     const index = samples.findIndex((job) => job.id === before.job?.id);
     if (index >= 0) samples[index] = before.job;
-    sampleReview = "pending";
+    sampleReviews.delete(before.suggestionId);
     await refresh();
     await render();
     feedback("Sample email action undone.");

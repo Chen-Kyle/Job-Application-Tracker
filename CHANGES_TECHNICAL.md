@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Multiple sample email approvals
+
+- Request: provide sample dashboard examples to approve.
+- `scripts/email/email-ui.js`: four fictional suggestions targeting distinct sample jobs (Applied, Interviewing, Offer and activity-only). Track review decisions per suggestion rather than one shared flag; undo restores the corresponding suggestion and job. Approved examples retain subjects and activity summaries in sample records; only status suggestions produce status history. Existing manual status override works for all matched samples. No real inbox read or storage write introduced.
+- Validation: script syntax, full Node regression/path suite, existing email regression harness and diff checks. No live browser test performed.
+
 ## 2026-10-07 — Recruiter contacts and conversation references
 
 - Request: implement the first version of job-specific recruiter contacts and separately attached email conversations.

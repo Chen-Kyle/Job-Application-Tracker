@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Added four fictional sample emails for application confirmation, interview, offer, and activity-only approval; each can be approved, dismissed, overridden, and undone independently.
+
 - Added recruiter contacts and manually attached Gmail conversations per job, separate from status email activity, with last-message/last-sent dates, Gmail links, refresh, undo, and backup support.
 
 - Resumed automatic commits and pushes; committed the style/documentation organization and manual email status override together.
