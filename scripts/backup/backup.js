@@ -59,6 +59,8 @@ globalThis.JobBackup = (() => {
         updatedAt: date(item.updatedAt || item.savedAt),
         statusHistory: [],
       };
+      if (item.recruiterContacts !== undefined)
+        job.recruiterContacts = RecruiterData.normalize(item.recruiterContacts);
       if (!job.role.trim()) fail();
       if (item.appliedAt != null) job.appliedAt = date(item.appliedAt);
       if (item.companyAliases !== undefined) {

@@ -6,10 +6,12 @@
   <title>Applications · Job Tracker</title>
   <link rel="stylesheet" href="styles/dashboard.css">
   <link rel="stylesheet" href="styles/themes.css">
+  <script src="scripts/recruiters/recruiter-data.js" defer></script>
   <script src="scripts/core/theme.js" defer></script>
   <script src="scripts/core/store.js" defer></script>
   <script src="scripts/email/email-links.js" defer></script>
   <script src="scripts/dashboard/dashboard.js" defer></script>
+  <script src="scripts/recruiters/recruiter-ui.js" defer></script>
   <script src="scripts/dashboard/job-details.js" defer></script>
   <script src="scripts/dashboard/manual-entry.js" defer></script>
   <script src="scripts/email/email-preferences.js" defer></script>
@@ -102,6 +104,7 @@
       <label for="edit-job-saved">Saved date and time</label><input id="edit-job-saved" form="job-details-edit-form" type="datetime-local" required step="1">
       <label for="edit-job-applied">Applied date and time</label><input id="edit-job-applied" form="job-details-edit-form" type="datetime-local" step="1">
     </div>
+    <section class="job-details-section"><h3>Recruiter conversations</h3><div id="job-recruiters"></div></section>
     <section class="job-details-section"><h3>Email activity</h3><div id="job-details-emails"></div></section>
     <section class="job-details-section"><h3>Other activity</h3><p id="job-notes"></p><div id="job-notes-editor" hidden><label for="edit-job-notes">Notes</label><textarea form="job-details-edit-form" id="edit-job-notes" maxlength="20000" rows="5" placeholder="Add your notes about this application"></textarea></div><div id="job-details-manual"></div></section>
     <div id="job-details-edit-footer" hidden><p id="job-details-edit-message" role="status" aria-live="polite"></p><button id="job-details-edit-cancel" type="button">Cancel</button><button id="job-details-save" class="approve-email" type="submit" form="job-details-edit-form">Save changes</button></div>

@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Recruiter contacts and conversation references
+
+- Request: implement the first version of job-specific recruiter contacts and separately attached email conversations.
+- New `scripts/recruiters/`: shared strict contact/summary validation, read-only Gmail thread lookup including sent mail (20 search results, five concurrent reads), and job-panel UI. Show subject, latest direction/date, last SENT-labeled message date, last refreshed timestamp, thread link and Gmail compose link. Users explicitly attach threads to avoid matching a recruiter’s unrelated roles. Refresh attached threads manually; no background contact scans or sending permission added.
+- `job-details.js`, `store.js`: contacts and attachment changes use existing draft/save/cancel and guarded snapshot undo. Search/refresh rejects stale panel operations; refresh writes metadata without changing status history or status email activity. Limit 20 contacts and 30 conversation summaries per contact. Sample mode edits fictional/local contacts but never queries real Gmail.
+- `backup.js`: validate and preserve contacts and thread summaries in existing version-1 backups; legacy backups remain valid. Gmail authorization remains excluded. Updated page load order, worker imports/message reply data, code guide, setup guide, README and backup explanations.
+- Tests: recruiter sent/received date separation, explicit-address matching, draft exclusion, sent-inclusive lookup with no status mutation, backup round-trip, guarded snapshot undo, invalid input/account rejection and load-path coverage and mocked UI contact/search/attachment interactions; existing rescan/matching/approval checks retained. No authenticated browser/Gmail test performed.
+- Limits: preserves metadata and links, not a full offline archive. Thread searches return up to 20 results and attached summaries refresh manually. Gmail labeling determines sent direction; no contact matching or job status inference is triggered by attaching conversations. Existing account must be connected to refresh.
+
 ## 2026-10-07 — Resume commits and publish pending changes
 
 - Request: resume automatic commits/pushes and commit the pending assistant changes now.

@@ -12,6 +12,7 @@ Applying to jobs often means switching between job boards, email, and spreadshee
 
 - **Save jobs while browsing:** capture the role, company, and listing link, with editable fields when autofill needs a correction.
 - **Track applications:** search, filter, and update Saved, Applied, Interviewing, Offer, Rejected, or Withdrawn statuses. Add applications manually too.
+- **Recruiter conversations:** attach contacts and specific Gmail threads to a job, see the latest message and when you last emailed, and compose a follow-up in Gmail. Conversation summaries remain separate from status updates.
 - **Keep details together:** open a job's side panel to view its listing, dates, notes, email activity, and next steps.
 - **Review Gmail updates:** suggest status changes and actions from job-related emails. Uncertain matches let you choose the application.
 - **Choose automatic updates:** automatically approve strong status matches while keeping uncertain matches and detected next-step actions available for review.
@@ -49,6 +50,8 @@ This is rule-based matching, not AI. It can miss unfamiliar wording or require h
 ## Data and privacy
 
 Application records are stored locally in your Chrome profile. Gmail access is read-only: the extension does not send emails or change your mailbox. Matching runs locally, and approved email activity stores subjects, links, dates, and short excerpts rather than complete email bodies or attachments.
+
+Recruiter contacts and attached conversation summaries are stored with the job and included in backups. Refresh conversations from the job panel to update their timestamps; full threads stay in Gmail.
 
 Google Sheets exports create separate snapshots; they do not sync back to the dashboard. JSON backups preserve application data and settings, but exclude authorization tokens, pending/dismissed suggestion queues, and undo history. Download a backup before uninstalling or changing the extension's ID.
 

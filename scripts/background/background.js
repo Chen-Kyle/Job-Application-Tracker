@@ -2,6 +2,8 @@
 // See scripts/README.md for page entry points and dependency order.
 // Worker imports resolve relative to this file, not manifest.json.
 importScripts(
+  "../recruiters/recruiter-data.js",
+  "../recruiters/recruiter-gmail.js",
   "../core/store.js",
   "../email/email-actions.js",
   "../email/email-matcher.js",
@@ -491,6 +493,8 @@ async function review(id, decision, selection = {}) {
 
 async function handle(message) {
   switch (message.action) {
+    case "recruiter-threads":
+      return RecruiterGmail.lookup(message, { state, token, gmail });
     case "subjects": {
       const current = await state();
       if (!current.connected) return;
@@ -701,7 +705,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   navigator.locks
     .request("email-connector", () => handle(message))
     .then(
-      () => respond({ ok: true }),
+      (data) => respond({ ok: true, data }),
       (error) =>
         respond({ ok: false, error: error.message || "Email action failed." }),
     );

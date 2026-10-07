@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Added recruiter contacts and manually attached Gmail conversations per job, separate from status email activity, with last-message/last-sent dates, Gmail links, refresh, undo, and backup support.
+
 - Resumed automatic commits and pushes; committed the style/documentation organization and manual email status override together.
 
 - Added a manual status override before approving an email matched to an application. Changes remain local.

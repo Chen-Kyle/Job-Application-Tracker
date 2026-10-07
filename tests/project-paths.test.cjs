@@ -44,6 +44,12 @@ test("root pages reference existing local assets and preserve script dependency 
           `${filename}: ${dependency} must load before ${controller}`,
         );
     };
+    before("scripts/recruiters/recruiter-data.js", "scripts/core/store.js");
+    before("scripts/recruiters/recruiter-data.js", "scripts/backup/backup.js");
+    before(
+      "scripts/recruiters/recruiter-ui.js",
+      "scripts/dashboard/job-details.js",
+    );
     before("scripts/core/store.js", "scripts/dashboard/dashboard.js");
     before(
       "scripts/dashboard/dashboard.js",

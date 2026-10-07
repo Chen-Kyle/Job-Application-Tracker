@@ -301,6 +301,36 @@ globalThis.JobDetails = (() => {
     el("job-details-company").textContent =
       job.company || "Company not specified";
     renderTasks(job);
+    const recruiterSnapshot = editSnapshot;
+    RecruiterUI.render(job, Boolean(editSnapshot), async (contacts) => {
+      if (selected !== job.id || editSnapshot !== recruiterSnapshot)
+        throw Error("This panel changed. Try again.");
+      if (editSnapshot) {
+        draftUndo.push(structuredClone(editSnapshot.draft));
+        editSnapshot.draft.recruiterContacts = contacts;
+        await render();
+      } else {
+        let snapshot;
+        if (demo) {
+          const current = samples.find((item) => item.id === job.id);
+          const before = structuredClone(current);
+          current.recruiterContacts = contacts;
+          snapshot = { before, after: structuredClone(current) };
+        } else
+          snapshot = await JobStore.updateDetails(
+            job.id,
+            {
+              role: job.role,
+              company: job.company || "",
+              recruiterContacts: contacts,
+              expectedJob: job,
+            },
+            job.updatedAt || job.savedAt,
+          );
+        panelUndo.push({ kind: "snapshot", ...snapshot, demo });
+        await refresh();
+      }
+    });
     el("job-details-edit-footer").hidden = !editSnapshot;
     dialog.classList.toggle("editing", Boolean(editSnapshot));
     for (const id of [
@@ -611,6 +641,9 @@ globalThis.JobDetails = (() => {
       );
     const nextSteps = snapshot.draft.nextSteps;
     const emailActivity = snapshot.draft.emailActivity;
+    const recruiterContacts = RecruiterData.normalize(
+      snapshot.draft.recruiterContacts || [],
+    );
     const button = el("job-details-save");
     button.disabled = true;
     try {
@@ -632,6 +665,7 @@ globalThis.JobDetails = (() => {
             throw new Error("This activity changed. Cancel and edit again.");
           Object.assign(entry, { from: edit.from, to: edit.to, at: edit.at });
         }
+        job.recruiterContacts = structuredClone(recruiterContacts);
         if (nextSteps !== undefined) job.nextSteps = structuredClone(nextSteps);
         if (emailActivity !== undefined)
           job.emailActivity = structuredClone(emailActivity);
@@ -676,6 +710,7 @@ globalThis.JobDetails = (() => {
             activityDeletions,
             nextSteps,
             emailActivity,
+            recruiterContacts,
             expectedJob: snapshot.original,
           },
           snapshot.updatedAt,

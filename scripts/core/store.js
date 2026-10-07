@@ -321,10 +321,13 @@ globalThis.JobStore = (() => {
       activityDeletions = [],
       nextSteps,
       emailActivity,
+      recruiterContacts,
       expectedJob,
     },
     expectedUpdatedAt,
   ) {
+    if (recruiterContacts !== undefined)
+      recruiterContacts = RecruiterData.normalize(recruiterContacts);
     role = typeof role === "string" ? role.trim() : "";
     company = typeof company === "string" ? company.trim() : "";
     if (
@@ -392,6 +395,8 @@ globalThis.JobStore = (() => {
           event.activityDeletedAt = edit.deletedAt;
         } else delete event.activityDeletedAt;
       }
+      if (recruiterContacts !== undefined)
+        job.recruiterContacts = structuredClone(recruiterContacts);
       if (emailActivity !== undefined)
         job.emailActivity = structuredClone(emailActivity);
       if (nextSteps !== undefined) {

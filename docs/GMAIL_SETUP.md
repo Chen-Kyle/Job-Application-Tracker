@@ -72,3 +72,11 @@ Official references: [Chrome OAuth setup](https://developer.chrome.com/docs/exte
 - Proposed deadlines recognize numeric calendar days relative to the email's received date and explicit YYYY-MM-DD dates after due/by/deadline wording. Confirm or clear the date before approval. Business days, multiple deadlines, natural-language dates, time zones, and subtle wording may need manual correction.
 - Old messages within the 30-day search window can be offered as activity for review even if saved later. Status rules still prevent old confirmations from automatically changing a newer application state.
 - Test scenarios and instructions are in EMAIL_TEST_CASES.md. This feature does not create a complete Gmail thread archive; it records approved individual emails.
+
+## Recruiter conversations
+
+Open a job, click Edit, enter a recruiter name/email and click Add recruiter. Find conversations searches up to 20 matching Gmail threads, including sent messages. Attach only conversations for that job and click Save changes. Cancel discards the draft; the panel’s undo restores saved edits when safe.
+
+Attached conversations appear separately from status-update email activity and never change the job status. Each shows its subject, latest sent/received timestamp, and the most recent message labeled Sent by Gmail. Refresh conversations updates these summaries; an inaccessible thread produces an error without removing saved data. The Gmail account used to attach the conversation must be connected for refresh. Open the link to read the full chain in Gmail, or use Email recruiter in Gmail to compose a message yourself.
+
+Contacts and thread summaries are included in JSON backups, not full messages or attachments. The existing Gmail read-only scope is sufficient; no send permission is requested. Contacts can be added without Gmail, including in the sample dashboard, but sample mode never searches a real inbox.
