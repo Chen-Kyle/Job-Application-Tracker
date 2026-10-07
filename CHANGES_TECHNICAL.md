@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Recruiter autocomplete dropdown
+
+- Request: search-style dropdown with arrow keys between recruiter suggestions.
+- Replaced native datalist with a themed combobox/listbox under the email field. Names, addresses and contact source appear per row. Up/Down wraps options, Enter selects without submitting, Escape closes without closing the details dialog; click selection, blur/Tab dismissal and composition guard included. ARIA expanded/selected/active descendant reflect state. Existing saved/Gmail cache sources retained.
+- Files: recruiter-autocomplete.js, recruiter-ui.js, styles/dashboard.css, recruiter-autocomplete.test.cjs and both logs.
+- Validation: Node suite including keyboard/filter/dismissal regression; diff checks. No live browser or screen-reader test performed.
+
 ## 2026-10-07 — Exclude job recommendation emails
 
 - Request: exclude recommendation emails that match a saved company/role but do not confirm an application.

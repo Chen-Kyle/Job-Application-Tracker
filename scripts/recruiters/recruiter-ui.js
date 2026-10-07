@@ -292,7 +292,10 @@ globalThis.RecruiterUI = (() => {
         () =>
           version === revision && document.getElementById("job-details").open,
       );
-      form.append(nameLabel, emailLabel, suggestions, add);
+      const emailField = document.createElement("div");
+      emailField.className = "recruiter-email-field";
+      emailField.append(emailLabel, suggestions);
+      form.append(nameLabel, emailField, add);
       form.addEventListener("submit", (event) => {
         event.preventDefault();
         save([

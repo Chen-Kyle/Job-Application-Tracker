@@ -113,3 +113,12 @@ footer { margin-top: 20px; }
 .recruiter-chain { max-width: none; margin-top: 12px; }
 .recruiter-message { padding: 14px; margin-top: 10px; background: var(--page); border: 1px solid var(--border); border-radius: 8px; }
 .recruiter-message p { margin: 8px 0 0; }
+
+/* Suggestions stay next to the input and use the selected dashboard theme. */
+.recruiter-email-field { position: relative; min-width: 0; }
+.recruiter-suggestions { position: absolute; top: 100%; left: 0; right: 0; z-index: 5; max-height: 270px; overflow-y: auto; margin-top: 4px; padding: 6px; background: var(--card, var(--page)); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 8px 24px rgb(0 0 0 / 15%); }
+.recruiter-suggestions[hidden] { display: none; }
+.recruiter-suggestion { display: grid; gap: 3px; padding: 12px; border-radius: 8px; cursor: pointer; overflow-wrap: anywhere; font-size: 14px; }
+.recruiter-suggestion span, .recruiter-suggestion small { color: var(--muted); }
+.recruiter-suggestion:hover, .recruiter-suggestion[aria-selected="true"] { background: var(--hover); }
+@media (forced-colors: active) { .recruiter-suggestion[aria-selected="true"] { outline: 2px solid Highlight; } }

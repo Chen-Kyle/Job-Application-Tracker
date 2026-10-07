@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Changed recruiter autocomplete to a themed name/address dropdown with arrow-key navigation, Enter selection, and Escape dismissal.
+
 - Excluded job recommendations and job alerts from email suggestions while keeping explicit application confirmations and interview updates.
 
 - Added recruiter email autocomplete from saved contacts and locally cached recent Gmail correspondents; selecting a known address fills its name.

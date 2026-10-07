@@ -69,3 +69,47 @@ test("recent correspondents cache avoids repeat Gmail calls and excludes automat
   assert.ok(run("calls") > calls);
   assert.equal(data.recruiterContactCache.account, "second@example.com");
 });
+test("dropdown filters names and supports arrows, Enter, Escape and blur", () => {
+  class Element {
+    constructor() { this.children = []; this.attributes = {}; this.listeners = {}; this.value = ""; }
+    setAttribute(key, value) { this.attributes[key] = value; }
+    removeAttribute(key) { delete this.attributes[key]; }
+    addEventListener(key, fn) { this.listeners[key] = fn; }
+    append(...children) { this.children.push(...children); }
+    replaceChildren() { this.children = []; }
+    scrollIntoView() {}
+    fire(key, extra = {}) {
+      const event = { preventDefault() { this.prevented = true; }, stopPropagation() {}, ...extra };
+      this.listeners[key]?.(event);
+      return event;
+    }
+  }
+  const email = new Element();
+  const name = new Element();
+  const context = vm.createContext({
+    document: { activeElement: email, createElement: () => new Element() },
+    demo: true,
+    samples: [{ recruiterContacts: [{ email: "alex@example.com", name: "Alex" }, { email: "amy@example.com", name: "Amy" }] }],
+    RecruiterData: { email: () => true },
+  });
+  vm.runInContext(fs.readFileSync(path.join(root, "scripts/recruiters/recruiter-autocomplete.js"), "utf8"), context);
+  const list = context.RecruiterAutocomplete.attach(email, name, {}, () => true);
+  email.fire("keydown", { key: "ArrowDown" });
+  assert.equal(list.children[0].attributes["aria-selected"], "true");
+  email.fire("keydown", { key: "ArrowUp" });
+  assert.equal(list.children[1].attributes["aria-selected"], "true");
+  assert.equal(email.fire("keydown", { key: "Enter" }).prevented, true);
+  assert.equal(email.value, "amy@example.com");
+  assert.equal(name.value, "Amy");
+  assert.equal(list.hidden, true);
+  email.value = "alex";
+  email.fire("input");
+  assert.equal(list.children.length, 1);
+  email.fire("keydown", { key: "Escape" });
+  assert.equal(list.hidden, true);
+  assert.equal(email.value, "alex");
+  email.fire("input");
+  email.fire("blur");
+  assert.equal(email.attributes["aria-expanded"], "false");
+  assert.equal(email.attributes["aria-activedescendant"], undefined);
+});
