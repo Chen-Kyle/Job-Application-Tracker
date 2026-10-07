@@ -200,6 +200,7 @@ test("recruiter UI supports adding a contact and explicitly attaching a result",
       createElement: (tag) => new Element(tag),
       getElementById: (id) => (id === "job-details" ? dialog : container),
     },
+    RecruiterAutocomplete: { attach: () => new Element("datalist") },
     RecruiterData: { normalize: (value) => value },
     EmailLinks: { message: (_, id) => `https://mail.google.com/#all/${id}` },
     chrome: {

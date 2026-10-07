@@ -11,7 +11,7 @@ Scripts are grouped by responsibility. HTML pages and `manifest.json` remain at 
 | `background/` | Chrome messages, alarms and resumable Gmail scans | `background.js` |
 | `settings/` | Email preferences, sidebar and sample settings | `email-settings-ui.js` |
 | `backup/` | Backup format, validation and restore controls | `backup.js`, then `backup-ui.js` |
-| `recruiters/` | Contact validation, read-only thread lookup and recruiter conversation UI | `recruiter-ui.js`, `recruiter-gmail.js` |
+| `recruiters/` | Contact validation, cached autocomplete, read-only thread lookup and recruiter conversation UI | `recruiter-ui.js`, `recruiter-gmail.js` |
 | `sheets/` | Spreadsheet creation and export controls | `google-sheets.js`, `sheets-ui.js` |
 
 ## How the code runs

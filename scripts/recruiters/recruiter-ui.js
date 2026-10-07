@@ -10,9 +10,11 @@ globalThis.RecruiterUI = (() => {
     const contacts = job.recruiterContacts || [];
     const notice = document.createElement("p");
     notice.className = "email-secondary";
-    notice.textContent = globalThis.demo ? "Fictional sample contacts. Click Edit, then Find conversations to attach example threads." : contacts.length
-      ? "Conversations are separate from status-update email activity."
-      : "No recruiter contacts yet. Click Edit to add one.";
+    notice.textContent = globalThis.demo
+      ? "Fictional sample contacts. Click Edit, then Find conversations to attach example threads."
+      : contacts.length
+        ? "Conversations are separate from status-update email activity."
+        : "No recruiter contacts yet. Click Edit to add one.";
     container.append(notice);
     const feedback = document.createElement("p");
     feedback.setAttribute("role", "status");
@@ -54,8 +56,16 @@ globalThis.RecruiterUI = (() => {
         try {
           if (globalThis.demo) {
             pending.delete(key);
-            if (refresh) { controls.querySelectorAll("button").forEach(button => { button.disabled = false; }); return; }
-            results.set(key, RecruiterSamples.conversations(job, contact.email));
+            if (refresh) {
+              controls.querySelectorAll("button").forEach((button) => {
+                button.disabled = false;
+              });
+              return;
+            }
+            results.set(
+              key,
+              RecruiterSamples.conversations(job, contact.email),
+            );
             render(job, editing, change);
             return;
           }
@@ -151,7 +161,9 @@ globalThis.RecruiterUI = (() => {
         controls.append(refresh);
       }
       card.append(controls);
-      for (const thread of [...(contact.conversations || [])].sort((a,b)=>Date.parse(b.latestAt)-Date.parse(a.latestAt))) {
+      for (const thread of [...(contact.conversations || [])].sort(
+        (a, b) => Date.parse(b.latestAt) - Date.parse(a.latestAt),
+      )) {
         const row = document.createElement("div");
         row.className = "recruiter-thread";
         const link = document.createElement("a");
@@ -168,15 +180,28 @@ globalThis.RecruiterUI = (() => {
         checked.textContent = `Last refreshed: ${new Date(thread.checkedAt).toLocaleString()}`;
         row.append(link, dates, checked);
         if (thread.messages?.length) {
-          const chain = document.createElement("details"); chain.className="recruiter-chain";
-          const summary = document.createElement("summary"); summary.textContent=`${thread.messages.length} emails · newest first`;
+          const chain = document.createElement("details");
+          chain.className = "recruiter-chain";
+          const summary = document.createElement("summary");
+          summary.textContent = `${thread.messages.length} emails · newest first`;
           chain.append(summary);
-          for (const message of [...thread.messages].sort((a,b)=>Date.parse(b.receivedAt)-Date.parse(a.receivedAt))) {
-            const entry=document.createElement("article"); entry.className="recruiter-message";
-            const sender=document.createElement("strong");sender.textContent=message.direction==='sent'?'You sent':message.from || contact.name || contact.email;
-            const date=document.createElement("p");date.className="email-secondary";date.textContent=new Date(message.receivedAt).toLocaleString();
-            const body=document.createElement("p");body.textContent=message.snippet;
-            entry.append(sender,date,body);chain.append(entry);
+          for (const message of [...thread.messages].sort(
+            (a, b) => Date.parse(b.receivedAt) - Date.parse(a.receivedAt),
+          )) {
+            const entry = document.createElement("article");
+            entry.className = "recruiter-message";
+            const sender = document.createElement("strong");
+            sender.textContent =
+              message.direction === "sent"
+                ? "You sent"
+                : message.from || contact.name || contact.email;
+            const date = document.createElement("p");
+            date.className = "email-secondary";
+            date.textContent = new Date(message.receivedAt).toLocaleString();
+            const body = document.createElement("p");
+            body.textContent = message.snippet;
+            entry.append(sender, date, body);
+            chain.append(entry);
           }
           row.append(chain);
         }
@@ -260,7 +285,14 @@ globalThis.RecruiterUI = (() => {
       const add = document.createElement("button");
       add.type = "submit";
       add.textContent = "Add recruiter";
-      form.append(nameLabel, emailLabel, add);
+      const suggestions = RecruiterAutocomplete.attach(
+        email,
+        name,
+        job,
+        () =>
+          version === revision && document.getElementById("job-details").open,
+      );
+      form.append(nameLabel, emailLabel, suggestions, add);
       form.addEventListener("submit", (event) => {
         event.preventDefault();
         save([

@@ -82,3 +82,5 @@ Attached conversations appear separately from status-update email activity and n
 Contacts and thread summaries are included in JSON backups, not full messages or attachments. The existing Gmail read-only scope is sufficient; no send permission is requested. Contacts can be added without Gmail, including in the sample dashboard, but sample mode never searches a real inbox.
 
 Attached thread previews list message excerpts newest first, with the oldest at the bottom. Refresh older attachments to load those previews. In the sample dashboard each job has a fictional contact; Find conversations offers scheduling and follow-up examples without accessing an inbox.
+
+Recruiter email autocomplete combines saved contacts across jobs with recent Gmail correspondents. On field focus, it can cache names/addresses from up to 50 messages in the last 30 days for 24 hours. Typing filters locally; selecting a suggestion fills a known recruiter name. These correspondents are not verified recruiters. The account-scoped cache is cleared on disconnection/account changes and excluded from backups.

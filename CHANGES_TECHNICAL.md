@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Recruiter email autocomplete
+
+- Request: suggestions from both saved recruiter contacts and recent Gmail correspondents.
+- Added native datalist autocomplete that filters names/addresses locally and fills a known name when an address is selected. Saved contacts from all jobs take priority; sample mode uses fictional contacts only.
+- Added account-scoped 24-hour contact cache, populated on field focus from headers of up to 50 recent messages (last 30 days, including sent mail). Five concurrent metadata reads; exclude the account address and common automated senders. No per-keystroke Gmail calls. Disconnection/account changes clear the cache; cache stays out of backups.
+- New recruiter modules, HTML/worker dependencies and UI updated. Existing read-only authorization sufficient. Correspondents are suggestions, not verified recruiters; attachments still require explicit selection.
+- Validation: Node regression/path suite, header parsing/cache tests, existing mocked email checks and diff checks; no live Gmail/browser test performed. Native autocomplete appearance depends on Chrome; failed Gmail lookup leaves saved-contact suggestions available.
+
 ## 2026-10-07 — Sample recruiter threads and chronological previews
 
 - Request: attach fictional recruiter conversations in sample jobs; display newest messages at top, oldest at bottom.

@@ -4,6 +4,7 @@
 importScripts(
   "../recruiters/recruiter-data.js",
   "../recruiters/recruiter-gmail.js",
+  "../recruiters/recruiter-contacts.js",
   "../core/store.js",
   "../email/email-actions.js",
   "../email/email-matcher.js",
@@ -493,6 +494,8 @@ async function review(id, decision, selection = {}) {
 
 async function handle(message) {
   switch (message.action) {
+    case "recruiter-contacts":
+      return RecruiterContacts.lookup({ state, token, gmail });
     case "recruiter-threads":
       return RecruiterGmail.lookup(message, { state, token, gmail });
     case "subjects": {
@@ -569,6 +572,7 @@ async function handle(message) {
           emailExamined: {},
           emailApprovalUndo: [],
           emailRescan: null,
+          recruiterContactCache: null,
         });
       }
       await patchState({
@@ -598,7 +602,10 @@ async function handle(message) {
       });
       await chrome.alarms.clear(ALARM);
       await chrome.alarms.clear(RESCAN_ALARM);
-      await chrome.storage.local.set({ emailRescan: null });
+      await chrome.storage.local.set({
+        emailRescan: null,
+        recruiterContactCache: null,
+      });
       await chrome.storage.local.set({
         emailSuggestions: [],
         emailSeen: [],

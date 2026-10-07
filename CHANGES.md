@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Added recruiter email autocomplete from saved contacts and locally cached recent Gmail correspondents; selecting a known address fills its name.
+
 - Added fictional recruiter conversation examples to sample roles and expandable email previews ordered newest first, oldest at the bottom.
 
 - Added distinct placeholder job-description links to all sample applications.
