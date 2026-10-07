@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Added Dates sorting by latest status change: newest first, oldest first, then default saved-date order.
+
 - Sorting now cycles through ascending, descending, then the default newest-saved-first order on the third click.
 
 - Made Role and Company separate sorting buttons within their shared table column.

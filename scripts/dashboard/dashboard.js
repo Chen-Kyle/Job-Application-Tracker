@@ -114,21 +114,23 @@ function render() {
     : "Open a job listing and use the extension to save your first opportunity.";
   $("#empty-demo").hidden = jobs.length > 0 || demo;
   // Role and Company share a column, so update its sort state once.
-  for (const column of ["role", "status"]) {
+  for (const column of ["role", "status", "dates"]) {
     const heading = $(`#${column}-heading`);
     const selected = jobSort.key === column || (column === "role" && jobSort.key === "company");
     if (selected) heading.setAttribute("aria-sort", jobSort.direction);
     else heading.removeAttribute("aria-sort");
   }
-  for (const key of ["role", "company", "status"]) {
+  for (const key of ["role", "company", "status", "dates"]) {
     const button = $(`[data-sort="${key}"]`);
     const selected = jobSort.key === key;
     button.querySelector(".sort-direction").textContent = selected
       ? (jobSort.direction === "ascending" ? " ↑" : " ↓") : "";
-    const nextDirection = selected && jobSort.direction === "ascending" ? "descending" : "ascending";
-    button.setAttribute("aria-label", selected && jobSort.direction === "descending"
+    const next = JobSort.toggle(jobSort, key);
+    button.setAttribute("aria-label", !next.key
       ? "Restore default order, newest saved first"
-      : `Sort by ${key}, ${nextDirection}`);
+      : key === "dates"
+        ? `Sort by latest status change, ${next.direction === "descending" ? "newest" : "oldest"} first`
+        : `Sort by ${key}, ${next.direction}`);
   }
   for (const job of visible.sort((a, b) => JobSort.compare(a, b, jobSort))) {
     const row = document.createElement("tr");
@@ -195,30 +197,14 @@ function render() {
     statusCell.append(select);
     const dates = document.createElement("td");
     dates.className = "application-dates";
-    const latestStatusChange = (job.statusHistory || [])
-      .filter(
-        (event) =>
-          !event.activityDeletedAt &&
-          event.from !== event.to &&
-          Number.isFinite(Date.parse(event.at)),
-      )
-      .reduce(
-        (latest, event) =>
-          !latest || Date.parse(event.at) >= Date.parse(latest.at)
-            ? event
-            : latest,
-        null,
-      );
+    const latestStatusChange = JobSort.latestStatusChange(job);
     const statusUpdate = document.createElement("div");
     statusUpdate.className = "date-label";
     statusUpdate.textContent = latestStatusChange
       ? `${latestStatusChange.from} → ${latestStatusChange.to}`
       : job.status || "Saved";
     const statusDate = document.createElement("div");
-    statusDate.textContent = date(
-      latestStatusChange?.at ||
-        (job.status === "Applied" ? job.appliedAt || job.savedAt : job.savedAt),
-    );
+    statusDate.textContent = date(JobSort.statusDate(job));
     dates.append(statusUpdate, statusDate);
     const activity = document.createElement("td");
     const visibleHistory = (job.statusHistory || []).filter(
@@ -318,7 +304,7 @@ $("#demo").addEventListener("click", toggleDemo);
 $("#empty-demo").addEventListener("click", toggleDemo);
 $("#search").addEventListener("input", render);
 $("#filter").addEventListener("change", render);
-for (const key of ["role", "company", "status"])
+for (const key of ["role", "company", "status", "dates"])
   $(`[data-sort="${key}"]`).addEventListener("click", () => {
     jobSort = JobSort.toggle(jobSort, key);
     render();

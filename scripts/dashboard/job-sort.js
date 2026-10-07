@@ -2,9 +2,19 @@
 globalThis.JobSort = (() => {
   const statuses = ["Saved", "Applied", "Interviewing", "Offer", "Rejected", "Withdrawn"];
   function toggle(current, key) {
-    if (current.key !== key) return { key, direction: "ascending" };
-    if (current.direction === "ascending") return { key, direction: "descending" };
+    const first = key === "dates" ? "descending" : "ascending";
+    if (current.key !== key) return { key, direction: first };
+    if (current.direction === first)
+      return { key, direction: first === "ascending" ? "descending" : "ascending" };
     return { key: null, direction: "ascending" };
+  }
+  function latestStatusChange(job) {
+    return (job.statusHistory || [])
+      .filter(event => !event.activityDeletedAt && event.from !== event.to && Number.isFinite(Date.parse(event.at)))
+      .reduce((latest, event) => !latest || Date.parse(event.at) >= Date.parse(latest.at) ? event : latest, null);
+  }
+  function statusDate(job) {
+    return latestStatusChange(job)?.at || (job.status === "Applied" ? job.appliedAt || job.savedAt : job.savedAt);
   }
   function compare(a, b, sort) {
     const recentFirst = () => String(b.savedAt || "").localeCompare(String(a.savedAt || ""));
@@ -12,6 +22,8 @@ globalThis.JobSort = (() => {
     let result;
     if (sort.key === "role" || sort.key === "company") {
       result = String(a[sort.key] || "").localeCompare(String(b[sort.key] || ""), undefined, { sensitivity: "base", numeric: true });
+    } else if (sort.key === "dates") {
+      result = (Date.parse(statusDate(a)) || 0) - (Date.parse(statusDate(b)) || 0);
     } else {
       const rank = (job) => {
         const index = statuses.indexOf(job.status || "Saved");
@@ -21,5 +33,5 @@ globalThis.JobSort = (() => {
     }
     return result ? result * (sort.direction === "descending" ? -1 : 1) : recentFirst();
   }
-  return { toggle, compare };
+  return { toggle, compare, latestStatusChange, statusDate };
 })();

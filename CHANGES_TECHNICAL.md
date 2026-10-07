@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Sort dates by latest status change
+
+- Request: sortable Dates based on most recent status change.
+- Added Dates heading button and newest-first → oldest-first → default cycle. Shared helper drives both visible date and comparator: latest valid non-deleted from/to transition, fallback applied date for Applied or saved date. Notes edits, same-status email activity and deleted history do not affect ordering. Existing filters retained, Activity unsortable.
+- Files: dashboard.html, dashboard.js, job-sort.js, tests/job-sort.test.cjs and both logs.
+- Validation: Node suite covers history out of order, deleted/same-status events, fallbacks and direction cycle; diff check. No live browser test performed.
+
 ## 2026-10-07 — Third-click sorting reset
 
 - Request: third click on a sorting heading restores the normal dashboard order.

@@ -44,3 +44,17 @@ test("third click restores newest-saved order for every sortable heading", () =>
     assert.equal(sort.toggle(state,key).direction, "ascending");
   }
 });
+
+test("Dates sorts by latest real status change, not edits or recorded emails", () => {
+  const old = {savedAt:"2026-10-01",status:"Applied",updatedAt:"2026-10-09",statusHistory:[{from:"Saved",to:"Applied",at:"2026-10-02"},{from:"Applied",to:"Applied",at:"2026-10-08"},{from:"Applied",to:"Offer",at:"2026-10-10",activityDeletedAt:"2026-10-11"}]};
+  const recent = {savedAt:"2026-09-01",statusHistory:[{from:"Applied",to:"Interviewing",at:"2026-10-07"},{from:"Saved",to:"Applied",at:"2026-10-03"}]};
+  const first = sort.toggle({key:null}, "dates");
+  assert.equal(first.direction, "descending");
+  assert.equal(sort.statusDate(old), "2026-10-02");
+  assert.equal([old,recent].sort((a,b)=>sort.compare(a,b,first))[0], recent);
+  const second = sort.toggle(first,"dates");
+  assert.equal([old,recent].sort((a,b)=>sort.compare(a,b,second))[0], old);
+  assert.equal(sort.toggle(second,"dates").key, null);
+  assert.equal(sort.statusDate({status:"Applied",appliedAt:"2026-10-04",savedAt:"2026-10-01"}), "2026-10-04");
+  assert.equal(sort.statusDate({status:"Saved",savedAt:"2026-10-01"}), "2026-10-01");
+});
