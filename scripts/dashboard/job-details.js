@@ -113,7 +113,8 @@ globalThis.JobDetails = (() => {
       const badge = document.createElement("span");
       badge.className = `step-reminder ${reminder.kind}`;
       badge.textContent = reminder.label;
-      metadata.append(badge);
+      if (ReminderSettings.enabled()) metadata.append(badge);
+      else metadata.textContent = task.deadline ? "Due" : "No deadline";
       if (task.deadline) metadata.append(` · ${new Date(`${task.deadline}T12:00:00`).toLocaleDateString()}`);
       const source =
         emailLink(task.emailUrl) ||

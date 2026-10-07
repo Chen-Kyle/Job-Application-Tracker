@@ -214,12 +214,14 @@ globalThis.JobBackup = (() => {
           value.preferences.emailPreferences.checkFrequency)
     )
       fail();
+    if (value.preferences?.nextStepReminders !== undefined && typeof value.preferences.nextStepReminders !== "boolean") fail();
     return {
       format: "job-tracker-backup",
       version: 1,
       jobs,
       preferences: {
         colorScheme,
+        ...(value.preferences?.nextStepReminders !== undefined ? {nextStepReminders:value.preferences.nextStepReminders} : {}),
         ...(value.preferences?.emailPreferences ? { emailPreferences } : {}),
       },
     };
@@ -231,11 +233,13 @@ globalThis.JobBackup = (() => {
         colorScheme = "terracotta",
         emailPreferences = {},
         emailSuggestions = [],
+        nextStepReminders = false,
       } = await chrome.storage.local.get([
         "jobs",
         "colorScheme",
         "emailPreferences",
         "emailSuggestions",
+        "nextStepReminders",
       ]);
       // Older history entries kept their subjects only in the review queue.
       const subjects = new Map(
@@ -261,6 +265,7 @@ globalThis.JobBackup = (() => {
           jobs,
           preferences: {
             colorScheme,
+            nextStepReminders,
             emailPreferences: EmailPreferences.normalize(emailPreferences),
           },
         }),
@@ -284,6 +289,7 @@ globalThis.JobBackup = (() => {
           await chrome.storage.local.get("emailConnector");
         await chrome.storage.local.set({
           jobs: [...jobs, ...additions],
+          ...(restoreSettings && backup.preferences.nextStepReminders !== undefined ? {nextStepReminders:backup.preferences.nextStepReminders} : {}),
           ...(restoreSettings
             ? { colorScheme: backup.preferences.colorScheme }
             : {}),

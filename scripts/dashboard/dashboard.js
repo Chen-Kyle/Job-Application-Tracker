@@ -109,6 +109,10 @@ function render() {
   $("#offers").textContent = jobs.filter(
     (job) => job.status === "Offer",
   ).length;
+  const remindersEnabled = ReminderSettings.enabled();
+  $("#needs-action").hidden = !remindersEnabled;
+  document.querySelector(".stats").classList.toggle("with-reminders", remindersEnabled);
+  if (!remindersEnabled) needsActionOnly = false;
   $("#needs-action-count").textContent = jobs.filter(job => StepReminders.pending(job).length).length;
   $("#needs-action").setAttribute("aria-pressed", String(needsActionOnly));
   const term = $("#search").value.trim().toLowerCase();
@@ -166,7 +170,7 @@ function render() {
     company.className = "company";
     company.textContent = job.company || "Company not specified";
     entry.append(role, company);
-    const reminder = StepReminders.summary(job);
+    const reminder = remindersEnabled ? StepReminders.summary(job) : null;
     if (reminder) {
       const badge = document.createElement("span");
       badge.className = `step-reminder ${reminder.kind}`;
@@ -328,6 +332,7 @@ $("#demo").addEventListener("click", toggleDemo);
 $("#empty-demo").addEventListener("click", toggleDemo);
 $("#search").addEventListener("input", render);
 $("#filter").addEventListener("change", render);
+document.addEventListener("reminder-settings-change", render);
 $("#needs-action").addEventListener("click", () => {
   needsActionOnly = !needsActionOnly;
   render();

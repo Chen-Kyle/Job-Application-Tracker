@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Made next-step reminders optional in Settings, off by default, with separate sample preferences and backup support.
+
 - Added next-step reminder badges, a Needs action dashboard filter, deadline labels in job details, and sample reminders to preview.
 
 - Added Dates sorting by latest status change: newest first, oldest first, then default saved-date order.

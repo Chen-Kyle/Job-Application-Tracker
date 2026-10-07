@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles/themes.css">
   <script src="scripts/recruiters/recruiter-data.js" defer></script>
   <script src="scripts/core/theme.js" defer></script>
+  <script src="scripts/settings/reminder-settings.js" defer></script>
   <script src="scripts/settings/settings-sidebar.js" defer></script>
   <script src="scripts/email/email-preferences.js" defer></script>
   <script src="scripts/settings/email-settings-ui.js" defer></script>
@@ -32,6 +33,10 @@
         <section class="settings-row" aria-labelledby="settings-heading">
           <div class="settings-description"><h2 id="settings-heading">Appearance</h2><p>Choose a color scheme for your dashboard and popup. Your choice saves automatically.</p></div>
           <div class="settings-controls email-settings"><fieldset class="theme-picker"><legend>Color scheme</legend><div class="theme-options"><label class="theme-option"><input type="radio" name="color-scheme" value="terracotta" checked><span class="theme-swatch swatch-terracotta" aria-hidden="true"></span><span class="theme-name">Cream and terracotta <span class="theme-default">(Default)</span></span></label><label class="theme-option"><input type="radio" name="color-scheme" value="green"><span class="theme-swatch swatch-green" aria-hidden="true"></span><span class="theme-name">White and green</span></label><label class="theme-option"><input type="radio" name="color-scheme" value="violet"><span class="theme-swatch swatch-violet" aria-hidden="true"></span><span class="theme-name">Warm gray and violet</span></label><label class="theme-option"><input type="radio" name="color-scheme" value="blue"><span class="theme-swatch swatch-blue" aria-hidden="true"></span><span class="theme-name">Slate and blue</span></label><label class="theme-option"><input type="radio" name="color-scheme" value="dark"><span class="theme-swatch swatch-dark" aria-hidden="true"></span><span class="theme-name">Dark navy and lavender</span></label></div></fieldset><p id="theme-message" role="status" aria-live="polite"></p></div>
+        </section>
+        <section class="settings-row" aria-labelledby="reminder-settings-heading">
+          <div class="settings-description"><h2 id="reminder-settings-heading">Next-step reminders</h2><p>Show pending steps, due dates, overdue badges, and the Needs action filter on your dashboard.</p></div>
+          <div class="settings-controls email-settings"><label for="next-step-reminders"><input id="next-step-reminders" type="checkbox"> Enable next-step reminders</label><p class="email-secondary">Off by default. Your next steps are kept when reminders are disabled. No browser notifications are sent.</p><p id="reminder-settings-message" role="status" aria-live="polite"></p></div>
         </section>
         <section class="settings-row" aria-labelledby="email-settings-heading">
           <div class="settings-description"><h2 id="email-settings-heading">Email updates</h2><p>Choose how Gmail suggestions update your applications and how often to check for new emails.</p><details class="settings-info"><summary><span class="email-info-icon" aria-hidden="true">i</span> Info</summary><p>Automatic mode approves new emails only when they clearly match one application and suggest a supported status change. Ambiguous matches, emails with next steps, and emails that only record activity still need your review.</p><p>Updates appear in Automatically added emails and the application’s email activity. Undo is available while newer changes have not made it unsafe. Gmail checks never send emails or change your mailbox.</p></details></div>

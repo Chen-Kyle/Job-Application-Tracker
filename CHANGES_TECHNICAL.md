@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Optional next-step reminders setting
+
+- Request: toggle next-step reminders on in Settings.
+- Added unchecked-by-default checkbox to real/sample settings and shared preference controller. Real preference persists in extension storage; sample uses its own localStorage key. Dashboard badges, urgency labels and Needs action card hidden when off; disabling clears the pending-step filter without removing tasks. Normal deadlines/checkboxes remain. Open dashboard responds to storage changes; overview returns to four cards when disabled.
+- JSON backups preserve the optional boolean setting; old backups remain valid and do not overwrite it when absent. Restore applies it only when Restore backup's settings is selected.
+- Files: reminder-settings.js, dashboard/settings/sample-settings HTML, dashboard.js, job-details.js, dashboard.css, backup.js, reminder-settings.test.cjs and both logs.
+- Validation: Node regression suite including default-off persistence/sample isolation and path checks; diff checks. No live browser test performed.
+
 ## 2026-10-07 — Dashboard next-step reminders
 
 - Request: try dashboard reminders for pending next steps.
