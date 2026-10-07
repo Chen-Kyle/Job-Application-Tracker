@@ -4,8 +4,13 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## Table of contents
 
+- [2026-10-07](#2026-10-07)
 - [2026-10-06](#2026-10-06)
 - [Progress through 2026-10-06](#progress-through-2026-10-06)
+
+## 2026-10-07
+
+- Added a feedback and bug-report section at the bottom of the dashboard with a labeled placeholder support email and a prefilled email template.
 
 ## 2026-10-06
 

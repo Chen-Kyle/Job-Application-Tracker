@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Feedback and bug reports
+
+- Request: add a bottom-of-dashboard support section with a placeholder email and advise on a separate Gmail account.
+- `dashboard.html`: themed section after Sheets export, accessible heading, mailto link with feedback/bug-report prompts, and explicitly labeled reserved example.com placeholder. Uses the user’s mail application; no messages are automatically sent and no new permissions are required. Replace the address before distribution.
+- Validation: existing mocked regression harness, JavaScript syntax/HTML asset checks, and diff checks. No actual email sent or live browser test performed.
+
 ## 2026-10-06 — Remove Sheets setup dropdown
 
 - Request: remove the dropdown in Google Sheets export.
