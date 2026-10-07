@@ -175,3 +175,53 @@ test("rescan requests larger pages and promptly schedules each next batch", asyn
   assert.ok(alarms.get("gmail-rescan").when <= Date.now() + 1000);
   assert.equal(alarms.get("gmail-rescan").periodInMinutes, 0.5);
 });
+
+test("manual status override forwards selected status and displayed snapshot", async () => {
+  const data = fixture();
+  data.jobs[0].status = "Applied";
+  data.jobs[0].updatedAt = "2026-10-07T12:00:00Z";
+  data.emailSuggestions = [
+    {
+      id: "matched",
+      review: "pending",
+      jobId: "job",
+      status: "Rejected",
+      fromStatus: "Applied",
+      expectedUpdatedAt: data.jobs[0].updatedAt,
+    },
+  ];
+  const run = worker(data);
+  await run(`JobStore.statuses = ['Saved', 'Applied', 'Interviewing', 'Offer', 'Rejected', 'Withdrawn'];
+    JobStore.updateStatus = async (id, status, options) => {
+      if (status !== 'Interviewing' || options.expectedStatus !== 'Applied' || options.expectedUpdatedAt !== '2026-10-07T12:00:00Z' || options.approval.recordOnly || options.approval.automatic) throw Error('Incorrect override approval');
+    };
+    review('matched', 'approved', { statusOverride: 'Interviewing', expectedStatus: 'Applied', expectedUpdatedAt: '2026-10-07T12:00:00Z' });`);
+});
+test("status override rejects invalid or automatic choices and requires a snapshot", async () => {
+  const data = fixture();
+  data.emailSuggestions = [
+    {
+      id: "matched",
+      review: "pending",
+      jobId: "job",
+      status: "Applied",
+      fromStatus: "Saved",
+    },
+  ];
+  const run = worker(data);
+  await run("JobStore.statuses = ['Saved', 'Applied'];");
+  await assert.rejects(
+    run("review('matched','approved',{statusOverride:'Invalid'})"),
+    /valid manual status/,
+  );
+  await assert.rejects(
+    run(
+      "review('matched','approved',{statusOverride:'Applied',automatic:true})",
+    ),
+    /valid manual status/,
+  );
+  await assert.rejects(
+    run("review('matched','approved',{statusOverride:'Applied'})"),
+    /Reload the dashboard/,
+  );
+});

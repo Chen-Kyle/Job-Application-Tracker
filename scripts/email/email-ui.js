@@ -88,6 +88,7 @@ globalThis.EmailUI = (() => {
   }
   const selections = new Map();
   const deadlines = new Map();
+  const statusOverrides = new Map();
   const time = (value) => (value ? new Date(value).toLocaleString() : "Never");
   function feedback(text) {
     el("#email-message").textContent = text;
@@ -385,8 +386,13 @@ globalThis.EmailUI = (() => {
           item.id ===
           (suggestion.needsSelection ? selection?.jobId : suggestion.jobId),
       );
-      const stale =
-        job && (!suggestion.status || job.status === suggestion.status)
+      const override = statusOverrides.get(suggestion.id);
+      const proposedStatus = override?.status || suggestion.status;
+      const stale = override
+        ? !job ||
+          job.status !== override.expectedStatus ||
+          (job.updatedAt || job.savedAt) !== override.expectedUpdatedAt
+        : job && (!suggestion.status || job.status === suggestion.status)
           ? false
           : suggestion.needsSelection
             ? Boolean(
@@ -409,10 +415,10 @@ globalThis.EmailUI = (() => {
         : `${suggestion.role} · ${suggestion.company}`;
       const change = document.createElement("p");
       change.className = "email-change";
-      change.textContent = suggestion.status
+      change.textContent = proposedStatus
         ? suggestion.needsSelection
-          ? `Suggested status: ${suggestion.status}`
-          : `${suggestion.fromStatus} → ${suggestion.status}`
+          ? `Suggested status: ${proposedStatus}`
+          : `${job?.status || suggestion.fromStatus} → ${proposedStatus}`
         : "Add email activity and keep the current status";
       const subject = document.createElement("strong");
       subject.textContent = suggestion.subject;
@@ -431,9 +437,7 @@ globalThis.EmailUI = (() => {
       const approve = document.createElement("button");
       approve.type = "button";
       approve.className = "approve-email";
-      approve.textContent = suggestion.status
-        ? "Approve update"
-        : "Approve email";
+      approve.textContent = proposedStatus ? "Approve update" : "Approve email";
       approve.disabled =
         busy || stale || (suggestion.needsSelection && !selection);
       const dismiss = document.createElement("button");
@@ -458,6 +462,13 @@ globalThis.EmailUI = (() => {
             id: suggestion.id,
             decision,
             actionDeadlines: deadlines.get(suggestion.id),
+            ...(override
+              ? {
+                  statusOverride: override.status,
+                  expectedStatus: override.expectedStatus,
+                  expectedUpdatedAt: override.expectedUpdatedAt,
+                }
+              : {}),
             ...(suggestion.needsSelection ? selections.get(suggestion.id) : {}),
           });
         sampleUndo.push({
@@ -467,12 +478,12 @@ globalThis.EmailUI = (() => {
           const at = new Date().toISOString();
           job.statusHistory.push({
             from: job.status,
-            to: suggestion.status,
+            to: proposedStatus,
             at,
             source: "email",
             eventId: suggestion.id,
           });
-          job.status = suggestion.status;
+          job.status = proposedStatus || job.status;
           job.updatedAt = at;
           job.appliedAt ||= at;
         }
@@ -505,6 +516,42 @@ globalThis.EmailUI = (() => {
         controls.append(link);
       }
       card.append(title, change, subject, sender, snippet, reason);
+      if (job && !suggestion.needsSelection) {
+        const label = document.createElement("label");
+        label.className = "application-picker";
+        label.append("Status to approve");
+        const picker = document.createElement("select");
+        picker.setAttribute(
+          "aria-label",
+          `Status to approve for ${suggestion.role} at ${suggestion.company}`,
+        );
+        picker.disabled = busy;
+        const original = document.createElement("option");
+        original.value = "";
+        original.textContent = suggestion.status
+          ? `Suggested: ${suggestion.status}`
+          : "Keep current status";
+        picker.append(original);
+        for (const status of JobStore.statuses) {
+          const option = document.createElement("option");
+          option.value = status;
+          option.textContent = status;
+          picker.append(option);
+        }
+        picker.value = override?.status || "";
+        picker.addEventListener("change", () => {
+          if (picker.value)
+            statusOverrides.set(suggestion.id, {
+              status: picker.value,
+              expectedStatus: job.status,
+              expectedUpdatedAt: job.updatedAt || job.savedAt,
+            });
+          else statusOverrides.delete(suggestion.id);
+          render().catch((error) => feedback(error.message));
+        });
+        label.append(picker);
+        card.append(label);
+      }
       if (suggestion.actions?.length) {
         const taskSection = document.createElement("div");
         taskSection.className = "suggested-next-steps";

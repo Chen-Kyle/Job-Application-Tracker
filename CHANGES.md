@@ -1,6 +1,6 @@
 # Quick change log
 
-Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain in `project_log.md`.
+Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain in `docs/project_log.md`.
 
 ## Table of contents
 
@@ -9,6 +9,12 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 - [Progress through 2026-10-06](#progress-through-2026-10-06)
 
 ## 2026-10-07
+
+- Resumed automatic commits and pushes; committed the style/documentation organization and manual email status override together.
+
+- Added a manual status override before approving an email matched to an application. Changes remain local.
+
+- Moved CSS into `styles/` and supporting guides into `docs/`; updated page and documentation references. Changes remain local, as requested.
 
 - Organized JavaScript into feature directories, formatted scripts for readability, updated all page/worker paths, and added a code guide and path checks.
 

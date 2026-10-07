@@ -38,7 +38,7 @@ In the installed extension, click **Explore sample dashboard**. Sample interacti
 5. Open a job listing, click the extension, review the captured details, and choose **Save job**.
 6. Click **Open dashboard** to manage your applications.
 
-Saving jobs and using the dashboard work without a Google connection. Gmail and Sheets require the Google setup described in [GMAIL_SETUP.md](GMAIL_SETUP.md); access for testers must be configured by the project owner.
+Saving jobs and using the dashboard work without a Google connection. Gmail and Sheets require the Google setup described in [GMAIL_SETUP.md](docs/GMAIL_SETUP.md); access for testers must be configured by the project owner.
 
 ## How email updates work
 
@@ -60,11 +60,11 @@ Plain **JavaScript, HTML, and CSS**, Chrome **Manifest V3**, Chrome storage and 
 
 The extension is still being tested before a public release. Autofill varies by website, and Google integration requires OAuth configuration. Public distribution and Google's applicable verification requirements remain follow-up work.
 
-- [Setup guide](GMAIL_SETUP.md)
-- [Email test cases](EMAIL_TEST_CASES.md)
+- [Setup guide](docs/GMAIL_SETUP.md)
+- [Email test cases](docs/EMAIL_TEST_CASES.md)
 - [Quick change log](CHANGES.md)
 - [Technical change log](CHANGES_TECHNICAL.md)
-- [Project notes and planned work](project_log.md)
+- [Project notes and planned work](docs/project_log.md)
 
 ## License
 
@@ -72,4 +72,4 @@ The extension is still being tested before a public release. Autofill varies by 
 
 ## Code organization
 
-JavaScript lives in `scripts/`, grouped by feature. See [the code guide](scripts/README.md) for responsibilities, entry points, dependency order and test commands. HTML pages and styles remain at the root, so installation and sample-page instructions are unchanged.
+JavaScript lives in `scripts/`, grouped by feature. See [the code guide](scripts/README.md) for responsibilities, entry points, dependency order and test commands. HTML pages remain at the root; CSS lives in `styles/` and supporting guides in `docs/`, so installation and sample-page instructions are unchanged.

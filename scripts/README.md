@@ -1,6 +1,6 @@
 # JavaScript structure
 
-Scripts are grouped by responsibility. HTML pages, stylesheets and `manifest.json` remain at the repository root; no build step is required.
+Scripts are grouped by responsibility. HTML pages and `manifest.json` remain at the repository root; stylesheets live in `styles/` and supporting documentation in `docs/`; no build step is required.
 
 | Directory | Responsibility | Start here |
 | --- | --- | --- |

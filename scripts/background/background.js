@@ -57,7 +57,7 @@ function configured() {
 async function token(interactive = false) {
   if (!configured())
     throw new Error(
-      "Gmail setup is required. Follow GMAIL_SETUP.md in the extension folder, then reload the extension.",
+      "Gmail setup is required. Follow docs/GMAIL_SETUP.md in the extension folder, then reload the extension.",
     );
   try {
     const auth = await chrome.identity.getAuthToken({
@@ -429,14 +429,29 @@ async function review(id, decision, selection = {}) {
       ? selection.jobId
       : suggestion.jobId;
     if (!jobId) throw new Error("Choose a saved application before approving.");
+    const override = selection.statusOverride;
+    if (
+      override !== undefined &&
+      (selection.automatic ||
+        suggestion.needsSelection ||
+        !JobStore.statuses.includes(override))
+    )
+      throw new Error(
+        "Choose a valid manual status override for a matched application.",
+      );
+    const targetStatus = override ?? suggestion.status;
     let expectedStatus = suggestion.needsSelection
       ? selection.expectedStatus
       : suggestion.fromStatus;
     let expectedUpdatedAt = suggestion.needsSelection
       ? selection.expectedUpdatedAt
       : suggestion.expectedUpdatedAt;
+    if (override !== undefined) {
+      expectedStatus = selection.expectedStatus;
+      expectedUpdatedAt = selection.expectedUpdatedAt;
+    }
     // A manual approval can attach an email to an already-current status.
-    if (!selection.automatic) {
+    if (!selection.automatic && override === undefined) {
       const job = (await JobStore.list()).find((item) => item.id === jobId);
       if (job && (!suggestion.status || job.status === suggestion.status)) {
         expectedStatus = job.status;
@@ -452,7 +467,7 @@ async function review(id, decision, selection = {}) {
       return { ...action, deadline: deadline || null };
     });
     const job = (await JobStore.list()).find((item) => item.id === jobId);
-    await JobStore.updateStatus(jobId, suggestion.status || job?.status, {
+    await JobStore.updateStatus(jobId, targetStatus || job?.status, {
       source: "email",
       eventId: suggestion.id,
       expectedStatus,
@@ -465,7 +480,7 @@ async function review(id, decision, selection = {}) {
       approval: {
         id: suggestion.id,
         actions,
-        recordOnly: !suggestion.status,
+        recordOnly: !targetStatus,
         automatic: Boolean(selection.automatic),
       },
     });

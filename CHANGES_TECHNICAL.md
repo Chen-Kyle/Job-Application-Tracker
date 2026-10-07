@@ -1,6 +1,6 @@
 # Technical change log
 
-This is the detailed engineering record for assistant-made changes. See `CHANGES.md` for the quick version and `../project_log.md` for ideas and TODOs.
+This is the detailed engineering record for assistant-made changes. See `CHANGES.md` for the quick version and `docs/project_log.md` for ideas and TODOs.
 
 ## How to maintain this log
 
@@ -9,6 +9,27 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Distinguish implemented code from verified browser behavior and external setup completed by the user.
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
+
+## 2026-10-07 — Resume commits and publish pending changes
+
+- Request: resume automatic commits/pushes and commit the pending assistant changes now.
+- Scope: style/documentation directory organization, updated references and the manual email status override with its tests. The preceding local-only entries describe the state at the time; this entry authorizes their commit and push.
+- Validation: all 10 Node tests passed; existing mocked email/matching/approval regression, HTML/manifest references and diff checks passed. Verified origin targets Chen-Kyle/Job-Application-Tracker. Unrelated user deletion of `Change`, installed skills directories and skills-lock.json excluded.
+- Standing commit/push instructions in AGENTS.md apply again to future completed requested changes.
+
+## 2026-10-07 — Manual email status override
+
+- Request: correct the suggested status for emails strongly matched to a job before approval.
+- Matched cards in `scripts/email/email-ui.js` offer a Status to approve selector with the original suggestion and all application statuses. Choice previews the transition and is submitted only on approval; sample preview supports the choice too.
+- `scripts/background/background.js` validates manual overrides, rejects automatic/ambiguous overrides, and uses the selected status through existing activity, history and undo persistence. Requires the displayed application snapshot to avoid overwriting newer edits.
+- Validation: existing mocked email regression and Node path/rescan tests, syntax and diff checks; targeted review tests for override validation and snapshot forwarding. No live Gmail/browser test performed. Work remains uncommitted/unpushed per the current session request.
+
+## 2026-10-07 — Organize styles and supporting documentation
+
+- Request: move CSS and supporting documentation into directories, without committing or pushing.
+- Moved dashboard/popup/theme CSS to `styles/`; moved setup guide, email test cases and project notes to `docs/`. Keep HTML, manifest, README, license, instructions and change logs at root.
+- Updated all HTML stylesheet links, README document links, code-guide layout description and setup-guide references in UI/service messages. Historical log paths remain unchanged.
+- Validation: Node regression/path checks and existing mocked email/syntax/HTML asset checks; diff check. No live browser testing. No commit or push performed. Pre-existing user deletion of `Change` left untouched.
 
 ## 2026-10-07 — Organize and format scripts
 

@@ -84,7 +84,7 @@ globalThis.GoogleSheets = (() => {
   async function accessToken(interactive) {
     if (!chrome.runtime.getManifest().oauth2?.client_id)
       throw new Error(
-        "Configure your Google OAuth client first. See GMAIL_SETUP.md.",
+        "Configure your Google OAuth client first. See docs/GMAIL_SETUP.md.",
       );
     try {
       const result = await chrome.identity.getAuthToken({
