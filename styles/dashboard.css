@@ -122,3 +122,7 @@ footer { margin-top: 20px; }
 .recruiter-suggestion span, .recruiter-suggestion small { color: var(--muted); }
 .recruiter-suggestion:hover, .recruiter-suggestion[aria-selected="true"] { background: var(--hover); }
 @media (forced-colors: active) { .recruiter-suggestion[aria-selected="true"] { outline: 2px solid Highlight; } }
+
+.table-sort { padding: 0; border: 0; border-radius: 0; background: transparent; color: inherit; font: inherit; font-weight: inherit; cursor: pointer; }
+.table-sort:hover { background: transparent; color: var(--accent); }
+.table-sort:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }

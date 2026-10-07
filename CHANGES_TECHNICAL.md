@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Sort application table by role and status
+
+- Request: sortable job role/status only, meaningful status order and direction toggles.
+- Added JobSort helper and header buttons. First click sorts role A–Z or Saved → Applied → Interviewing → Offer → Rejected → Withdrawn; repeat reverses. Arrow indicators and aria-sort track the active column. Company, Dates and Activity remain plain headings. Default newest-saved order retained; ties use newest saved first. Search/filter/data refresh preserve sorting for the open page; reload resets it.
+- Files: dashboard.html, dashboard.js, job-sort.js, styles/dashboard.css, tests/job-sort.test.cjs and both logs.
+- Validation: Node regression suite and diff checks; no live browser test performed.
+
 ## 2026-10-07 — Recruiter autocomplete dropdown
 
 - Request: search-style dropdown with arrow keys between recruiter suggestions.

@@ -6,6 +6,7 @@ const inExtension = Boolean(
 var demo =
   !inExtension || new URLSearchParams(location.search).get("sample") === "1";
 let jobs = [];
+let jobSort = { key: null, direction: "ascending" };
 let samples = makeSamples();
 const $ = (selector) => document.querySelector(selector);
 const date = (value) =>
@@ -112,9 +113,15 @@ function render() {
     ? "Try a different search or status."
     : "Open a job listing and use the extension to save your first opportunity.";
   $("#empty-demo").hidden = jobs.length > 0 || demo;
-  for (const job of visible.sort((a, b) =>
-    b.savedAt.localeCompare(a.savedAt),
-  )) {
+  for (const key of ["role", "status"]) {
+    const heading = $(`#${key}-heading`);
+    const selected = jobSort.key === key;
+    if (selected) heading.setAttribute("aria-sort", jobSort.direction);
+    else heading.removeAttribute("aria-sort");
+    heading.querySelector(".sort-direction").textContent = selected
+      ? (jobSort.direction === "ascending" ? " ↑" : " ↓") : "";
+  }
+  for (const job of visible.sort((a, b) => JobSort.compare(a, b, jobSort))) {
     const row = document.createElement("tr");
     const roleCell = document.createElement("td");
     const entry = document.createElement("button");
@@ -302,6 +309,11 @@ $("#demo").addEventListener("click", toggleDemo);
 $("#empty-demo").addEventListener("click", toggleDemo);
 $("#search").addEventListener("input", render);
 $("#filter").addEventListener("change", render);
+for (const key of ["role", "status"])
+  $(`[data-sort="${key}"]`).addEventListener("click", () => {
+    jobSort = JobSort.toggle(jobSort, key);
+    render();
+  });
 if (inExtension)
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === "local" && changes.jobs && !demo)
