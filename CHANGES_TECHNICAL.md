@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Set support email
+
+- Request: use the user-provided public support address kylechenapps@gmail.com.
+- `dashboard.html`: update the mailto recipient and visible address; remove the placeholder explanation while preserving report prompts. No email sent.
+- Validation: checked recipient and visible address match, and diff formatting.
+
 ## 2026-10-07 — Feedback and bug reports
 
 - Request: add a bottom-of-dashboard support section with a placeholder email and advise on a separate Gmail account.
