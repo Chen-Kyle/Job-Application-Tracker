@@ -58,3 +58,13 @@ test("Dates sorts by latest real status change, not edits or recorded emails", (
   assert.equal(sort.statusDate({status:"Applied",appliedAt:"2026-10-04",savedAt:"2026-10-01"}), "2026-10-04");
   assert.equal(sort.statusDate({status:"Saved",savedAt:"2026-10-01"}), "2026-10-01");
 });
+
+test("pending jobs stay first in either direction while completed-only jobs keep ordinary sorting", () => {
+  const pending = {role:"Zeta",savedAt:"2026-10-01",nextSteps:[{completed:false}]};
+  const done = {role:"Alpha",savedAt:"2026-10-07",nextSteps:[{completed:true}]};
+  for (const direction of ["ascending","descending"]) {
+    assert.equal([done,pending].sort((a,b)=>sort.compare(a,b,{key:"role",direction,pendingFirst:true}))[0],pending);
+  }
+  assert.equal([done,pending].sort((a,b)=>sort.compare(a,b,{key:null,pendingFirst:true}))[0],pending);
+  assert.equal([done,pending].sort((a,b)=>sort.compare(a,b,{key:null,pendingFirst:false}))[0],done);
+});

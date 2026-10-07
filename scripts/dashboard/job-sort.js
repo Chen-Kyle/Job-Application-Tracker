@@ -17,6 +17,11 @@ globalThis.JobSort = (() => {
     return latestStatusChange(job)?.at || (job.status === "Applied" ? job.appliedAt || job.savedAt : job.savedAt);
   }
   function compare(a, b, sort) {
+    if (sort.pendingFirst) {
+      const pending = (job) => (job.nextSteps || []).some(task => !task.completed);
+      const priority = Number(pending(b)) - Number(pending(a));
+      if (priority) return priority;
+    }
     const recentFirst = () => String(b.savedAt || "").localeCompare(String(a.savedAt || ""));
     if (!sort.key) return recentFirst();
     let result;

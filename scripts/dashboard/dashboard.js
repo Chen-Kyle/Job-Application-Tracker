@@ -152,7 +152,7 @@ function render() {
         ? `Sort by latest status change, ${next.direction === "descending" ? "newest" : "oldest"} first`
         : `Sort by ${key}, ${next.direction}`);
   }
-  for (const job of visible.sort((a, b) => JobSort.compare(a, b, jobSort))) {
+  for (const job of visible.sort((a, b) => JobSort.compare(a, b, { ...jobSort, pendingFirst: remindersEnabled }))) {
     const row = document.createElement("tr");
     const roleCell = document.createElement("td");
     const entry = document.createElement("button");

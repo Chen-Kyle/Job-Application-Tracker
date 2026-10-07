@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Jobs with unfinished next steps now appear first when reminders are enabled; selected sorting applies within each group.
+
 - Made next-step reminders optional in Settings, off by default, with separate sample preferences and backup support.
 
 - Added next-step reminder badges, a Needs action dashboard filter, deadline labels in job details, and sample reminders to preview.
