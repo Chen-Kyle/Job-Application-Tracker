@@ -126,7 +126,15 @@ globalThis.EmailMatcher = (() => {
       return "";
     }
   }
+  // Recommendation wording alone is not evidence of an application update.
+  // Explicit confirmations still qualify when a footer also advertises jobs.
+  function isRecommendation(message) {
+    const content = `${message.subject || ""} ${message.bodyText || message.snippet || ""}`;
+    const recommendation = /\b(?:jobs? (?:that match your profile|recommended for you|you may (?:like|be interested in))|recommended jobs?|job recommendations?|job alerts?|new jobs? (?:for you|matching)|based on your (?:profile|title and location))\b/i.test(content);
+    return recommendation && !classify(content);
+  }
   function analyzeStatus(message, jobs) {
+    if (isRecommendation(message)) return null;
     const content = `${message.subject} ${message.bodyText || message.snippet}`;
     const status = classify(content);
     if (!status) return null;
@@ -213,6 +221,7 @@ globalThis.EmailMatcher = (() => {
     );
   }
   function analyze(message, jobs) {
+    if (isRecommendation(message)) return null;
     const content = `${message.subject} ${message.bodyText || message.snippet}`;
     const actions = EmailActions.suggest(content, message.receivedAt);
     const legacy = analyzeStatus(message, jobs);

@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Exclude job recommendation emails
+
+- Request: exclude recommendation emails that match a saved company/role but do not confirm an application.
+- Added a shared recommendation wording guard in both matcher entry points, including profile matches, recommended jobs and job alerts. Explicit classified application/status updates remain eligible even with recommendation footers; no sender-specific block.
+- Files: scripts/email/email-matcher.js and tests/email-recommendations.test.cjs, plus both logs.
+- Validation: Node regression suite and diff checks. No live Gmail/browser test. Existing queued suggestions are unchanged and can be dismissed; unrecognized recommendation wording may still require dismissal.
+
 ## 2026-10-07 — Recruiter email autocomplete
 
 - Request: suggestions from both saved recruiter contacts and recent Gmail correspondents.
