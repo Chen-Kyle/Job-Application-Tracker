@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Organize and format scripts
+
+- Request: make code readable, group scripts into directories and update references.
+- Moved all 21 root JavaScript files into `scripts/{core,background,email,backup,dashboard,settings,sheets,popup}/` by responsibility. Root HTML/CSS and page URLs remain stable. Updated every HTML script source, manifest worker path, worker-relative imports, and test worker path.
+- Formatted JavaScript and tests with Prettier 3.6.2 (one-off tool, no runtime dependency). Added responsibility headers and named check/rescan page-size and concurrency constants. Preserved global classic-script interfaces and dependency order; no feature changes intended.
+- Added `scripts/README.md` with architecture, entry points, dependency order, editing guidance and test command; linked it from the main README. Historical log paths describe the old layout and are retained as history.
+- Added `tests/project-paths.test.cjs` for syntax, local assets, required script ordering, manifest and relative worker imports. Updated the existing rescan tests and temporary legacy regression harness for moved source files.
+- Validation: Node test suite, existing mocked email/matching/approval regression harness, HTML/manifest asset checks and diff checks. No authenticated browser test; reload the unpacked extension after the worker path change.
+
 ## 2026-10-07 — Set support email
 
 - Request: use the user-provided public support address kylechenapps@gmail.com.

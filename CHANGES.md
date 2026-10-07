@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Organized JavaScript into feature directories, formatted scripts for readability, updated all page/worker paths, and added a code guide and path checks.
+
 - Set the feedback and bug-report address to kylechenapps@gmail.com and removed the placeholder notice.
 
 - Added a feedback and bug-report section at the bottom of the dashboard with a labeled placeholder support email and a prefilled email template.

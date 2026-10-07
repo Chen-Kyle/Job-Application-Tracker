@@ -69,3 +69,7 @@ The extension is still being tested before a public release. Autofill varies by 
 ## License
 
 [MIT](LICENSE) — you may use, modify, and distribute the code while retaining the copyright and license notice.
+
+## Code organization
+
+JavaScript lives in `scripts/`, grouped by feature. See [the code guide](scripts/README.md) for responsibilities, entry points, dependency order and test commands. HTML pages and styles remain at the root, so installation and sample-page instructions are unchanged.
