@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Added fictional recruiter conversation examples to sample roles and expandable email previews ordered newest first, oldest at the bottom.
+
 - Added distinct placeholder job-description links to all sample applications.
 
 - Added four fictional sample emails for application confirmation, interview, offer, and activity-only approval; each can be approved, dismissed, overridden, and undone independently.

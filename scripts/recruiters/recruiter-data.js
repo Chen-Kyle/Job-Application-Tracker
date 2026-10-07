@@ -56,7 +56,16 @@ globalThis.RecruiterData = (() => {
             throw Error("Invalid conversation direction.");
           if (!thread.latestAt || !thread.checkedAt)
             throw Error("Missing conversation dates.");
+          let messages;
+          if (thread.messages !== undefined) {
+            if (!Array.isArray(thread.messages) || thread.messages.length > 100) throw Error('Invalid conversation messages.');
+            messages = thread.messages.map(message => {
+              if (!message || !['sent','received'].includes(message.direction) || !message.receivedAt) throw Error('Invalid conversation message.');
+              return { subject: text(message.subject,500), from: text(message.from,300), snippet: text(message.snippet,1000), receivedAt: date(message.receivedAt), direction: message.direction };
+            }).sort((a,b)=>Date.parse(b.receivedAt)-Date.parse(a.receivedAt));
+          }
           return {
+            ...(messages ? {messages} : {}),
             account: thread.account.toLowerCase(),
             threadId: thread.threadId,
             subject: text(thread.subject, 500),

@@ -109,3 +109,7 @@ footer { margin-top: 20px; }
 .recruiter-contact-form { display: grid; gap: 12px; margin-top: 16px; }
 .recruiter-contact-form label { display: grid; gap: 6px; font-size: 14px; }
 .recruiter-contact-form button { justify-self: start; }
+
+.recruiter-chain { max-width: none; margin-top: 12px; }
+.recruiter-message { padding: 14px; margin-top: 10px; background: var(--page); border: 1px solid var(--border); border-radius: 8px; }
+.recruiter-message p { margin: 8px 0 0; }

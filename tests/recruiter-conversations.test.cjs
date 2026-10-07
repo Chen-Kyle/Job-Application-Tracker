@@ -256,3 +256,15 @@ test('unsent drafts do not become the latest conversation message', () => {
   assert.equal(summary.subject,'Re: Engineer follow-up');
   assert.equal(summary.latestAt,'2026-10-03T12:00:00.000Z');
 });
+
+test('sample recruiter conversations have role-specific messages newest first and survive validation', () => {
+  const {run}=setup();
+  run(fs.readFileSync(path.join(root,'scripts/recruiters/recruiter-samples.js'),'utf8'));
+  const contacts=run(`(()=>{ const job={id:'sample-2',role:'Data Analyst',company:'Juniper Labs'}; const contact=RecruiterSamples.contact(job); contact.conversations=RecruiterSamples.conversations(job,contact.email); return RecruiterData.normalize([contact]); })()`);
+  assert.equal(contacts[0].conversations.length,2);
+  for(const thread of contacts[0].conversations) {
+    assert.equal(thread.messages.length,3);
+    assert.match(thread.subject,/Data Analyst/);
+    assert.ok(Date.parse(thread.messages[0].receivedAt)>Date.parse(thread.messages[2].receivedAt));
+  }
+});

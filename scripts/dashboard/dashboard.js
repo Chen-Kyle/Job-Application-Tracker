@@ -46,6 +46,7 @@ function makeSamples() {
           ? []
           : [{ from: "Saved", to: status, at: updatedAt, source: "manual" }],
     };
+    sampleJob.recruiterContacts = [RecruiterSamples.contact(sampleJob)];
     if (i === 1) {
       const email = {
         id: "sample-auto-email",

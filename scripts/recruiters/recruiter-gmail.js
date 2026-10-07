@@ -25,6 +25,12 @@ globalThis.RecruiterGmail = (() => {
         ?.value || "";
     return {
       account,
+      messages: [...messages].reverse().map(message => ({
+        subject: (message.payload?.headers?.find(h => h.name.toLowerCase() === 'subject')?.value || '(No subject)').slice(0,500),
+        from: (message.payload?.headers?.find(h => h.name.toLowerCase() === 'from')?.value || '').slice(0,300),
+        receivedAt: new Date(Number(message.internalDate)).toISOString(),
+        direction: message.labelIds?.includes('SENT') ? 'sent' : 'received', snippet: (message.snippet || '').slice(0,1000),
+      })),
       threadId: thread.id,
       subject: (header("subject") || "(No subject)").slice(0, 500),
       snippet: (latest.snippet || "").slice(0, 1000),

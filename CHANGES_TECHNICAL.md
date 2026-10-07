@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Sample recruiter threads and chronological previews
+
+- Request: attach fictional recruiter conversations in sample jobs; display newest messages at top, oldest at bottom.
+- Added role-specific sample contacts and two attachable three-message fixtures (scheduling and follow-up). Sample Find conversations reads only fixtures; refresh never accesses real Gmail. Expanded attached chains show ordered sender/date/excerpt previews.
+- Real recruiter summaries now retain bounded message metadata/excerpts and sort newest first; shared validation/backup round-trip preserves this optional field. Older summaries remain valid. Full bodies/attachments remain in Gmail.
+- Validation: full Node suite, mocked legacy email regressions, syntax/assets and diff checks. No authenticated Gmail or browser visual test performed.
+
 ## 2026-10-07 — Sample job-description links
 
 - Request: add fake job-description links to sample roles.
