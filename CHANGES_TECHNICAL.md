@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Third-click sorting reset
+
+- Request: third click on a sorting heading restores the normal dashboard order.
+- Role, Company and Status now cycle ascending → descending → default newest-saved-first. Existing search/status filters remain; changing heading starts ascending. Existing render removes arrows/aria-sort when reset; accessible action labels describe the reset.
+- Files: job-sort.js, dashboard.js, tests/job-sort.test.cjs and both logs.
+- Validation: Node regression suite including three-click cycles for all headings and restored date ordering; diff checks. No live browser test performed.
+
 ## 2026-10-07 — Separate role and company sorting controls
 
 - Request: try the separate Role and Company sorting choices.

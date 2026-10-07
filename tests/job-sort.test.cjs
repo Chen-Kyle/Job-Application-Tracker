@@ -29,3 +29,18 @@ test("company sorts independently of role and reverses direction", () => {
   assert.equal([...jobs].sort((a,b)=>sort.compare(a,b,first))[0].company, "alpha");
   assert.equal([...jobs].sort((a,b)=>sort.compare(a,b,sort.toggle(first,"company")))[0].company, "Zeta");
 });
+
+test("third click restores newest-saved order for every sortable heading", () => {
+  const jobs = [{role:"Alpha",company:"Alpha",status:"Saved",savedAt:"2026-10-01"}, {role:"Zeta",company:"Zeta",status:"Offer",savedAt:"2026-10-07"}];
+  for (const key of ["role", "company", "status"]) {
+    let state = {key:null, direction:"ascending"};
+    state = sort.toggle(state, key);
+    assert.equal(state.direction, "ascending");
+    state = sort.toggle(state, key);
+    assert.equal(state.direction, "descending");
+    state = sort.toggle(state, key);
+    assert.equal(state.key, null);
+    assert.equal([...jobs].sort((a,b)=>sort.compare(a,b,state))[0].savedAt, "2026-10-07");
+    assert.equal(sort.toggle(state,key).direction, "ascending");
+  }
+});

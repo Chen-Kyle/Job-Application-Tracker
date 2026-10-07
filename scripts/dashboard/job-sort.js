@@ -2,7 +2,9 @@
 globalThis.JobSort = (() => {
   const statuses = ["Saved", "Applied", "Interviewing", "Offer", "Rejected", "Withdrawn"];
   function toggle(current, key) {
-    return { key, direction: current.key === key && current.direction === "ascending" ? "descending" : "ascending" };
+    if (current.key !== key) return { key, direction: "ascending" };
+    if (current.direction === "ascending") return { key, direction: "descending" };
+    return { key: null, direction: "ascending" };
   }
   function compare(a, b, sort) {
     const recentFirst = () => String(b.savedAt || "").localeCompare(String(a.savedAt || ""));

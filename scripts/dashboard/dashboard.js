@@ -126,7 +126,9 @@ function render() {
     button.querySelector(".sort-direction").textContent = selected
       ? (jobSort.direction === "ascending" ? " ↑" : " ↓") : "";
     const nextDirection = selected && jobSort.direction === "ascending" ? "descending" : "ascending";
-    button.setAttribute("aria-label", `Sort by ${key}, ${nextDirection}`);
+    button.setAttribute("aria-label", selected && jobSort.direction === "descending"
+      ? "Restore default order, newest saved first"
+      : `Sort by ${key}, ${nextDirection}`);
   }
   for (const job of visible.sort((a, b) => JobSort.compare(a, b, jobSort))) {
     const row = document.createElement("tr");
