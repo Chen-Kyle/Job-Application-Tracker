@@ -33,6 +33,8 @@ function makeSamples() {
     ).toISOString();
     const sampleJob = {
       id: `sample-${i}`,
+      // Reserved example domain: fictional listings, never real job postings.
+      url: `https://example.com/jobs/${company.toLowerCase().replace(/\s+/g, "-")}/${role.toLowerCase().replace(/\s+/g, "-")}`,
       company,
       role,
       status,

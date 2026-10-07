@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Sample job-description links
+
+- Request: add fake job-description links to sample roles.
+- `scripts/dashboard/dashboard.js`: generate distinct example.com job URLs from each sample company/role so the existing job-panel link and URL editor work in sample mode. These are fictional placeholders, not actual listing pages.
+- Validation: Node regression/path suite, existing mocked email regression and diff checks. No real data modified.
+
 ## 2026-10-07 — Multiple sample email approvals
 
 - Request: provide sample dashboard examples to approve.
