@@ -6,6 +6,7 @@ const inExtension = Boolean(
 var demo =
   !inExtension || new URLSearchParams(location.search).get("sample") === "1";
 let jobs = [];
+let needsActionOnly = false;
 let jobSort = { key: null, direction: "ascending" };
 let samples = makeSamples();
 const $ = (selector) => document.querySelector(selector);
@@ -47,6 +48,18 @@ function makeSamples() {
           ? []
           : [{ from: "Saved", to: status, at: updatedAt, source: "manual" }],
     };
+    const sampleDeadline = (offset) => {
+      const value = new Date();
+      value.setDate(value.getDate() + offset);
+      return `${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,"0")}-${String(value.getDate()).padStart(2,"0")}`;
+    };
+    const reminderSamples = [
+      {title:"Confirm interview time", deadline:sampleDeadline(0)},
+      {title:"Complete assessment", deadline:sampleDeadline(-2)},
+      {title:"Reply to recruiter", deadline:null},
+      {title:"Review offer", deadline:sampleDeadline(3)},
+    ];
+    if (reminderSamples[i]) sampleJob.nextSteps = [{id:`sample-step-${i}`, ...reminderSamples[i], completed:false}];
     sampleJob.recruiterContacts = [RecruiterSamples.contact(sampleJob)];
     if (i === 1) {
       const email = {
@@ -96,10 +109,13 @@ function render() {
   $("#offers").textContent = jobs.filter(
     (job) => job.status === "Offer",
   ).length;
+  $("#needs-action-count").textContent = jobs.filter(job => StepReminders.pending(job).length).length;
+  $("#needs-action").setAttribute("aria-pressed", String(needsActionOnly));
   const term = $("#search").value.trim().toLowerCase();
   const status = $("#filter").value;
   const visible = jobs.filter(
     (job) =>
+      (!needsActionOnly || StepReminders.pending(job).length > 0) &&
       (!status || job.status === status) &&
       `${job.role} ${job.company}`.toLowerCase().includes(term),
   );
@@ -150,6 +166,13 @@ function render() {
     company.className = "company";
     company.textContent = job.company || "Company not specified";
     entry.append(role, company);
+    const reminder = StepReminders.summary(job);
+    if (reminder) {
+      const badge = document.createElement("span");
+      badge.className = `step-reminder ${reminder.kind}`;
+      badge.textContent = reminder.label;
+      entry.append(badge);
+    }
     entry.addEventListener("click", () => JobDetails.open(job.id));
     roleCell.append(entry);
     const statusCell = document.createElement("td");
@@ -285,6 +308,7 @@ async function refresh() {
 }
 async function toggleDemo() {
   demo = !demo;
+  needsActionOnly = false;
   const viewUrl = new URL(location.href);
   if (demo) viewUrl.searchParams.set("sample", "1");
   else viewUrl.searchParams.delete("sample");
@@ -304,6 +328,19 @@ $("#demo").addEventListener("click", toggleDemo);
 $("#empty-demo").addEventListener("click", toggleDemo);
 $("#search").addEventListener("input", render);
 $("#filter").addEventListener("change", render);
+$("#needs-action").addEventListener("click", () => {
+  needsActionOnly = !needsActionOnly;
+  render();
+});
+// Refresh relative deadline labels after midnight or returning to the dashboard.
+let reminderDay = new Date().toDateString();
+setInterval(() => {
+  const today = new Date().toDateString();
+  if (today !== reminderDay) { reminderDay = today; render(); }
+}, 60000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) { reminderDay = new Date().toDateString(); render(); }
+});
 for (const key of ["role", "company", "status", "dates"])
   $(`[data-sort="${key}"]`).addEventListener("click", () => {
     jobSort = JobSort.toggle(jobSort, key);

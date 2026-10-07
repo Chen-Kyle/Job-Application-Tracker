@@ -62,11 +62,7 @@ globalThis.JobDetails = (() => {
   function renderTasks(job) {
     const container = el("job-next-steps");
     container.replaceChildren();
-    const tasks = [...(job.nextSteps || [])].sort(
-      (a, b) =>
-        Number(a.completed) - Number(b.completed) ||
-        (a.deadline || "9999").localeCompare(b.deadline || "9999"),
-    );
+    const tasks = StepReminders.ordered(job.nextSteps || []);
     if (!tasks.length) {
       const empty = document.createElement("p");
       empty.className = "email-secondary";
@@ -113,9 +109,12 @@ globalThis.JobDetails = (() => {
       });
       const metadata = document.createElement("p");
       metadata.className = "email-secondary";
-      metadata.textContent = task.deadline
-        ? `Due ${new Date(`${task.deadline}T12:00:00`).toLocaleDateString()}`
-        : "No deadline";
+      const reminder = StepReminders.describe(task);
+      const badge = document.createElement("span");
+      badge.className = `step-reminder ${reminder.kind}`;
+      badge.textContent = reminder.label;
+      metadata.append(badge);
+      if (task.deadline) metadata.append(` · ${new Date(`${task.deadline}T12:00:00`).toLocaleDateString()}`);
       const source =
         emailLink(task.emailUrl) ||
         (task.emailMessage

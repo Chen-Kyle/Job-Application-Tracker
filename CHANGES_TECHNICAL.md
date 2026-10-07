@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Dashboard next-step reminders
+
+- Request: try dashboard reminders for pending next steps.
+- Added shared local-calendar helper for unfinished-step summaries, urgency labels and deadline ordering. Row badges distinguish overdue/due today/tomorrow/upcoming/undated; completed steps excluded. Job detail steps remain editable with source links and checkboxes, now with reminder labels; unfinished tasks ordered before completed ones.
+- Added Needs action overview button counting jobs (not tasks); toggles a filter combined with existing search/status/sort. Date labels refresh at day changes and when returning to the dashboard. Sample dashboard includes four fictional reminder cases. No notification permissions or external services added.
+- Files: step-reminders.js, dashboard.js, job-details.js, dashboard.html, dashboard.css, tests/step-reminders.test.cjs and both logs.
+- Validation: Node suite including calendar boundaries, invalid dates, completion exclusion, urgency ordering and sample/path checks; diff checks. No live browser or screen-reader test performed. Reminder urgency is based on viewer local calendar dates, not exact hours.
+
 ## 2026-10-07 — Sort dates by latest status change
 
 - Request: sortable Dates based on most recent status change.

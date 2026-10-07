@@ -11,6 +11,7 @@
   <script src="scripts/core/store.js" defer></script>
   <script src="scripts/email/email-links.js" defer></script>
   <script src="scripts/recruiters/recruiter-samples.js" defer></script>
+  <script src="scripts/dashboard/step-reminders.js" defer></script>
   <script src="scripts/dashboard/job-sort.js" defer></script>
   <script src="scripts/dashboard/dashboard.js" defer></script>
   <script src="scripts/recruiters/recruiter-autocomplete.js" defer></script>
@@ -43,6 +44,7 @@
         <article><span>Applied</span><strong id="applied">0</strong></article>
         <article><span>Interviewing</span><strong id="interviewing">0</strong></article>
         <article class="offer"><span>Offers</span><strong id="offers">0</strong></article>
+        <button type="button" id="needs-action" class="needs-action" aria-pressed="false"><span>Needs action</span><strong id="needs-action-count">0</strong></button>
       </section>
       <section class="workspace">
         <div class="toolbar"><h2>Your opportunities <span id="result-count"></span></h2><div class="filters"><button id="add-application" class="approve-email add-application-button" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg><span>Add application</span></button><label class="sr-only" for="search">Search company or role</label><input id="search" type="search" placeholder="Search company or role"><label class="sr-only" for="filter">Filter by status</label><select id="filter"><option value="">All statuses</option></select></div></div>
