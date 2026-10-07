@@ -140,3 +140,7 @@ footer { margin-top: 20px; }
 @media (max-width: 760px) { .stats.with-reminders { grid-template-columns: repeat(2, minmax(0, 1fr)); } .needs-action { padding: 16px; } }
 
 .needs-action[hidden] { display: none; }
+
+#pending-steps-sort[hidden] { display: none; }
+#pending-steps-sort[aria-pressed="true"] { background: var(--accent); color: white; border-color: var(--accent); }
+#pending-steps-sort:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

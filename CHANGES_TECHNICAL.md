@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Explicit pending-step sorting button
+
+- Clarification: prioritize pending jobs only by clicking a button; button appears only with reminders enabled.
+- Added Pending steps first toolbar toggle (aria-pressed), initially inactive. Reminders alone no longer reorder rows. Toggle sorts unfinished-step jobs first while retaining every matching job and the chosen column sorting within groups. Second click removes prioritization; disabling reminders or switching sample mode resets it. Existing Needs action card remains a separate pending-only filter.
+- Files: dashboard.html, dashboard.js, dashboard.css and both logs.
+- Validation: Node regression suite, existing priority/direction checks and diff checks. No live browser test performed.
+
 ## 2026-10-07 — Prioritize applications with pending next steps
 
 - Request: sort next steps to the top of the application list.

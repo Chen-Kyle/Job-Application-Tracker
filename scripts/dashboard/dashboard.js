@@ -7,6 +7,7 @@ var demo =
   !inExtension || new URLSearchParams(location.search).get("sample") === "1";
 let jobs = [];
 let needsActionOnly = false;
+let pendingStepsFirst = false;
 let jobSort = { key: null, direction: "ascending" };
 let samples = makeSamples();
 const $ = (selector) => document.querySelector(selector);
@@ -112,7 +113,12 @@ function render() {
   const remindersEnabled = ReminderSettings.enabled();
   $("#needs-action").hidden = !remindersEnabled;
   document.querySelector(".stats").classList.toggle("with-reminders", remindersEnabled);
-  if (!remindersEnabled) needsActionOnly = false;
+  if (!remindersEnabled) {
+    needsActionOnly = false;
+    pendingStepsFirst = false;
+  }
+  $("#pending-steps-sort").hidden = !remindersEnabled;
+  $("#pending-steps-sort").setAttribute("aria-pressed", String(pendingStepsFirst));
   $("#needs-action-count").textContent = jobs.filter(job => StepReminders.pending(job).length).length;
   $("#needs-action").setAttribute("aria-pressed", String(needsActionOnly));
   const term = $("#search").value.trim().toLowerCase();
@@ -152,7 +158,7 @@ function render() {
         ? `Sort by latest status change, ${next.direction === "descending" ? "newest" : "oldest"} first`
         : `Sort by ${key}, ${next.direction}`);
   }
-  for (const job of visible.sort((a, b) => JobSort.compare(a, b, { ...jobSort, pendingFirst: remindersEnabled }))) {
+  for (const job of visible.sort((a, b) => JobSort.compare(a, b, { ...jobSort, pendingFirst: remindersEnabled && pendingStepsFirst }))) {
     const row = document.createElement("tr");
     const roleCell = document.createElement("td");
     const entry = document.createElement("button");
@@ -313,6 +319,7 @@ async function refresh() {
 async function toggleDemo() {
   demo = !demo;
   needsActionOnly = false;
+  pendingStepsFirst = false;
   const viewUrl = new URL(location.href);
   if (demo) viewUrl.searchParams.set("sample", "1");
   else viewUrl.searchParams.delete("sample");
@@ -333,6 +340,11 @@ $("#empty-demo").addEventListener("click", toggleDemo);
 $("#search").addEventListener("input", render);
 $("#filter").addEventListener("change", render);
 document.addEventListener("reminder-settings-change", render);
+$("#pending-steps-sort").addEventListener("click", () => {
+  if (!ReminderSettings.enabled()) return;
+  pendingStepsFirst = !pendingStepsFirst;
+  render();
+});
 $("#needs-action").addEventListener("click", () => {
   needsActionOnly = !needsActionOnly;
   render();

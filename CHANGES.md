@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Replaced automatic pending-step prioritization with a “Pending steps first” sorting button, visible only when reminders are enabled.
+
 - Jobs with unfinished next steps now appear first when reminders are enabled; selected sorting applies within each group.
 
 - Made next-step reminders optional in Settings, off by default, with separate sample preferences and backup support.
