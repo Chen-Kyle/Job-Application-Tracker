@@ -8,8 +8,8 @@ globalThis.JobSort = (() => {
     const recentFirst = () => String(b.savedAt || "").localeCompare(String(a.savedAt || ""));
     if (!sort.key) return recentFirst();
     let result;
-    if (sort.key === "role") {
-      result = String(a.role || "").localeCompare(String(b.role || ""), undefined, { sensitivity: "base", numeric: true });
+    if (sort.key === "role" || sort.key === "company") {
+      result = String(a[sort.key] || "").localeCompare(String(b[sort.key] || ""), undefined, { sensitivity: "base", numeric: true });
     } else {
       const rank = (job) => {
         const index = statuses.indexOf(job.status || "Saved");

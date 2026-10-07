@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Made Role and Company separate sorting buttons within their shared table column.
+
 - Added clickable Role and Status headings with reversible sorting and direction arrows; status follows application stages.
 
 - Changed recruiter autocomplete to a themed name/address dropdown with arrow-key navigation, Enter selection, and Escape dismissal.

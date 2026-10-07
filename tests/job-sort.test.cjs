@@ -21,3 +21,11 @@ test("role alphabetizes without case differences and equal roles retain newest s
   assert.deepEqual([...jobs].sort((a, b) => sort.compare(a, b, {key:"role",direction:"ascending"})).map(j=>j.savedAt), ["2026-10-02", "2026-10-01", "2026-10-03"]);
   assert.equal([...jobs].sort((a,b)=>sort.compare(a,b,{key:null}))[0].role, "zebra");
 });
+
+test("company sorts independently of role and reverses direction", () => {
+  const jobs = [{ company: "Zeta", role: "Alpha" }, { company: "alpha", role: "Zebra" }];
+  const first = sort.toggle({key:"role", direction:"descending"}, "company");
+  assert.equal(first.direction, "ascending");
+  assert.equal([...jobs].sort((a,b)=>sort.compare(a,b,first))[0].company, "alpha");
+  assert.equal([...jobs].sort((a,b)=>sort.compare(a,b,sort.toggle(first,"company")))[0].company, "Zeta");
+});

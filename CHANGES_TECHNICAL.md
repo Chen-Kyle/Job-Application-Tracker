@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Separate role and company sorting controls
+
+- Request: try the separate Role and Company sorting choices.
+- Kept the shared column and made each heading word independently clickable. Company uses case-insensitive alphabetical sorting with repeat-click reversal and newest-saved tie breaks, like Role. Arrow stays beside the selected word; shared column aria-sort and button action labels track state. Existing status sorting preserved.
+- Files: dashboard.html, dashboard.js, job-sort.js, tests/job-sort.test.cjs and both logs.
+- Validation: Node regression suite and diff checks; no live browser test performed.
+
 ## 2026-10-07 — Sort application table by role and status
 
 - Request: sortable job role/status only, meaningful status order and direction toggles.

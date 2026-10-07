@@ -113,13 +113,20 @@ function render() {
     ? "Try a different search or status."
     : "Open a job listing and use the extension to save your first opportunity.";
   $("#empty-demo").hidden = jobs.length > 0 || demo;
-  for (const key of ["role", "status"]) {
-    const heading = $(`#${key}-heading`);
-    const selected = jobSort.key === key;
+  // Role and Company share a column, so update its sort state once.
+  for (const column of ["role", "status"]) {
+    const heading = $(`#${column}-heading`);
+    const selected = jobSort.key === column || (column === "role" && jobSort.key === "company");
     if (selected) heading.setAttribute("aria-sort", jobSort.direction);
     else heading.removeAttribute("aria-sort");
-    heading.querySelector(".sort-direction").textContent = selected
+  }
+  for (const key of ["role", "company", "status"]) {
+    const button = $(`[data-sort="${key}"]`);
+    const selected = jobSort.key === key;
+    button.querySelector(".sort-direction").textContent = selected
       ? (jobSort.direction === "ascending" ? " ↑" : " ↓") : "";
+    const nextDirection = selected && jobSort.direction === "ascending" ? "descending" : "ascending";
+    button.setAttribute("aria-label", `Sort by ${key}, ${nextDirection}`);
   }
   for (const job of visible.sort((a, b) => JobSort.compare(a, b, jobSort))) {
     const row = document.createElement("tr");
@@ -309,7 +316,7 @@ $("#demo").addEventListener("click", toggleDemo);
 $("#empty-demo").addEventListener("click", toggleDemo);
 $("#search").addEventListener("input", render);
 $("#filter").addEventListener("change", render);
-for (const key of ["role", "status"])
+for (const key of ["role", "company", "status"])
   $(`[data-sort="${key}"]`).addEventListener("click", () => {
     jobSort = JobSort.toggle(jobSort, key);
     render();
