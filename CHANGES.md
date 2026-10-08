@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Status filter now uses the same dropdown style as Filters.
+
 - Removed the explanation beneath Application outcomes.
 
 - Removed the period/week explanation beneath Applications over time.

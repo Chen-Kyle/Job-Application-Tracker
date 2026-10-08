@@ -88,7 +88,26 @@ for (const status of JobStore.statuses) {
   $("#filter").append(option);
 }
 
+// Use the same popover and button styles as the quick Filters menu.
+for (const status of ["", ...JobStore.statuses]) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.statusFilter = status;
+  button.textContent = status || "All statuses";
+  button.addEventListener("click", () => {
+    $("#filter").value = status;
+    $("#status-filter-menu").open = false;
+    updateDashboardView();
+    $("#status-filter-menu > summary").focus();
+  });
+  $("#status-filter-options").append(button);
+}
+
 function render() {
+  $("#status-filter-label").textContent = $("#filter").value || "All statuses";
+  for (const button of document.querySelectorAll("[data-status-filter]")) {
+    button.setAttribute("aria-pressed", String(button.dataset.statusFilter === $("#filter").value));
+  }
   document.querySelector(".settings-nav").href = demo
     ? "sample-settings.html"
     : "settings.html";
@@ -399,7 +418,18 @@ for (const button of document.querySelectorAll("[data-quick-filter]")) button.ad
   updateDashboardView();
 });
 
-const filterMenu = document.querySelector(".dashboard-filter-menu");
+const filterMenus = document.querySelectorAll(".dashboard-filter-menu");
 document.addEventListener("click", (event) => {
-  if (filterMenu.open && !filterMenu.contains(event.target)) filterMenu.open = false;
+  for (const menu of filterMenus) {
+    if (menu.open && !menu.contains(event.target)) menu.open = false;
+  }
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  for (const menu of filterMenus) {
+    if (!menu.open) continue;
+    const focusedInside = menu.contains(document.activeElement);
+    menu.open = false;
+    if (focusedInside) menu.querySelector("summary").focus();
+  }
 });
