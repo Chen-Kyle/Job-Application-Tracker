@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Moved manual email attachment into Edit as an expanded panel.
+
 - Added manual Gmail email lookup and approval in job details, with a preview, status choice and Message-ID fallback for unsupported links.
 
 - Added a trash icon to remove suggested next steps while keeping the email and status approval.

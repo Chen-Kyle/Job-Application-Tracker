@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Manual email panel in Edit
+
+- Request: expose manual email attachment in Edit rather than its own dropdown.
+- Replaced the outer details with a plain panel visible only while editing. Successful email save rebases the edit snapshot to the updated job and preserves other pending edits; email saves immediately, with explicit confirmation that other edits require Save changes. Message-ID fallback remains a secondary disclosure.
+- Files: dashboard.html, job-details.js and both logs.
+- Validation: JavaScript syntax, Node suite and diff check. No live browser test performed.
+
 ## 2026-10-08 — Manual email attachment
 
 - Request: attach an email to a role by Gmail link when automatic suggestions fail, fetching metadata and allowing a status choice.

@@ -333,6 +333,7 @@ globalThis.JobDetails = (() => {
     });
     el("job-details-edit-footer").hidden = !editSnapshot;
     dialog.classList.toggle("editing", Boolean(editSnapshot));
+    el("manual-email-panel").hidden = !editSnapshot;
     for (const id of [
       "job-role-editor",
       "job-company-editor",
@@ -499,8 +500,25 @@ globalThis.JobDetails = (() => {
       manualEmail = null;
       el("manual-email-preview").hidden = true;
       await refresh();
+      // Keep pending edits while rebasing the newly saved email onto the edit snapshot.
+      const latest = jobs.find(item => item.id === selected);
+      if (editSnapshot && latest && editSnapshot.id === latest.id) {
+        const original = editSnapshot.original;
+        for (const key of ["emailActivity", "statusHistory"]) {
+          const known = new Set((original[key] || []).map(item => item.id || item.eventId));
+          editSnapshot.draft[key] ||= [];
+          editSnapshot.draft[key].push(...structuredClone((latest[key] || []).filter(item => !known.has(item.id || item.eventId))));
+        }
+        if (el("edit-job-status").value === original.status) el("edit-job-status").value = latest.status;
+        if (el("edit-job-applied").value === localDate(original.appliedAt)) el("edit-job-applied").value = localDate(latest.appliedAt);
+        editSnapshot.draft.status = latest.status;
+        editSnapshot.draft.updatedAt = latest.updatedAt;
+        editSnapshot.original = structuredClone(latest);
+        editSnapshot.updatedAt = latest.updatedAt || latest.savedAt;
+        draftUndo.length = 0;
+      }
       await render();
-      el("manual-email-message").textContent = "Email saved to this job.";
+      el("manual-email-message").textContent = "Email saved to this job. Other edits still need Save changes.";
     } catch (error) { el("manual-email-message").textContent = error.message; }
     finally { manualEmailBusy = false; el("manual-email-save").disabled = false; }
   });
