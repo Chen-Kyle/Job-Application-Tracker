@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Remove dashboard footer instruction
+
+- Request: remove the footer sentence about saving listings and changing statuses.
+- Removed the footer element containing the requested text from dashboard.html.
+- Files: dashboard.html and both logs.
+- Validation: located the exact text and ran git diff --check; no browser test performed for this text removal.
+
 ## 2026-10-08 — Search against pending email edits
 
 - Request: show an email again in manual search when removed in the current unsaved edit session.

@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Removed the dashboard footer instruction about saving listings and changing statuses.
+
 - Emails removed during the current edit session now reappear in subject search before saving.
 
 - Manual email searches now hide emails already attached to the selected job, while retaining other emails with the same subject.
