@@ -526,7 +526,16 @@ globalThis.JobDetails = (() => {
     try {
       await manualRequest("manual-email-save",{jobId:selected,messageId:manualEmail.messageId,status:el("manual-email-status").value,...manualEmailSnapshot});
       manualEmail = null;
+      manualEmailJob = null;
+      manualEmailSnapshot = null;
+      el("manual-email-search-subject").value = "";
+      el("manual-email-results").replaceChildren();
       el("manual-email-preview").hidden = true;
+      el("manual-email-subject").textContent = "";
+      el("manual-email-from").textContent = "";
+      el("manual-email-body").textContent = "";
+      el("manual-email-source").removeAttribute("href");
+      el("manual-email-status").selectedIndex = 0;
       await refresh();
       // Keep pending edits while rebasing the newly saved email onto the edit snapshot.
       const latest = jobs.find(item => item.id === selected);

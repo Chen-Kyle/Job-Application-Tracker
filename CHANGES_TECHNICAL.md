@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Reset manual email search after save
+
+- Request: return manual email attachment to a blank search with no suggestions immediately after Save email succeeds.
+- Clear search input, results, preview contents/link, status selection and selected email state after successful API save. Preserve the success confirmation and other pending job edits. Failed saves retain the search for retry.
+- Files: job-details.js and both logs.
+- Validation: JavaScript syntax and diff checks; no live browser test performed.
+
 ## 2026-10-08 — Manual email subject search
 
 - Request: replace manual Gmail link attachment with subject search and explicit selection.
