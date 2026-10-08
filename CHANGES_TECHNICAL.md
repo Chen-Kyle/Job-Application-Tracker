@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Dismiss filters on outside click
+
+- Request: close open Filters dropdown when clicking elsewhere.
+- Added document click handling that closes the native details menu only when the target is outside it. Menu controls and summary keep their existing behavior; no filter preferences change when dismissed.
+- Files: dashboard.js and both logs.
+- Validation: existing Node regression/path suite and diff check; no live browser test performed.
+
 ## 2026-10-07 — Fix clipped filters menu
 
 - Request: menu cut off at the applications panel bottom; remove Clear filters.

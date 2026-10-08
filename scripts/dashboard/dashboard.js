@@ -397,3 +397,8 @@ for (const button of document.querySelectorAll("[data-quick-filter]")) button.ad
   $("#filter").value = "";
   updateDashboardView();
 });
+
+const filterMenu = document.querySelector(".dashboard-filter-menu");
+document.addEventListener("click", (event) => {
+  if (filterMenu.open && !filterMenu.contains(event.target)) filterMenu.open = false;
+});

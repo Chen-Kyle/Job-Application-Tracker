@@ -4,9 +4,14 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## Table of contents
 
+- [2026-10-08](#2026-10-08)
 - [2026-10-07](#2026-10-07)
 - [2026-10-06](#2026-10-06)
 - [Progress through 2026-10-06](#progress-through-2026-10-06)
+
+## 2026-10-08
+
+- Filters dropdown now closes when clicking outside it.
 
 ## 2026-10-07
 
