@@ -524,7 +524,7 @@ globalThis.EmailUI = (() => {
         controls.append(link);
       }
       card.append(title, change, subject, sender, snippet, reason);
-      if (job && !suggestion.needsSelection) {
+      if (job) {
         const label = document.createElement("label");
         label.className = "application-picker";
         label.append("Status to approve");
@@ -534,19 +534,13 @@ globalThis.EmailUI = (() => {
           `Status to approve for ${suggestion.role} at ${suggestion.company}`,
         );
         picker.disabled = busy;
-        const original = document.createElement("option");
-        original.value = "";
-        original.textContent = suggestion.status
-          ? `Suggested: ${suggestion.status}`
-          : "Keep current status";
-        picker.append(original);
         for (const status of JobStore.statuses) {
           const option = document.createElement("option");
           option.value = status;
           option.textContent = status;
           picker.append(option);
         }
-        picker.value = override?.status || "";
+        picker.value = override?.status || suggestion.status || job.status;
         picker.addEventListener("change", () => {
           if (picker.value)
             statusOverrides.set(suggestion.id, {
@@ -604,6 +598,7 @@ globalThis.EmailUI = (() => {
         }
         picker.value = selection?.jobId || "";
         picker.addEventListener("change", () => {
+          statusOverrides.delete(suggestion.id);
           const application = currentJobs.find(
             (item) => item.id === picker.value,
           );

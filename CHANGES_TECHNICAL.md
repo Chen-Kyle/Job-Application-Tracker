@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Status choice for all email approvals
+
+- Request: allow manual status selection for suggestions requiring application selection, preselecting the algorithm recommendation for one-click approval.
+- Display status selector whenever a target job is available, including manually selected jobs; default to suggestion.status or current job status. Clear overrides when changing the selected job to avoid stale target snapshots.
+- Background accepts manual status overrides for selected applications, retaining valid-status, automatic-approval exclusion and expected-state checks.
+- Files: email-ui.js, background.js and both logs.
+- Validation: JavaScript syntax, existing Node suite and diff checks; no live Gmail/browser test performed.
+
 ## 2026-10-08 — Matching status filter popover
 
 - Request: style the status dropdown like Filters.

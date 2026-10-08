@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Email suggestions now offer a status selector after choosing a job, defaulting to the recommended status (or the current status).
+
 - Status filter now uses the same dropdown style as Filters.
 
 - Removed the explanation beneath Application outcomes.

@@ -436,7 +436,6 @@ async function review(id, decision, selection = {}) {
     if (
       override !== undefined &&
       (selection.automatic ||
-        suggestion.needsSelection ||
         !JobStore.statuses.includes(override))
     )
       throw new Error(
