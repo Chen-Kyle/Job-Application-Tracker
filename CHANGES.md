@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Added Needs action, Upcoming interviews and Awaiting response quick filters; dashboard sorting, search and filters now persist across reloads, separately for sample mode.
+
 - Added persistent undo for application deletion and stronger duplicate-link warnings that ignore common tracking parameters.
 
 - Restored the confirmation message after saving the next-step reminder setting.

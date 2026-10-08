@@ -147,3 +147,8 @@ footer { margin-top: 20px; }
 
 #undo-application-deletion { margin: 0 0 16px; }
 #undo-application-deletion[hidden] { display: none; }
+
+.quick-filters { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 24px 18px; }
+.quick-filters button { font-size: 13px; }
+.quick-filters button[aria-pressed="true"] { background: var(--accent); color: white; border-color: var(--accent); }
+.quick-filters button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

@@ -6,7 +6,7 @@ const inExtension = Boolean(
 var demo =
   !inExtension || new URLSearchParams(location.search).get("sample") === "1";
 let jobs = [];
-let needsActionOnly = false;
+let quickFilter = "";
 let pendingStepsFirst = false;
 let jobSort = { key: null, direction: "ascending" };
 let samples = makeSamples();
@@ -114,18 +114,20 @@ function render() {
   $("#needs-action").hidden = !remindersEnabled;
   document.querySelector(".stats").classList.toggle("with-reminders", remindersEnabled);
   if (!remindersEnabled) {
-    needsActionOnly = false;
     pendingStepsFirst = false;
   }
   $("#pending-steps-sort").hidden = !remindersEnabled;
   $("#pending-steps-sort").setAttribute("aria-pressed", String(pendingStepsFirst));
   $("#needs-action-count").textContent = jobs.filter(job => StepReminders.pending(job).length).length;
-  $("#needs-action").setAttribute("aria-pressed", String(needsActionOnly));
+  $("#needs-action").setAttribute("aria-pressed", String(quickFilter === "needs-action"));
+  for (const button of document.querySelectorAll("[data-quick-filter]")) button.setAttribute("aria-pressed", String(button.dataset.quickFilter === quickFilter));
   const term = $("#search").value.trim().toLowerCase();
   const status = $("#filter").value;
   const visible = jobs.filter(
     (job) =>
-      (!needsActionOnly || StepReminders.pending(job).length > 0) &&
+      (quickFilter !== "needs-action" || StepReminders.pending(job).length > 0) &&
+      (quickFilter !== "interviews" || job.status === "Interviewing") &&
+      (quickFilter !== "awaiting" || job.status === "Applied") &&
       (!status || job.status === status) &&
       `${job.role} ${job.company}`.toLowerCase().includes(term),
   );
@@ -318,7 +320,7 @@ async function refresh() {
 }
 async function toggleDemo() {
   demo = !demo;
-  needsActionOnly = false;
+  quickFilter = "";
   pendingStepsFirst = false;
   const viewUrl = new URL(location.href);
   if (demo) viewUrl.searchParams.set("sample", "1");
@@ -329,6 +331,7 @@ async function toggleDemo() {
   $("#filter").value = "";
   $("#message").textContent = "";
   try {
+    await loadDashboardPreferences();
     await refresh();
   } catch {
     $("#message").textContent =
@@ -337,17 +340,17 @@ async function toggleDemo() {
 }
 $("#demo").addEventListener("click", toggleDemo);
 $("#empty-demo").addEventListener("click", toggleDemo);
-$("#search").addEventListener("input", render);
-$("#filter").addEventListener("change", render);
+$("#search").addEventListener("input", updateDashboardView);
+$("#filter").addEventListener("change", updateDashboardView);
 document.addEventListener("reminder-settings-change", render);
 $("#pending-steps-sort").addEventListener("click", () => {
   if (!ReminderSettings.enabled()) return;
   pendingStepsFirst = !pendingStepsFirst;
-  render();
+  updateDashboardView();
 });
 $("#needs-action").addEventListener("click", () => {
-  needsActionOnly = !needsActionOnly;
-  render();
+  quickFilter = quickFilter === "needs-action" ? "" : "needs-action";
+  updateDashboardView();
 });
 // Refresh relative deadline labels after midnight or returning to the dashboard.
 let reminderDay = new Date().toDateString();
@@ -361,7 +364,7 @@ document.addEventListener("visibilitychange", () => {
 for (const key of ["role", "company", "status", "dates"])
   $(`[data-sort="${key}"]`).addEventListener("click", () => {
     jobSort = JobSort.toggle(jobSort, key);
-    render();
+    updateDashboardView();
   });
 if (inExtension)
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -370,7 +373,33 @@ if (inExtension)
         $("#message").textContent = "Could not refresh applications.";
       });
   });
-refresh().catch(() => {
+loadDashboardPreferences().then(refresh).catch(() => {
   $("#message").textContent =
     "Could not load applications. Try reloading this page.";
+});
+
+async function loadDashboardPreferences() {
+  const preferences = await DashboardPreferences.get(demo);
+  jobSort = preferences.sort;
+  quickFilter = preferences.quickFilter;
+  pendingStepsFirst = preferences.pendingFirst;
+  $("#search").value = preferences.search;
+  $("#filter").value = preferences.status;
+}
+function updateDashboardView() {
+  render();
+  DashboardPreferences.save({sort:jobSort,quickFilter,pendingFirst:pendingStepsFirst,search:$("#search").value,status:$("#filter").value},demo).catch(() => {
+    $("#message").textContent = "Could not save dashboard preferences.";
+  });
+}
+for (const button of document.querySelectorAll("[data-quick-filter]")) button.addEventListener("click", () => {
+  quickFilter = quickFilter === button.dataset.quickFilter ? "" : button.dataset.quickFilter;
+  $("#filter").value = "";
+  updateDashboardView();
+});
+$("#clear-dashboard-filters").addEventListener("click", () => {
+  quickFilter = "";
+  $("#search").value = "";
+  $("#filter").value = "";
+  updateDashboardView();
 });

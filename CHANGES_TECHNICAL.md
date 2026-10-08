@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Quick filters and persistent dashboard preferences
+
+- Request: three quick filters and preserve sorting/filter choices after reopening.
+- Added mutually exclusive toggle buttons for unfinished next steps, Interviewing status (Upcoming interviews), and Applied status (Awaiting response), plus Clear filters. Quick-filter selection clears the status dropdown to avoid conflicting statuses; search still combines with filters. Needs action overview card shares the quick-filter state. Task quick filter available even with reminder badges disabled.
+- Added validated DashboardPreferences helper; persist column/direction, quick filter, search, status dropdown and pending-first toggle in chrome.storage.local, with separate sample localStorage. Load before initial job rendering and on sample-mode switches. Reminder-disabled views still suppress pending-first priority. View preferences are local UI state and currently not included in JSON backups.
+- Files: dashboard-preferences.js, dashboard.js, dashboard.html, dashboard.css, dashboard-preferences.test.cjs and both logs.
+- Validation: Node regression suite covers persistence, sample isolation and invalid preference normalization; path/syntax and diff checks. No live browser test performed. Upcoming interviews means Interviewing status, not a scheduled interview date; Awaiting response means Applied, not inferred recruiter reply state.
+
 ## 2026-10-07 — Application deletion undo and duplicate detection
 
 - Request: recover accidentally deleted applications and warn about already tracked listings.

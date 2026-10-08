@@ -14,6 +14,7 @@
   <script src="scripts/recruiters/recruiter-samples.js" defer></script>
   <script src="scripts/dashboard/step-reminders.js" defer></script>
   <script src="scripts/dashboard/job-sort.js" defer></script>
+  <script src="scripts/dashboard/dashboard-preferences.js" defer></script>
   <script src="scripts/dashboard/dashboard.js" defer></script>
   <script src="scripts/dashboard/deletion-undo.js" defer></script>
   <script src="scripts/recruiters/recruiter-autocomplete.js" defer></script>
@@ -50,6 +51,7 @@
       </section>
       <section class="workspace">
         <div class="toolbar"><h2>Your opportunities <span id="result-count"></span></h2><div class="filters"><button id="pending-steps-sort" type="button" aria-pressed="false" hidden>Pending steps first</button><button id="add-application" class="approve-email add-application-button" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg><span>Add application</span></button><label class="sr-only" for="search">Search company or role</label><input id="search" type="search" placeholder="Search company or role"><label class="sr-only" for="filter">Filter by status</label><select id="filter"><option value="">All statuses</option></select></div></div>
+        <div class="quick-filters" role="group" aria-label="Quick application filters"><button type="button" data-quick-filter="needs-action" aria-pressed="false">Needs action</button><button type="button" data-quick-filter="interviews" aria-pressed="false">Upcoming interviews</button><button type="button" data-quick-filter="awaiting" aria-pressed="false">Awaiting response</button><button type="button" id="clear-dashboard-filters">Clear filters</button></div>
         <div class="table-wrap"><table><thead><tr><th scope="col" id="role-heading"><button type="button" class="table-sort" data-sort="role">Role<span class="sort-direction" aria-hidden="true"></span></button> / <button type="button" class="table-sort" data-sort="company">Company<span class="sort-direction" aria-hidden="true"></span></button></th><th scope="col" id="status-heading"><button type="button" class="table-sort" data-sort="status">Status<span class="sort-direction" aria-hidden="true"></span></button></th><th scope="col" id="dates-heading"><button type="button" class="table-sort" data-sort="dates">Dates<span class="sort-direction" aria-hidden="true"></span></button></th><th scope="col">Activity</th><th scope="col">Actions</th></tr></thead><tbody id="rows"></tbody></table></div>
         <div id="empty" class="empty" hidden><h3>No applications yet</h3><p>Open a job listing and use the extension to save your first opportunity.</p><button id="empty-demo" type="button">Try sample applications</button></div>
       </section>
