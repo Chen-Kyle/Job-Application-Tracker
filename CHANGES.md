@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Updated beta readiness in the project log and added a prioritized public beta launch checklist covering testing, privacy, Google authorization and store submission.
+
 - Added Needs action, Upcoming interviews and Awaiting response quick filters; dashboard sorting, search and filters now persist across reloads, separately for sample mode.
 
 - Added persistent undo for application deletion and stronger duplicate-link warnings that ignore common tracking parameters.

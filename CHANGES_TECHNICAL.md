@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Public beta progress and launch checklist
+
+- Request: update progress toward public beta and create the next-action checklist.
+- Added newest project-log assessment: feature foundation complete and ready for invited testing, with public release validation/approvals unconfirmed. Listed implemented capabilities separately from unchecked fresh-install/integration/privacy/packaging/store steps. Marked older beta TODO superseded rather than claiming external actions completed.
+- Official Chrome/Google references checked for developer registration, privacy disclosures, OAuth audience limits and restricted-scope verification; no assumed launch percentage or paid security-assessment requirement. Documented optional local-only launch scope and final item ID/OAuth migration checks.
+- Files: docs/project_log.md and both change logs. Validation: documentation diff check; no runtime changes or external configuration/submission performed.
+
 ## 2026-10-07 — Quick filters and persistent dashboard preferences
 
 - Request: three quick filters and preserve sorting/filter choices after reopening.
