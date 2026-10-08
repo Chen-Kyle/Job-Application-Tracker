@@ -493,33 +493,28 @@ async function review(id, decision, selection = {}) {
 
 async function handle(message) {
   switch (message.action) {
-    case "manual-email-preview": {
+    case "manual-email-search": {
       const current = await state();
-      if (!current.connected) throw new Error("Connect Gmail before adding an email.");
-      let url;
-      try { url = new URL(message.url); } catch { throw new Error("Paste a valid Gmail email link."); }
-      if (url.protocol !== "https:" || url.hostname !== "mail.google.com")
-        throw new Error("Use a link from mail.google.com.");
-      const id = decodeURIComponent(url.hash.split("/").at(-1) || "");
-      if (!/^[a-f0-9]{10,32}$/i.test(id))
-        throw new Error("This Gmail link does not expose a message ID. In Gmail, open the email, choose More → Show original, then copy its Message-ID into the field below.");
+      if (!current.connected) throw new Error("Connect Gmail before searching emails.");
+      const subject = String(message.subject || "").trim();
+      if (!subject || subject.length > 500) throw new Error("Enter an email subject (up to 500 characters).");
+      const words = subject.replace(/["\\]/g, " ").split(/\s+/).filter(Boolean);
+      if (!words.length) throw new Error("Enter an email subject.");
+      // Quote each word so user input cannot introduce Gmail search operators.
+      const query = words.map(word => `subject:"${word}"`).join(" ") + " -in:trash -in:spam -in:drafts";
       const access = await token();
-      const thread = await gmail(`threads/${encodeURIComponent(id)}?format=full`, access);
-      const messages = (thread.messages || []).filter(item => !item.labelIds?.includes("DRAFT"));
-      if (!messages.length) throw new Error("No email found in that conversation.");
-      const raw = messages.sort((a,b) => Number(b.internalDate)-Number(a.internalDate))[0];
-      return { ...summarize(raw), email: current.email, suggestedStatus: EmailMatcher.classify(`${summarize(raw).subject} ${raw.snippet || ""}`) };
-    }
-    case "manual-email-original": {
-      const current = await state();
-      if (!current.connected) throw new Error("Connect Gmail before adding an email.");
-      const original = String(message.originalId || "").trim().replace(/^<|>$/g, "");
-      if (!original || /[\s{}"]/.test(original) || original.length > 500) throw new Error("Enter the Message-ID from Show original.");
-      const access = await token();
-      const found = await gmail(`messages?q=${encodeURIComponent("rfc822msgid:" + original)}&maxResults=2`, access);
-      if (found.messages?.length !== 1) throw new Error("Could not identify one email in the connected Gmail account.");
-      const raw = await gmail(`messages/${found.messages[0].id}?format=full`, access);
-      return {...summarize(raw), email:current.email, suggestedStatus:EmailMatcher.classify(`${summarize(raw).subject} ${raw.snippet || ""}`)};
+      const found = await gmail(`messages?q=${encodeURIComponent(query)}&maxResults=20`, access);
+      const results = [];
+      for (let i = 0; i < (found.messages || []).length; i += 5) {
+        const batch = found.messages.slice(i,i+5);
+        const previews = await Promise.all(batch.map(async item => {
+          const raw = await gmail(`messages/${encodeURIComponent(item.id)}?format=full`,access);
+          return {...summarize(raw),email:current.email,suggestedStatus:EmailMatcher.classify(`${summarize(raw).subject} ${raw.snippet || ""}`)};
+        }));
+        results.push(...previews);
+      }
+      results.sort((a,b) => Date.parse(b.receivedAt)-Date.parse(a.receivedAt));
+      return {results,more:Boolean(found.nextPageToken)};
     }
     case "manual-email-save": {
       const job = (await JobStore.list()).find(item => item.id === message.jobId);

@@ -173,3 +173,7 @@ input, select { background: var(--card); color: var(--text); }
 #manual-email-panel input, #manual-email-panel select { display: block; width: 100%; margin: 6px 0 12px; box-sizing: border-box; }
 #manual-email-panel label { display: block; margin-top: 12px; }
 #manual-email-preview { margin-top: 16px; overflow-wrap: anywhere; }
+
+.manual-email-result { display: grid; gap: 6px; width: 100%; text-align: left; margin-top: 10px; overflow-wrap: anywhere; }
+.manual-email-result[aria-pressed="true"] { border-color: var(--accent); background: var(--hover); }
+.manual-email-result span { font-size: 13px; }

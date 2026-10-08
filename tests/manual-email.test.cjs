@@ -12,10 +12,10 @@ function setup(){
  for(const file of ['scripts/core/store.js','scripts/email/email-actions.js','scripts/email/email-matcher.js','scripts/background/background.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),c);
  return {data,c};
 }
-test('manual email preview rejects unrelated links and saves fetched metadata with status and undo',async()=>{
+test('manual subject search saves fetched metadata with status and undo',async()=>{
  const {data,c}=setup();
- await assert.rejects(c.handle({action:'manual-email-preview',url:'https://example.com/#all/123456789abc'}),/mail.google.com/);
- const preview=await c.handle({action:'manual-email-preview',url:'https://mail.google.com/mail/u/0/#inbox/123456789abc'});
+ const found=await c.handle({action:'manual-email-search',subject:'Application received'});
+ const preview=found.results[0];
  assert.equal(preview.subject,'Application received');
  await c.handle({action:'manual-email-save',jobId:'job',messageId:preview.messageId,status:'Applied',expectedStatus:'Saved',expectedUpdatedAt:data.jobs[0].updatedAt});
  assert.equal(data.jobs[0].status,'Applied');
@@ -24,9 +24,8 @@ test('manual email preview rejects unrelated links and saves fetched metadata wi
  assert.equal(data.emailApprovalUndo.length,1);
  await assert.rejects(c.handle({action:'manual-email-save',jobId:'job',messageId:preview.messageId,status:'Applied',expectedStatus:'Applied',expectedUpdatedAt:data.jobs[0].updatedAt}),/already/);
 });
-test('opaque Gmail links explain Message-ID fallback and original-ID lookup loads email',async()=>{
+test('subject search validates empty and oversized input',async()=>{
  const {c}=setup();
- await assert.rejects(c.handle({action:'manual-email-preview',url:'https://mail.google.com/mail/u/0/#inbox/FMfcgxExample'}),/Message-ID/);
- const preview=await c.handle({action:'manual-email-original',originalId:'<example@example.com>'});
- assert.equal(preview.messageId,'123456789abc');
+ await assert.rejects(c.handle({action:'manual-email-search',subject:' '}),/subject/);
+ await assert.rejects(c.handle({action:'manual-email-search',subject:'x'.repeat(501)}),/subject/);
 });

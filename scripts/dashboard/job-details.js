@@ -465,32 +465,60 @@ globalThis.JobDetails = (() => {
     if (!response?.ok) throw new Error(response?.error || "Could not access Gmail.");
     return response.data;
   }
-  async function loadManualEmail(original = false) {
+  function chooseManualEmail(preview,job) {
+    manualEmail = preview;
+    manualEmailJob = job.id;
+    manualEmailSnapshot = {expectedStatus:job.status,expectedUpdatedAt:job.updatedAt || job.savedAt};
+    el("manual-email-subject").textContent = preview.subject || "No subject";
+    el("manual-email-from").textContent = `${preview.from} · ${when(preview.receivedAt)}`;
+    el("manual-email-body").textContent = preview.snippet;
+    el("manual-email-source").href = EmailLinks.message(preview.email,preview.messageId);
+    el("manual-email-status").value = preview.suggestedStatus || job.status;
+    el("manual-email-preview").hidden = false;
+    el("manual-email-message").textContent = "Review the selected email and choose its status before saving.";
+  }
+  async function searchManualEmails() {
     if (manualEmailBusy) return;
     const job = jobs.find(item => item.id === selected);
     if (!job) return;
     manualEmailBusy = true;
     manualEmail = null;
     el("manual-email-preview").hidden = true;
-    el("manual-email-message").textContent = "Loading email…";
+    el("manual-email-results").replaceChildren();
+    el("manual-email-load").disabled = true;
+    el("manual-email-message").textContent = "Searching emails…";
     try {
-      const preview = await manualRequest(original ? "manual-email-original" : "manual-email-preview",{url:el("manual-email-link").value,originalId:el("manual-email-original").value});
+      const found = await manualRequest("manual-email-search",{subject:el("manual-email-search-subject").value});
       if (selected !== job.id) return;
-      manualEmail = preview;
-      manualEmailJob = job.id;
-      manualEmailSnapshot = {expectedStatus:job.status,expectedUpdatedAt:job.updatedAt || job.savedAt};
-      el("manual-email-subject").textContent = preview.subject || "No subject";
-      el("manual-email-from").textContent = `${preview.from} · ${when(preview.receivedAt)}`;
-      el("manual-email-body").textContent = preview.snippet;
-      el("manual-email-source").href = EmailLinks.message(preview.email,preview.messageId);
-      el("manual-email-status").value = preview.suggestedStatus || job.status;
-      el("manual-email-preview").hidden = false;
-      el("manual-email-message").textContent = "Review the email and choose its status before saving.";
+      for (const preview of found.results) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "manual-email-result";
+        const subject = document.createElement("strong");
+        subject.textContent = preview.subject || "No subject";
+        const sender = document.createElement("span");
+        sender.textContent = `${preview.from} · ${when(preview.receivedAt)}`;
+        const snippet = document.createElement("span");
+        snippet.textContent = preview.snippet.slice(0,240);
+        button.append(subject,sender,snippet);
+        button.setAttribute("aria-pressed","false");
+        button.addEventListener("click",() => {
+          for (const item of el("manual-email-results").children) item.setAttribute("aria-pressed","false");
+          button.setAttribute("aria-pressed","true");
+          chooseManualEmail(preview,jobs.find(item => item.id === selected) || job);
+        });
+        el("manual-email-results").append(button);
+      }
+      el("manual-email-message").textContent = found.results.length
+        ? `Choose an email below.${found.more ? " Showing 20 matches; use a more specific subject to narrow the search." : ""}`
+        : "No matching emails found in your connected Gmail account. Try fewer words from the subject.";
     } catch (error) { el("manual-email-message").textContent = error.message; }
-    finally { manualEmailBusy = false; }
+    finally { manualEmailBusy = false; el("manual-email-load").disabled = false; }
   }
-  el("manual-email-load").addEventListener("click",() => loadManualEmail());
-  el("manual-email-original-load").addEventListener("click",() => loadManualEmail(true));
+  el("manual-email-load").addEventListener("click",searchManualEmails);
+  el("manual-email-search-subject").addEventListener("keydown",event => {
+    if (event.key === "Enter") { event.preventDefault(); searchManualEmails(); }
+  });
   el("manual-email-save").addEventListener("click", async () => {
     if (manualEmailBusy || !manualEmail || selected !== manualEmailJob) return;
     manualEmailBusy = true;
@@ -527,8 +555,8 @@ globalThis.JobDetails = (() => {
     manualEmail = null;
     el("manual-email-preview").hidden = true;
     el("manual-email-message").textContent = "";
-    el("manual-email-link").value = "";
-    el("manual-email-original").value = "";
+    el("manual-email-search-subject").value = "";
+    el("manual-email-results").replaceChildren();
     el("job-details-edit-form").hidden = true;
     editSnapshot = null;
     el("activity-edit-message").textContent = "";

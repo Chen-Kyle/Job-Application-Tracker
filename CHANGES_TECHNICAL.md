@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Manual email subject search
+
+- Request: replace manual Gmail link attachment with subject search and explicit selection.
+- Edit panel now searches subject words in the connected Gmail account; returns up to 20 previews sorted newest first with sender, date and excerpt. User chooses the specific message before status selection/save; classifier recommendation remains the default, otherwise current status. Search results use textContent; input words are quoted in Gmail query to avoid search operator injection.
+- Removed link/Message-ID lookup UI and worker endpoints. Manual save still re-fetches metadata, checks duplicate/stale records and uses existing email history/undo storage. Searches exclude spam/trash/drafts; more results prompt a narrower subject search. Enter submits search.
+- Files: dashboard.html, job-details.js, background.js, themes.css, manual-email.test.cjs and both logs.
+- Validation: JavaScript syntax, Node suite including updated subject lookup/storage and input-validation tests, diff check. No live Gmail/browser test performed.
+
 ## 2026-10-08 — Manual email panel in Edit
 
 - Request: expose manual email attachment in Edit rather than its own dropdown.
