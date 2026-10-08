@@ -168,3 +168,16 @@ footer { margin-top: 20px; }
 .dashboard-filter-menu .quick-filters { max-height: min(360px, 60vh); overflow-y: auto; }
 
 #job-description-link { overflow-wrap: anywhere; }
+
+.analytics-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px; padding: 0 24px 24px; }
+.analytics-grid article { min-width: 0; }
+.analytics-grid h3 { font-size: 16px; }
+.analytics-chart { list-style: none; margin: 16px 0; padding: 0; }
+.analytics-chart li { display: grid; grid-template-columns: 95px minmax(0,1fr) 30px; align-items: center; gap: 8px; margin: 8px 0; font-size: 12px; }
+.analytics-track { height: 12px; background: var(--page); border-radius: 3px; }
+.analytics-bar { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.analytics-outcomes { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; }
+.analytics-outcomes dt { color: var(--muted); }
+.analytics-outcomes dd { margin: 0; font-weight: 650; }
+@media (max-width:1100px) { .analytics-grid { grid-template-columns:1fr 1fr; } .analytics-grid article:first-child { grid-column:1 / -1; } }
+@media (max-width:760px) { .analytics-grid { grid-template-columns:1fr; } }

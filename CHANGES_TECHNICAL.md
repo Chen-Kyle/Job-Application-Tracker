@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Dashboard analytics
+
+- Request: analytics between emails and Sheets, covering applications over time, outcomes and next steps.
+- Added local analytics module and section plus sidebar links on dashboard/settings/sample settings. Timeline displays 12 Monday-start weeks or calendar months with text counts and CSS bars; each job counted once using appliedAt or earliest non-deleted Applied transition, never savedAt. Missing dates disclosed; future applied dates not counted. Outcome totals use current status, explicitly not a conversion funnel. Steps count unfinished tasks, due today through three days, and overdue, independent of reminder preference/table filters.
+- Re-renders with dashboard storage/sample/task changes. No network calls, dependencies or permissions added; samples use existing fictional records. Updated script architecture guide.
+- Files: analytics.js, dashboard.js, dashboard/settings/sample-settings HTML, dashboard.css, scripts/README.md, analytics.test.cjs and both logs.
+- Validation: Node regression suite, aggregation/date/task tests and diff check. No live browser test performed. Historical weekly/monthly buckets use viewer local calendar; removed applications are excluded.
+
 ## 2026-10-08 — Restore visible job-link domains
 
 - Request: return to the previous link presentation.

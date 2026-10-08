@@ -309,6 +309,7 @@ function render() {
     row.append(roleCell, statusCell, dates, activity, actions);
     $("#rows").append(row);
   }
+  globalThis.Analytics?.render();
   globalThis.JobDetails?.render().catch(() => {});
   globalThis.EmailUI?.render().catch(() => {});
   globalThis.SheetsUI?.render().catch(() => {});
