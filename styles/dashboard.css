@@ -160,3 +160,9 @@ footer { margin-top: 20px; }
 .dashboard-filter-menu[open] > summary { background: var(--hover); }
 .dashboard-filter-menu .quick-filters { position: absolute; top: calc(100% + 8px); right: 0; z-index: 6; display: grid; min-width: 230px; max-width: calc(100vw - 48px); padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgb(0 0 0 / 15%); }
 .dashboard-filter-menu .quick-filters button { text-align: left; }
+
+/* Allow the filter menu to extend beyond a short/empty application table. */
+.applications-workspace { overflow: visible; }
+.applications-workspace .toolbar { border-radius: 10px 10px 0 0; }
+.applications-workspace .table-wrap { border-radius: 0 0 10px 10px; }
+.dashboard-filter-menu .quick-filters { max-height: min(360px, 60vh); overflow-y: auto; }

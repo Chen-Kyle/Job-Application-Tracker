@@ -397,9 +397,4 @@ for (const button of document.querySelectorAll("[data-quick-filter]")) button.ad
   $("#filter").value = "";
   updateDashboardView();
 });
-$("#clear-dashboard-filters").addEventListener("click", () => {
-  quickFilter = "";
-  $("#search").value = "";
-  $("#filter").value = "";
-  updateDashboardView();
-});
+

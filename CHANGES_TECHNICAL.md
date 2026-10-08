@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Fix clipped filters menu
+
+- Request: menu cut off at the applications panel bottom; remove Clear filters.
+- Scoped visible overflow to the applications workspace so its dropdown can extend over subsequent sections; retained table horizontal scrolling/rounded edges. Menu has viewport-bounded height with internal scrolling. Removed Clear filters markup and its event binding; clicking an active quick filter still turns it off.
+- Files: dashboard.html, dashboard.js, dashboard.css and both logs.
+- Validation: Node suite/path/syntax checks and diff check. Cause confirmed from workspace overflow:hidden; no live browser test performed.
+
 ## 2026-10-07 — Collapsible dashboard filter controls
 
 - Request: hide quick filters, Clear filters and Pending steps first under a filter icon button.
