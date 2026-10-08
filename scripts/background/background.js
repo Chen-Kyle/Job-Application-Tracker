@@ -502,8 +502,27 @@ async function handle(message) {
       if (!words.length) throw new Error("Enter an email subject.");
       // Quote each word so user input cannot introduce Gmail search operators.
       const query = words.map(word => `subject:"${word}"`).join(" ") + " -in:trash -in:spam -in:drafts";
+      const job = message.jobId ? (await JobStore.list()).find(item => item.id === message.jobId) : null;
+      if (message.jobId && !job) throw new Error("This job no longer exists.");
+      const attached = new Set();
+      const remember = event => {
+        if (event.activityDeletedAt) return;
+        const source = event.emailMessage;
+        if (source?.account === current.email) attached.add(source.messageId);
+        else {
+          const key = event.id || event.eventId || "";
+          const prefix = `${current.email}:`;
+          if (key.startsWith(prefix)) attached.add(key.slice(prefix.length).split(":")[0]);
+        }
+      };
+      for (const event of job?.emailActivity || []) {
+        const history = job.statusHistory?.find(item => item.eventId === event.id);
+        if (!history?.activityDeletedAt) remember(event);
+      }
+      for (const event of job?.statusHistory || []) if (event.source === "email") remember(event);
       const access = await token();
       const found = await gmail(`messages?q=${encodeURIComponent(query)}&maxResults=20`, access);
+      found.messages = (found.messages || []).filter(item => !attached.has(item.id));
       const results = [];
       for (let i = 0; i < (found.messages || []).length; i += 5) {
         const batch = found.messages.slice(i,i+5);

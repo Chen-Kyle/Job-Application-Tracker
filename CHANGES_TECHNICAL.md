@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Exclude attached emails from search
+
+- Request: hide already-attached email results while keeping distinct messages sharing a subject.
+- Pass target job ID to subject search and filter Gmail message IDs before fetching previews. Covers current emailMessage metadata and legacy account/message event IDs in email activity or status history; deleted activity may be reattached. Filtering is scoped to the selected job and connected account.
+- Files: background.js, job-details.js, manual-email.test.cjs and both logs.
+- Validation: regression tests for attached/deleted activity and legacy history, full Node suite, syntax and diff checks. No live browser/Gmail test performed.
+
 ## 2026-10-08 — Remove manual email instruction
 
 - Request: remove the Save changes / click again to unselect helper paragraph.

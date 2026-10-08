@@ -67,3 +67,19 @@ test('failed combined save does not attach email or alter job',async()=>{
  await assert.rejects(c.handle({action:'manual-email-edit-save',jobId:'job',messageId:'123456789abc',expectedUpdatedAt:'stale',details:{role:'Engineer',company:'Example',status:'Applied'}}),/changed/);
  assert.equal(JSON.stringify(data.jobs),original);
 });
+
+test('subject search hides attached message IDs while allowing removed activity',async()=>{
+ const {data,c}=setup();
+ data.jobs[0].emailActivity=[{id:'attached',emailMessage:{account:'test@example.com',messageId:'123456789abc'}}];
+ let found=await c.handle({action:'manual-email-search',jobId:'job',subject:'Application received'});
+ assert.equal(found.results.length,0);
+ data.jobs[0].emailActivity[0].activityDeletedAt='2026-10-08T00:00:00Z';
+ found=await c.handle({action:'manual-email-search',jobId:'job',subject:'Application received'});
+ assert.equal(found.results.length,1);
+});
+test('legacy email status history is excluded from manual search',async()=>{
+ const {data,c}=setup();
+ data.jobs[0].statusHistory=[{source:'email',eventId:'test@example.com:123456789abc'}];
+ const found=await c.handle({action:'manual-email-search',jobId:'job',subject:'Application received'});
+ assert.equal(found.results.length,0);
+});

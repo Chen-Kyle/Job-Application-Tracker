@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Manual email searches now hide emails already attached to the selected job, while retaining other emails with the same subject.
+
 - Removed the save/unselect instruction beneath the manual email preview.
 
 - Save changes now attaches the selected email together with job edits; click a selected result again to unselect it. Removed the separate Save email button.
