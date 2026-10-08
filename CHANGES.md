@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Added an illustrated PDF guide for updating the extension from a GitHub ZIP.
+
 - Changed the rescan input’s default to 5 days.
 
 - Removed the dashboard footer instruction about saving listings and changing statuses.
