@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Repair manual attachment duplicate handling
+
+- Request: Save email reports already recorded while target job shows no email activity.
+- Found duplicate checks treated any global approved suggestion or other job activity as a duplicate, even when target activity was absent/deleted. Check visible email activity on the selected job using source message metadata; previously reviewed/deleted records use a fresh attachment event ID to preserve existing review/undo history and avoid inheriting hidden status events.
+- Files: background.js, manual-email.test.cjs and both logs.
+- Validation: regression tests for prior approval without target activity and reattaching deleted activity, existing duplicate guard test, complete Node suite and syntax/diff checks. No live Gmail/browser test performed.
+
 ## 2026-10-08 — Reset manual email search after save
 
 - Request: return manual email attachment to a blank search with no suggestions immediately after Save email succeeds.

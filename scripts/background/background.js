@@ -524,14 +524,26 @@ async function handle(message) {
       if (!/^[a-f0-9]{10,32}$/i.test(message.messageId || "")) throw new Error("Load the email first.");
       const raw = await gmail(`messages/${message.messageId}?format=full`, await token());
       const preview = summarize(raw);
-      const id = `${current.email}:${preview.messageId}`;
+      const sourceId = `${current.email}:${preview.messageId}`;
       if (job.status !== message.expectedStatus || (job.updatedAt || job.savedAt) !== message.expectedUpdatedAt)
         throw new Error("This job changed. Load the email again before saving.");
-      if ((await JobStore.list()).some(item => item.emailActivity?.some(event => event.id === id)))
-        throw new Error("This email has already been recorded.");
+      const alreadyAttached = (job.emailActivity || []).some(event => {
+        const sameEmail = event.id === sourceId ||
+          (event.emailMessage?.account === current.email && event.emailMessage?.messageId === preview.messageId);
+        const history = (job.statusHistory || []).find(item => item.eventId === event.id);
+        return sameEmail && !event.activityDeletedAt && !history?.activityDeletedAt;
+      });
+      if (alreadyAttached) throw new Error("This email is already attached to this job.");
       const {emailSuggestions = []} = await chrome.storage.local.get("emailSuggestions");
+      const existing = emailSuggestions.find(item => item.id === sourceId);
+      // Prior reviews can outlive deleted/imported jobs. A new attachment must not reuse
+      // their event ID or overwrite their review/undo state.
+      const needsNewId = existing?.review === "approved" ||
+        (existing?.jobId && existing.jobId !== job.id) ||
+        (job.statusHistory || []).some(event => event.eventId === sourceId) ||
+        (job.emailActivity || []).some(event => event.id === sourceId);
+      const id = needsNewId ? `${sourceId}:manual:${job.id}:${Date.now()}` : sourceId;
       let suggestion = emailSuggestions.find(item => item.id === id);
-      if (suggestion && suggestion.review === "approved") throw new Error("This email has already been recorded.");
       const pending = {...preview,id,email:current.email,jobId:job.id,role:job.role,company:job.company,fromStatus:job.status,expectedUpdatedAt:job.updatedAt || job.savedAt,status:null,actions:[],needsSelection:false,review:"pending"};
       if (suggestion) Object.assign(suggestion,pending); else emailSuggestions.push(pending);
       if (!JobStore.statuses.includes(message.status)) throw new Error("Choose a valid status.");

@@ -29,3 +29,23 @@ test('subject search validates empty and oversized input',async()=>{
  await assert.rejects(c.handle({action:'manual-email-search',subject:' '}),/subject/);
  await assert.rejects(c.handle({action:'manual-email-search',subject:'x'.repeat(501)}),/subject/);
 });
+
+test('prior approval without target activity does not block manual attachment',async()=>{
+ const {data,c}=setup();
+ data.emailSuggestions=[{id:'test@example.com:123456789abc',review:'approved',jobId:'old-job'}];
+ await c.handle({action:'manual-email-save',jobId:'job',messageId:'123456789abc',status:'Applied',expectedStatus:'Saved',expectedUpdatedAt:data.jobs[0].updatedAt});
+ assert.equal(data.jobs[0].emailActivity.length,1);
+ assert.equal(data.jobs[0].emailActivity[0].subject,'Application received');
+ assert.equal(data.emailSuggestions[0].jobId,'old-job');
+ assert.equal(data.emailSuggestions[0].review,'approved');
+});
+test('removed email activity can be reattached as a visible new event',async()=>{
+ const {data,c}=setup();
+ const id='test@example.com:123456789abc';
+ data.jobs[0].emailActivity=[{id,activityDeletedAt:'2026-10-08T00:00:00Z'}];
+ data.jobs[0].statusHistory=[{eventId:id,activityDeletedAt:'2026-10-08T00:00:00Z'}];
+ await c.handle({action:'manual-email-save',jobId:'job',messageId:'123456789abc',status:'Applied',expectedStatus:'Saved',expectedUpdatedAt:data.jobs[0].updatedAt});
+ const added=data.jobs[0].emailActivity.at(-1);
+ assert.notEqual(added.id,id);
+ assert.equal(added.activityDeletedAt,undefined);
+});
