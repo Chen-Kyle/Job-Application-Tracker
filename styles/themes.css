@@ -169,3 +169,7 @@ input, select { background: var(--card); color: var(--text); }
 .settings-info[open] summary::after { content: '▾'; }
 
 .suggested-next-steps-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+#manual-email-panel input, #manual-email-panel select { display: block; width: 100%; margin: 6px 0 12px; box-sizing: border-box; }
+#manual-email-panel label { display: block; margin-top: 12px; }
+#manual-email-preview { margin-top: 16px; overflow-wrap: anywhere; }

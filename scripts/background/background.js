@@ -493,6 +493,57 @@ async function review(id, decision, selection = {}) {
 
 async function handle(message) {
   switch (message.action) {
+    case "manual-email-preview": {
+      const current = await state();
+      if (!current.connected) throw new Error("Connect Gmail before adding an email.");
+      let url;
+      try { url = new URL(message.url); } catch { throw new Error("Paste a valid Gmail email link."); }
+      if (url.protocol !== "https:" || url.hostname !== "mail.google.com")
+        throw new Error("Use a link from mail.google.com.");
+      const id = decodeURIComponent(url.hash.split("/").at(-1) || "");
+      if (!/^[a-f0-9]{10,32}$/i.test(id))
+        throw new Error("This Gmail link does not expose a message ID. In Gmail, open the email, choose More → Show original, then copy its Message-ID into the field below.");
+      const access = await token();
+      const thread = await gmail(`threads/${encodeURIComponent(id)}?format=full`, access);
+      const messages = (thread.messages || []).filter(item => !item.labelIds?.includes("DRAFT"));
+      if (!messages.length) throw new Error("No email found in that conversation.");
+      const raw = messages.sort((a,b) => Number(b.internalDate)-Number(a.internalDate))[0];
+      return { ...summarize(raw), email: current.email, suggestedStatus: EmailMatcher.classify(`${summarize(raw).subject} ${raw.snippet || ""}`) };
+    }
+    case "manual-email-original": {
+      const current = await state();
+      if (!current.connected) throw new Error("Connect Gmail before adding an email.");
+      const original = String(message.originalId || "").trim().replace(/^<|>$/g, "");
+      if (!original || /[\s{}"]/.test(original) || original.length > 500) throw new Error("Enter the Message-ID from Show original.");
+      const access = await token();
+      const found = await gmail(`messages?q=${encodeURIComponent("rfc822msgid:" + original)}&maxResults=2`, access);
+      if (found.messages?.length !== 1) throw new Error("Could not identify one email in the connected Gmail account.");
+      const raw = await gmail(`messages/${found.messages[0].id}?format=full`, access);
+      return {...summarize(raw), email:current.email, suggestedStatus:EmailMatcher.classify(`${summarize(raw).subject} ${raw.snippet || ""}`)};
+    }
+    case "manual-email-save": {
+      const job = (await JobStore.list()).find(item => item.id === message.jobId);
+      if (!job) throw new Error("This job no longer exists.");
+      const current = await state();
+      if (!current.connected) throw new Error("Connect Gmail before adding an email.");
+      if (!/^[a-f0-9]{10,32}$/i.test(message.messageId || "")) throw new Error("Load the email first.");
+      const raw = await gmail(`messages/${message.messageId}?format=full`, await token());
+      const preview = summarize(raw);
+      const id = `${current.email}:${preview.messageId}`;
+      if (job.status !== message.expectedStatus || (job.updatedAt || job.savedAt) !== message.expectedUpdatedAt)
+        throw new Error("This job changed. Load the email again before saving.");
+      if ((await JobStore.list()).some(item => item.emailActivity?.some(event => event.id === id)))
+        throw new Error("This email has already been recorded.");
+      const {emailSuggestions = []} = await chrome.storage.local.get("emailSuggestions");
+      let suggestion = emailSuggestions.find(item => item.id === id);
+      if (suggestion && suggestion.review === "approved") throw new Error("This email has already been recorded.");
+      const pending = {...preview,id,email:current.email,jobId:job.id,role:job.role,company:job.company,fromStatus:job.status,expectedUpdatedAt:job.updatedAt || job.savedAt,status:null,actions:[],needsSelection:false,review:"pending"};
+      if (suggestion) Object.assign(suggestion,pending); else emailSuggestions.push(pending);
+      if (!JobStore.statuses.includes(message.status)) throw new Error("Choose a valid status.");
+      await chrome.storage.local.set({emailSuggestions});
+      await review(id,"approved",{statusOverride:message.status,expectedStatus:message.expectedStatus,expectedUpdatedAt:message.expectedUpdatedAt});
+      return preview;
+    }
     case "recruiter-contacts":
       return RecruiterContacts.lookup({ state, token, gmail });
     case "recruiter-threads":

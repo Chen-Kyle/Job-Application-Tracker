@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Manual email attachment
+
+- Request: attach an email to a role by Gmail link when automatic suggestions fail, fetching metadata and allowing a status choice.
+- Added Add email manually under job Email activity. Load a hex-ID Gmail conversation link, review the newest non-draft email’s subject, sender, snippet, received date and Gmail link; select the classifier recommendation or current status, then save. Opaque browser links use an explicit Show original / Message-ID fallback with rfc822msgid lookup.
+- Background fetches from the connected Gmail account, re-fetches metadata before saving and uses the existing review/store path for status history, email activity and approval undo. Guards invalid hosts, duplicate recorded emails, invalid statuses and changed job snapshots. No inferred next steps are added through this manual flow.
+- Files: dashboard.html, job-details.js, background.js, themes.css, manual-email.test.cjs and both logs.
+- Validation: two mocked-worker tests cover preview, host rejection, status/activity/undo storage, duplicate rejection, opaque links and original-ID fallback; full Node suite and syntax/diff checks. No live Gmail/browser test performed.
+- Limitations: Gmail must be connected; sample mode shows an explanation instead of lookup. Conversation links load the newest email; Message-ID selects a specific email. Gmail opaque links cannot be resolved from URL alone.
+
 ## 2026-10-08 — Remove proposed email next steps
 
 - Request: trash icon at the top right of the suggested next steps box, removing tasks while preserving the email approval.

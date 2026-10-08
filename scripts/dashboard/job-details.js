@@ -449,8 +449,68 @@ globalThis.JobDetails = (() => {
       }
     }
   }
+  let manualEmail = null;
+  let manualEmailJob = null;
+  let manualEmailSnapshot = null;
+  let manualEmailBusy = false;
+  for (const status of JobStore.statuses) {
+    const option = document.createElement("option");
+    option.value = option.textContent = status;
+    el("manual-email-status").append(option);
+  }
+  async function manualRequest(action, extra) {
+    if (demo) throw new Error("Manual email lookup requires your connected Gmail account outside sample mode.");
+    const response = await chrome.runtime.sendMessage({type:"email-connector",action,...extra});
+    if (!response?.ok) throw new Error(response?.error || "Could not access Gmail.");
+    return response.data;
+  }
+  async function loadManualEmail(original = false) {
+    if (manualEmailBusy) return;
+    const job = jobs.find(item => item.id === selected);
+    if (!job) return;
+    manualEmailBusy = true;
+    manualEmail = null;
+    el("manual-email-preview").hidden = true;
+    el("manual-email-message").textContent = "Loading email…";
+    try {
+      const preview = await manualRequest(original ? "manual-email-original" : "manual-email-preview",{url:el("manual-email-link").value,originalId:el("manual-email-original").value});
+      if (selected !== job.id) return;
+      manualEmail = preview;
+      manualEmailJob = job.id;
+      manualEmailSnapshot = {expectedStatus:job.status,expectedUpdatedAt:job.updatedAt || job.savedAt};
+      el("manual-email-subject").textContent = preview.subject || "No subject";
+      el("manual-email-from").textContent = `${preview.from} · ${when(preview.receivedAt)}`;
+      el("manual-email-body").textContent = preview.snippet;
+      el("manual-email-source").href = EmailLinks.message(preview.email,preview.messageId);
+      el("manual-email-status").value = preview.suggestedStatus || job.status;
+      el("manual-email-preview").hidden = false;
+      el("manual-email-message").textContent = "Review the email and choose its status before saving.";
+    } catch (error) { el("manual-email-message").textContent = error.message; }
+    finally { manualEmailBusy = false; }
+  }
+  el("manual-email-load").addEventListener("click",() => loadManualEmail());
+  el("manual-email-original-load").addEventListener("click",() => loadManualEmail(true));
+  el("manual-email-save").addEventListener("click", async () => {
+    if (manualEmailBusy || !manualEmail || selected !== manualEmailJob) return;
+    manualEmailBusy = true;
+    el("manual-email-save").disabled = true;
+    try {
+      await manualRequest("manual-email-save",{jobId:selected,messageId:manualEmail.messageId,status:el("manual-email-status").value,...manualEmailSnapshot});
+      manualEmail = null;
+      el("manual-email-preview").hidden = true;
+      await refresh();
+      await render();
+      el("manual-email-message").textContent = "Email saved to this job.";
+    } catch (error) { el("manual-email-message").textContent = error.message; }
+    finally { manualEmailBusy = false; el("manual-email-save").disabled = false; }
+  });
   function open(id) {
     selected = id;
+    manualEmail = null;
+    el("manual-email-preview").hidden = true;
+    el("manual-email-message").textContent = "";
+    el("manual-email-link").value = "";
+    el("manual-email-original").value = "";
     el("job-details-edit-form").hidden = true;
     editSnapshot = null;
     el("activity-edit-message").textContent = "";
