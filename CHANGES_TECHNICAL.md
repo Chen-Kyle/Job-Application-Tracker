@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Remove outcomes helper text
+
+- Request: remove “Current statuses across all jobs, not a conversion funnel.”
+- Removed the static paragraph under Application outcomes in dashboard.html; outcome counts are unchanged.
+- Files: dashboard.html and both change logs.
+- Validation: reviewed the diff and ran git diff --check; no browser test performed for this text removal.
+
 ## 2026-10-08 — Remove analytics helper text
 
 - Request: remove “Last 12 periods, including the current one. Weeks start Monday.” from the dashboard.

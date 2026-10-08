@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Removed the explanation beneath Application outcomes.
+
 - Removed the period/week explanation beneath Applications over time.
 
 - Added daily application counts to the Analytics chart.
