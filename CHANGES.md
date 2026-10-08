@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Restored the confirmation message after saving the next-step reminder setting.
+
 - Removed the next-step reminder save confirmation; the preference still saves automatically.
 
 - Replaced automatic pending-step prioritization with a “Pending steps first” sorting button, visible only when reminders are enabled.
