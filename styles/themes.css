@@ -167,3 +167,5 @@ input, select { background: var(--card); color: var(--text); }
 .settings-info summary::-webkit-details-marker { display: none; }
 .settings-info summary::after { content: '▸'; }
 .settings-info[open] summary::after { content: '▾'; }
+
+.suggested-next-steps-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

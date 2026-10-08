@@ -88,6 +88,7 @@ globalThis.EmailUI = (() => {
   }
   const selections = new Map();
   const deadlines = new Map();
+  const removedNextSteps = new Set();
   const statusOverrides = new Map();
   const time = (value) => (value ? new Date(value).toLocaleString() : "Never");
   function feedback(text) {
@@ -463,6 +464,7 @@ globalThis.EmailUI = (() => {
             id: suggestion.id,
             decision,
             actionDeadlines: deadlines.get(suggestion.id),
+            skipNextSteps: removedNextSteps.has(suggestion.id),
             ...(override
               ? {
                   statusOverride: override.status,
@@ -554,12 +556,26 @@ globalThis.EmailUI = (() => {
         label.append(picker);
         card.append(label);
       }
-      if (suggestion.actions?.length) {
+      if (suggestion.actions?.length && !removedNextSteps.has(suggestion.id)) {
         const taskSection = document.createElement("div");
         taskSection.className = "suggested-next-steps";
         const heading = document.createElement("strong");
         heading.textContent = "Suggested next steps";
-        taskSection.append(heading);
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "activity-trash";
+        remove.title = "Remove suggested next steps";
+        remove.setAttribute("aria-label", "Remove suggested next steps and keep this email");
+        remove.disabled = busy;
+        remove.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>';
+        remove.addEventListener("click", () => {
+          removedNextSteps.add(suggestion.id);
+          render().catch((error) => feedback(error.message));
+        });
+        const header = document.createElement("div");
+        header.className = "suggested-next-steps-header";
+        header.append(heading, remove);
+        taskSection.append(header);
         const values =
           deadlines.get(suggestion.id) ||
           suggestion.actions.map((action) => action.deadline || "");

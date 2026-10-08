@@ -462,7 +462,7 @@ async function review(id, decision, selection = {}) {
     }
     if (!expectedStatus || !expectedUpdatedAt)
       throw new Error("Reload the dashboard and choose the application again.");
-    const actions = (suggestion.actions || []).map((action, index) => {
+    const actions = (!selection.automatic && selection.skipNextSteps === true ? [] : suggestion.actions || []).map((action, index) => {
       const deadline = selection.actionDeadlines?.[index] ?? action.deadline;
       if (deadline && !EmailActions.validDate(deadline))
         throw new Error("Enter a valid next-step deadline.");

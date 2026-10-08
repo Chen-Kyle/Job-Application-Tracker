@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Remove proposed email next steps
+
+- Request: trash icon at the top right of the suggested next steps box, removing tasks while preserving the email approval.
+- Added an accessible icon button and header layout; removal hides the proposed steps through subsequent UI renders and sends skipNextSteps on manual approval. Background records the email/status without adding its proposed tasks; automatic approvals cannot use this flag.
+- Files: email-ui.js, background.js, themes.css and both logs.
+- Validation: JavaScript syntax, existing Node suite and diff checks. No live browser/Gmail test performed. Unapproved removal choices are session-only and reset on page reload.
+
 ## 2026-10-08 — Status choice for all email approvals
 
 - Request: allow manual status selection for suggestions requiring application selection, preselecting the algorithm recommendation for one-click approval.
