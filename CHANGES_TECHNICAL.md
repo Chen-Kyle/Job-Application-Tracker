@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Restore visible job-link domains
+
+- Request: return to the previous link presentation.
+- Restored hostname suffixes in job details and popup saved-job links, retaining full URL title tooltips and text-based rendering.
+- Files: job-details.js, popup.js, popup.css and both logs.
+- Validation: Node regression suite and diff check; no live browser test performed.
+
 ## 2026-10-08 — Hover-only link address
 
 - Clarification: reveal address when cursor hovers over the link.

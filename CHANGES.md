@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Restored visible destination domains beside job links, keeping full URLs on hover.
+
 - Kept job-link text compact; the full destination address appears only when hovering over the link.
 
 - Job-description links now show their destination domain and reveal the full URL on hover, in job details and the popup.

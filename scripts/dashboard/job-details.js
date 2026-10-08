@@ -382,7 +382,7 @@ globalThis.JobDetails = (() => {
         const destination = new URL(job.url);
         link.href = destination.href;
         link.title = destination.href;
-        link.textContent = "Open job description ↗";
+        link.textContent = `Open job description ↗ · ${destination.hostname}`;
         link.hidden = false;
       }
     } catch {

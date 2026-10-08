@@ -272,6 +272,10 @@ async function renderJobs() {
       const destination = new URL(job.url);
       link.href = destination.href;
       link.title = destination.href;
+      const domain = document.createElement("span");
+      domain.className = "job-link-domain";
+      domain.textContent = ` · ${destination.hostname}`;
+      link.append(domain);
 
     }
     link.target = "_blank";
