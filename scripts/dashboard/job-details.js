@@ -372,12 +372,17 @@ globalThis.JobDetails = (() => {
     const link = el("job-description-link");
     link.hidden = true;
     link.removeAttribute("href");
+    link.removeAttribute("title");
+    link.textContent = "Open job description ↗";
     try {
       if (
         !editSnapshot &&
         ["http:", "https:"].includes(new URL(job.url).protocol)
       ) {
-        link.href = job.url;
+        const destination = new URL(job.url);
+        link.href = destination.href;
+        link.title = destination.href;
+        link.textContent = `Open job description ↗ · ${destination.hostname}`;
         link.hidden = false;
       }
     } catch {

@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Visible job-link destinations
+
+- Request: show destination domains and full address on hover.
+- Job detail description link and popup saved-job links now include the parsed destination hostname, with the full parsed URL in the native title tooltip. Labels rendered as text, only existing HTTP/HTTPS links used; stale tooltip removed when changing jobs. Long domains wrap. This indicates the initial destination, not a redirect target or website trust assessment.
+- Files: job-details.js, popup.js, dashboard.css, popup.css and both logs.
+- Validation: Node regression/path/syntax suite and diff check; no live browser test performed. Native hover tooltip appearance/timing controlled by Chrome.
+
 ## 2026-10-08 — Dismiss filters on outside click
 
 - Request: close open Filters dropdown when clicking elsewhere.

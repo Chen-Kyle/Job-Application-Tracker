@@ -268,7 +268,15 @@ async function renderJobs() {
     const item = document.createElement("li");
     const link = document.createElement("a");
     link.textContent = job.role;
-    if (validUrl(job.url)) link.href = job.url;
+    if (validUrl(job.url)) {
+      const destination = new URL(job.url);
+      link.href = destination.href;
+      link.title = destination.href;
+      const domain = document.createElement("span");
+      domain.className = "job-link-domain";
+      domain.textContent = ` · ${destination.hostname}`;
+      link.append(domain);
+    }
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     const details = document.createElement("div");

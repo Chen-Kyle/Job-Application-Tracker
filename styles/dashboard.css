@@ -166,3 +166,5 @@ footer { margin-top: 20px; }
 .applications-workspace .toolbar { border-radius: 10px 10px 0 0; }
 .applications-workspace .table-wrap { border-radius: 0 0 10px 10px; }
 .dashboard-filter-menu .quick-filters { max-height: min(360px, 60vh); overflow-y: auto; }
+
+#job-description-link { overflow-wrap: anywhere; }

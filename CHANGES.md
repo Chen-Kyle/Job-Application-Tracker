@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Job-description links now show their destination domain and reveal the full URL on hover, in job details and the popup.
+
 - Filters dropdown now closes when clicking outside it.
 
 ## 2026-10-07
