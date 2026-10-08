@@ -504,6 +504,11 @@ async function handle(message) {
       const query = words.map(word => `subject:"${word}"`).join(" ") + " -in:trash -in:spam -in:drafts";
       const job = message.jobId ? (await JobStore.list()).find(item => item.id === message.jobId) : null;
       if (message.jobId && !job) throw new Error("This job no longer exists.");
+      // Pending edit removals determine what is currently attached in the editor.
+      // This changes search filtering only; save still validates the stored job snapshot.
+      const activity = message.draftActivity &&
+        Array.isArray(message.draftActivity.emailActivity) && Array.isArray(message.draftActivity.statusHistory)
+        ? message.draftActivity : job;
       const attached = new Set();
       const remember = event => {
         if (event.activityDeletedAt) return;
@@ -515,11 +520,11 @@ async function handle(message) {
           if (key.startsWith(prefix)) attached.add(key.slice(prefix.length).split(":")[0]);
         }
       };
-      for (const event of job?.emailActivity || []) {
-        const history = job.statusHistory?.find(item => item.eventId === event.id);
+      for (const event of activity?.emailActivity || []) {
+        const history = activity.statusHistory?.find(item => item.eventId === event.id);
         if (!history?.activityDeletedAt) remember(event);
       }
-      for (const event of job?.statusHistory || []) if (event.source === "email") remember(event);
+      for (const event of activity?.statusHistory || []) if (event.source === "email") remember(event);
       const access = await token();
       const found = await gmail(`messages?q=${encodeURIComponent(query)}&maxResults=20`, access);
       found.messages = (found.messages || []).filter(item => !attached.has(item.id));

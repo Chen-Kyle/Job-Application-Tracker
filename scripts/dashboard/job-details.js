@@ -488,7 +488,7 @@ globalThis.JobDetails = (() => {
     el("manual-email-load").disabled = true;
     el("manual-email-message").textContent = "Searching emails…";
     try {
-      const found = await manualRequest("manual-email-search",{subject:el("manual-email-search-subject").value,jobId:job.id});
+      const found = await manualRequest("manual-email-search",{subject:el("manual-email-search-subject").value,jobId:job.id,...(editSnapshot?.id === job.id ? {draftActivity:{emailActivity:editSnapshot.draft.emailActivity || [],statusHistory:editSnapshot.draft.statusHistory || []}} : {})});
       if (selected !== job.id) return;
       for (const preview of found.results) {
         const button = document.createElement("button");

@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Search against pending email edits
+
+- Request: show an email again in manual search when removed in the current unsaved edit session.
+- Send draft email activity/history to manual subject search; exclusion uses current draft visibility rather than persisted records. No stored data is changed by searching; unchanged attached messages remain excluded. Save retains snapshot validation and applies draft deletions before duplicate checking the selected attachment.
+- Files: job-details.js, background.js, manual-email.test.cjs and both logs.
+- Validation: regression test covers unsaved removal/search and retained attached exclusion; full Node suite, syntax and diff checks. No live browser/Gmail test performed.
+
 ## 2026-10-08 — Exclude attached emails from search
 
 - Request: hide already-attached email results while keeping distinct messages sharing a subject.

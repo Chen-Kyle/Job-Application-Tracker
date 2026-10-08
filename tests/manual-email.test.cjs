@@ -83,3 +83,15 @@ test('legacy email status history is excluded from manual search',async()=>{
  const found=await c.handle({action:'manual-email-search',jobId:'job',subject:'Application received'});
  assert.equal(found.results.length,0);
 });
+
+test('search respects unsaved draft email removal without changing stored activity',async()=>{
+ const {data,c}=setup();
+ const event={id:'attached',emailMessage:{account:'test@example.com',messageId:'123456789abc'}};
+ data.jobs[0].emailActivity=[event];
+ const draftActivity={emailActivity:[{...event,activityDeletedAt:'2026-10-08T00:00:00Z'}],statusHistory:[]};
+ const found=await c.handle({action:'manual-email-search',jobId:'job',subject:'Application received',draftActivity});
+ assert.equal(found.results.length,1);
+ assert.equal(data.jobs[0].emailActivity[0].activityDeletedAt,undefined);
+ const unchanged=await c.handle({action:'manual-email-search',jobId:'job',subject:'Application received',draftActivity:{emailActivity:[event],statusHistory:[]}});
+ assert.equal(unchanged.results.length,0);
+});
