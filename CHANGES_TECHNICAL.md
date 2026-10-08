@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Hover-only link address
+
+- Clarification: reveal address when cursor hovers over the link.
+- Removed visible domain suffixes from job detail and popup links; retained full URL in native title tooltip. Removed unused popup domain styling.
+- Files: job-details.js, popup.js, popup.css and both logs.
+- Validation: Node suite and diff check; no live browser test performed. Browser controls native tooltip delay.
+
 ## 2026-10-08 — Visible job-link destinations
 
 - Request: show destination domains and full address on hover.

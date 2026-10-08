@@ -20,5 +20,3 @@ a { color: var(--accent); font-weight: 600; }
 
 #undo-application-deletion { margin: 0 0 16px; }
 #undo-application-deletion[hidden] { display: none; }
-
-.job-link-domain { font-size: 12px; font-weight: normal; overflow-wrap: anywhere; }
