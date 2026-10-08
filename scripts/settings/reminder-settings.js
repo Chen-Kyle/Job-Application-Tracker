@@ -29,7 +29,7 @@ globalThis.ReminderSettings = (() => {
       if (sample() || !extension) localStorage.setItem(sample() ? "jobTrackerSampleReminders" : "jobTrackerReminders", String(value));
       else await chrome.storage.local.set({nextStepReminders:value});
       apply(value);
-      if (message) message.textContent = "Reminder setting saved.";
+      if (message) message.textContent = "";
     } catch {
       apply(before);
       if (message) message.textContent = "Could not save the reminder setting. Please try again.";

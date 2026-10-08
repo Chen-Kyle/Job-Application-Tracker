@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Quiet reminder preference saving
+
+- Request: remove the reminder setting saved message and confirm persistence.
+- Successful saves clear the feedback text instead of announcing confirmation; failure feedback retained. Real reminder settings still persist via chrome.storage.local; sample preferences remain separate in localStorage. Appearance and email preference persistence unchanged.
+- Files: reminder-settings.js and both logs.
+- Validation: reminder settings persistence/sample-isolation regression test and diff check; no live browser test.
+
 ## 2026-10-07 — Explicit pending-step sorting button
 
 - Clarification: prioritize pending jobs only by clicking a button; button appears only with reminders enabled.

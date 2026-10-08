@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Removed the next-step reminder save confirmation; the preference still saves automatically.
+
 - Replaced automatic pending-step prioritization with a “Pending steps first” sorting button, visible only when reminders are enabled.
 
 - Jobs with unfinished next steps now appear first when reminders are enabled; selected sorting applies within each group.
