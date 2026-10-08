@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Added daily application counts to the Analytics chart.
+
 - Added Analytics between Gmail and Google Sheets: weekly/monthly applications, current outcomes and pending/due-soon/overdue next steps.
 
 - Restored visible destination domains beside job links, keeping full URLs on hover.

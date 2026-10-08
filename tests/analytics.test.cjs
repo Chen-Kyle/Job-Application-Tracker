@@ -11,3 +11,10 @@ test('monthly timeline handles year boundaries and history date fallback',()=>{
  const data=context.Analytics.summarize([{status:'Interviewing',statusHistory:[{from:'Saved',to:'Applied',at:'2025-12-31T12:00:00'}]}],'monthly',new Date(2026,0,8));
  assert.equal(data.buckets.length,12);assert.equal(data.buckets[10].count,1);assert.equal(data.missingDates,0);
 });
+
+test('daily buckets count separate local calendar days across a month boundary',()=>{
+ const data=context.Analytics.summarize([{appliedAt:'2026-09-30T12:00:00'},{appliedAt:'2026-10-01T12:00:00'},{appliedAt:'2026-10-02T12:00:00'}],'daily',new Date(2026,9,1,18));
+ assert.equal(data.buckets.length,12);
+ assert.equal(data.buckets[10].count,1);assert.equal(data.buckets[11].count,1);
+ assert.equal(data.buckets.reduce((sum,b)=>sum+b.count,0),2);
+});

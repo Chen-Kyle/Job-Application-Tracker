@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Daily analytics grouping
+
+- Request: add Day option to analytics.
+- Added daily selector option showing 12 local calendar days including today, retaining weekly default and monthly option. Shared bucket calculation handles day/month boundaries and excludes future applications.
+- Files: analytics.js, dashboard.html, analytics.test.cjs and both logs.
+- Validation: Node analytics tests including daily boundary/future-date case; diff check. No live browser test performed.
+
 ## 2026-10-08 — Dashboard analytics
 
 - Request: analytics between emails and Sheets, covering applications over time, outcomes and next steps.

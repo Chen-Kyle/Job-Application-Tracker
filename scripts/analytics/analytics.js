@@ -4,15 +4,15 @@ globalThis.Analytics = (() => {
   function summarize(jobs, period = 'weekly', now = new Date()) {
     const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     if (period === 'monthly') start.setDate(1);
-    else start.setDate(start.getDate() - (start.getDay() + 6) % 7);
+    else if (period === 'weekly') start.setDate(start.getDate() - (start.getDay() + 6) % 7);
     const buckets = [];
     for (let offset = 11; offset >= 0; offset--) {
       const date = new Date(start);
       if (period === 'monthly') date.setMonth(date.getMonth() - offset);
-      else date.setDate(date.getDate() - offset * 7);
+      else date.setDate(date.getDate() - offset * (period === 'daily' ? 1 : 7));
       const end = new Date(date);
       if (period === 'monthly') end.setMonth(end.getMonth() + 1);
-      else end.setDate(end.getDate() + 7);
+      else end.setDate(end.getDate() + (period === 'daily' ? 1 : 7));
       buckets.push({start:date.getTime(),end:end.getTime(),label:date.toLocaleDateString(undefined,{month:'short',...(period==='monthly'?{year:'numeric'}:{day:'numeric'})}),count:0});
     }
     let missingDates = 0;
