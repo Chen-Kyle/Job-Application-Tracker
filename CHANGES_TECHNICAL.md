@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Five-day rescan default
+
+- Request: default rescan to the last 5 days instead of 30.
+- Changed gmail-rescan-days initial value to 5 in dashboard.html. The submitted user value still controls the rescan range; normal email checks retain their existing range.
+- Files: dashboard.html and both logs.
+- Validation: verified rescan UI reads the input value; git diff --check passed. No live browser test performed.
+
 ## 2026-10-08 — Remove dashboard footer instruction
 
 - Request: remove the footer sentence about saving listings and changing statuses.
