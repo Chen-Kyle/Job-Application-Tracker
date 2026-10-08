@@ -13,6 +13,7 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 ## 2026-10-07 — Fix clipped filters menu
 
 - Request: menu cut off at the applications panel bottom; remove Clear filters.
+- Removed a trailing blank line caught by the diff check.
 - Scoped visible overflow to the applications workspace so its dropdown can extend over subsequent sections; retained table horizontal scrolling/rounded edges. Menu has viewport-bounded height with internal scrolling. Removed Clear filters markup and its event binding; clicking an active quick filter still turns it off.
 - Files: dashboard.html, dashboard.js, dashboard.css and both logs.
 - Validation: Node suite/path/syntax checks and diff check. Cause confirmed from workspace overflow:hidden; no live browser test performed.

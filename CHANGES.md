@@ -10,7 +10,7 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
-- Fixed the Filters menu being clipped by short application lists and removed Clear filters.
+- Fixed the Filters menu being clipped by short application lists and removed Clear filters; cleaned up the related script formatting.
 
 - Moved quick filters and Pending steps first into a collapsed Filters icon menu in the dashboard toolbar.
 

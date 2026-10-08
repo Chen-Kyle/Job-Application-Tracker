@@ -397,4 +397,3 @@ for (const button of document.querySelectorAll("[data-quick-filter]")) button.ad
   $("#filter").value = "";
   updateDashboardView();
 });
-
