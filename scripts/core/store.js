@@ -358,6 +358,7 @@ globalThis.JobStore = (() => {
       emailActivity,
       recruiterContacts,
       expectedJob,
+      manualEmail,
     },
     expectedUpdatedAt,
   ) {
@@ -438,16 +439,31 @@ globalThis.JobStore = (() => {
         if (!Array.isArray(nextSteps)) throw new Error("Invalid next steps.");
         job.nextSteps = structuredClone(nextSteps);
       }
+      let attachment;
+      if (manualEmail) {
+        const source = manualEmail.emailMessage;
+        if (!source?.account || !source?.messageId || !Number.isFinite(Date.parse(manualEmail.receivedAt)))
+          throw new Error("Load and select a valid email before saving.");
+        const duplicate = (job.emailActivity || []).some(item => {
+          const history = job.statusHistory.find(event => event.eventId === item.id);
+          return item.emailMessage?.account === source.account && item.emailMessage?.messageId === source.messageId && !item.activityDeletedAt && !history?.activityDeletedAt;
+        });
+        if (duplicate) throw new Error("This email is already attached to this job.");
+        attachment = {...manualEmail,id:`${source.account}:${source.messageId}:manual:${id}:${at}`,approvedAt:at,automatic:false,fromStatus:job.status,toStatus:status || job.status,statusChanged:status !== undefined && status !== job.status,actions:[]};
+        job.emailActivity ||= [];
+        job.emailActivity.push(attachment);
+      }
       if (status !== undefined && status !== job.status) {
         job.statusHistory.push({
           from: job.status,
           to: status,
           at,
-          source: "manual",
-          eventId: null,
+          source: attachment ? "email" : "manual",
+          eventId: attachment?.id || null,
+          ...(attachment ? {emailSubject:attachment.subject,emailMessage:attachment.emailMessage} : {}),
         });
         job.status = status;
-        if (status === "Applied" && !job.appliedAt) job.appliedAt = at;
+        if (status === "Applied" && !job.appliedAt) job.appliedAt = attachment?.receivedAt || at;
       }
       Object.assign(job, {
         role,

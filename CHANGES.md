@@ -11,6 +11,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-08
 
+- Save changes now attaches the selected email together with job edits; click a selected result again to unselect it. Removed the separate Save email button.
+
 - Fixed manual email saves being blocked by prior approvals or deleted activity; duplicates now check the selected job’s visible emails.
 
 - Manual email search now clears its input, results and preview after saving an email.

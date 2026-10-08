@@ -475,7 +475,7 @@ globalThis.JobDetails = (() => {
     el("manual-email-source").href = EmailLinks.message(preview.email,preview.messageId);
     el("manual-email-status").value = preview.suggestedStatus || job.status;
     el("manual-email-preview").hidden = false;
-    el("manual-email-message").textContent = "Review the selected email and choose its status before saving.";
+    el("manual-email-message").textContent = "Review the selected email and choose its status. Save changes will attach it.";
   }
   async function searchManualEmails() {
     if (manualEmailBusy) return;
@@ -503,6 +503,15 @@ globalThis.JobDetails = (() => {
         button.append(subject,sender,snippet);
         button.setAttribute("aria-pressed","false");
         button.addEventListener("click",() => {
+          if (manualEmail?.messageId === preview.messageId) {
+            manualEmail = null;
+            manualEmailJob = null;
+            manualEmailSnapshot = null;
+            button.setAttribute("aria-pressed","false");
+            el("manual-email-preview").hidden = true;
+            el("manual-email-message").textContent = "Email unselected. Save changes will not attach an email.";
+            return;
+          }
           for (const item of el("manual-email-results").children) item.setAttribute("aria-pressed","false");
           button.setAttribute("aria-pressed","true");
           chooseManualEmail(preview,jobs.find(item => item.id === selected) || job);
@@ -519,46 +528,15 @@ globalThis.JobDetails = (() => {
   el("manual-email-search-subject").addEventListener("keydown",event => {
     if (event.key === "Enter") { event.preventDefault(); searchManualEmails(); }
   });
-  el("manual-email-save").addEventListener("click", async () => {
-    if (manualEmailBusy || !manualEmail || selected !== manualEmailJob) return;
-    manualEmailBusy = true;
-    el("manual-email-save").disabled = true;
-    try {
-      await manualRequest("manual-email-save",{jobId:selected,messageId:manualEmail.messageId,status:el("manual-email-status").value,...manualEmailSnapshot});
-      manualEmail = null;
-      manualEmailJob = null;
-      manualEmailSnapshot = null;
-      el("manual-email-search-subject").value = "";
-      el("manual-email-results").replaceChildren();
-      el("manual-email-preview").hidden = true;
-      el("manual-email-subject").textContent = "";
-      el("manual-email-from").textContent = "";
-      el("manual-email-body").textContent = "";
-      el("manual-email-source").removeAttribute("href");
-      el("manual-email-status").selectedIndex = 0;
-      await refresh();
-      // Keep pending edits while rebasing the newly saved email onto the edit snapshot.
-      const latest = jobs.find(item => item.id === selected);
-      if (editSnapshot && latest && editSnapshot.id === latest.id) {
-        const original = editSnapshot.original;
-        for (const key of ["emailActivity", "statusHistory"]) {
-          const known = new Set((original[key] || []).map(item => item.id || item.eventId));
-          editSnapshot.draft[key] ||= [];
-          editSnapshot.draft[key].push(...structuredClone((latest[key] || []).filter(item => !known.has(item.id || item.eventId))));
-        }
-        if (el("edit-job-status").value === original.status) el("edit-job-status").value = latest.status;
-        if (el("edit-job-applied").value === localDate(original.appliedAt)) el("edit-job-applied").value = localDate(latest.appliedAt);
-        editSnapshot.draft.status = latest.status;
-        editSnapshot.draft.updatedAt = latest.updatedAt;
-        editSnapshot.original = structuredClone(latest);
-        editSnapshot.updatedAt = latest.updatedAt || latest.savedAt;
-        draftUndo.length = 0;
-      }
-      await render();
-      el("manual-email-message").textContent = "Email saved to this job. Other edits still need Save changes.";
-    } catch (error) { el("manual-email-message").textContent = error.message; }
-    finally { manualEmailBusy = false; el("manual-email-save").disabled = false; }
-  });
+  function resetManualEmail() {
+    manualEmail = null;
+    manualEmailJob = null;
+    manualEmailSnapshot = null;
+    el("manual-email-search-subject").value = "";
+    el("manual-email-results").replaceChildren();
+    el("manual-email-preview").hidden = true;
+    el("manual-email-message").textContent = "";
+  }
   function open(id) {
     selected = id;
     manualEmail = null;
@@ -707,6 +685,7 @@ globalThis.JobDetails = (() => {
     el("edit-job-role").focus();
   });
   el("job-details-edit-cancel").addEventListener("click", () => {
+    resetManualEmail();
     el("job-details-edit-form").hidden = true;
     editSnapshot = null;
     draftUndo.length = 0;
@@ -722,7 +701,7 @@ globalThis.JobDetails = (() => {
     const role = el("edit-job-role").value.trim(),
       company = el("edit-job-company").value.trim();
     const notes = el("edit-job-notes").value;
-    const status = el("edit-job-status").value;
+    const status = manualEmail && manualEmailJob === snapshot.id ? el("manual-email-status").value : el("edit-job-status").value;
     if (!role) {
       el("job-details-edit-message").textContent = "Enter a role title.";
       return;
@@ -815,7 +794,11 @@ globalThis.JobDetails = (() => {
         if (appliedAt) job.appliedAt = appliedAt;
         else if (status !== "Applied") delete job.appliedAt;
         undoEntry = { before, after: structuredClone(job) };
-      } else
+      } else {
+        const details = {role,company,notes,status,url,savedAt,appliedAt,historyEdits,activityDeletions,nextSteps,emailActivity,recruiterContacts,expectedJob:snapshot.original};
+        if (manualEmail && manualEmailJob === snapshot.id) {
+          undoEntry = await manualRequest("manual-email-edit-save",{jobId:snapshot.id,messageId:manualEmail.messageId,details,expectedUpdatedAt:snapshot.updatedAt});
+        } else
         undoEntry = await JobStore.updateDetails(
           snapshot.id,
           {
@@ -835,6 +818,8 @@ globalThis.JobDetails = (() => {
           },
           snapshot.updatedAt,
         );
+      }
+      resetManualEmail();
       if (undoEntry)
         panelUndo.push({ kind: "snapshot", ...undoEntry, demo: snapshot.demo });
       if (selected === snapshot.id) {

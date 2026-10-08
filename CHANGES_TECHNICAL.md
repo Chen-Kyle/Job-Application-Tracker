@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-08 — Save selected email with job edits
+
+- Request: remove separate Save email button, attach on Save changes, toggle selected search result off when clicked again.
+- Selection remains staged until job form submission; its status selector supplies the final status. Cancel/unselect avoids attachment. Successful saves reset search/results/preview; failed saves retain selection.
+- Added manual-email-edit-save worker route to re-fetch selected message metadata and pass it to updateDetails. Store validates/reconciles edits and attaches email plus optional email status transition in one locked storage write; no partial attachment on stale/invalid edits. Existing job-detail snapshot undo restores both edits and attachment.
+- Files: dashboard.html, job-details.js, background.js, store.js, manual-email.test.cjs and both logs.
+- Validation: 46 Node tests passed, including combined edit/email persistence, undo and failure atomicity; JS syntax and diff checks. No live Gmail/browser test performed.
+
 ## 2026-10-08 — Repair manual attachment duplicate handling
 
 - Request: Save email reports already recorded while target job shows no email activity.

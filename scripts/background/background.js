@@ -516,6 +516,16 @@ async function handle(message) {
       results.sort((a,b) => Date.parse(b.receivedAt)-Date.parse(a.receivedAt));
       return {results,more:Boolean(found.nextPageToken)};
     }
+    case "manual-email-edit-save": {
+      const current = await state();
+      if (!current.connected) throw new Error("Connect Gmail before adding an email.");
+      if (!/^[a-f0-9]{10,32}$/i.test(message.messageId || "")) throw new Error("Select an email first.");
+      const preview = summarize(await gmail(`messages/${message.messageId}?format=full`,await token()));
+      return JobStore.updateDetails(message.jobId,{
+        ...message.details,
+        manualEmail:{subject:preview.subject,from:preview.from,snippet:preview.snippet,receivedAt:preview.receivedAt,emailMessage:{account:current.email,messageId:preview.messageId}},
+      },message.expectedUpdatedAt);
+    }
     case "manual-email-save": {
       const job = (await JobStore.list()).find(item => item.id === message.jobId);
       if (!job) throw new Error("This job no longer exists.");

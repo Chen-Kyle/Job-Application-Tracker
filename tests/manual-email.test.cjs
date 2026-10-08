@@ -49,3 +49,21 @@ test('removed email activity can be reattached as a visible new event',async()=>
  assert.notEqual(added.id,id);
  assert.equal(added.activityDeletedAt,undefined);
 });
+test('Save changes atomically saves job edits and selected email, and undo restores both',async()=>{
+ const {data,c}=setup();
+ const original=structuredClone(data.jobs[0]);
+ const result=await c.handle({action:'manual-email-edit-save',jobId:'job',messageId:'123456789abc',expectedUpdatedAt:original.updatedAt,details:{role:'Updated engineer',company:'Example',status:'Applied',url:'https://example.com/job',savedAt:original.savedAt,expectedJob:original}});
+ assert.equal(data.jobs[0].role,'Updated engineer');
+ assert.equal(data.jobs[0].status,'Applied');
+ assert.equal(data.jobs[0].emailActivity[0].subject,'Application received');
+ assert.equal(data.jobs[0].statusHistory[0].source,'email');
+ await c.JobStore.restoreSnapshot(result);
+ assert.equal(data.jobs[0].role,original.role);
+ assert.equal(data.jobs[0].emailActivity,undefined);
+});
+test('failed combined save does not attach email or alter job',async()=>{
+ const {data,c}=setup();
+ const original=JSON.stringify(data.jobs);
+ await assert.rejects(c.handle({action:'manual-email-edit-save',jobId:'job',messageId:'123456789abc',expectedUpdatedAt:'stale',details:{role:'Engineer',company:'Example',status:'Applied'}}),/changed/);
+ assert.equal(JSON.stringify(data.jobs),original);
+});
