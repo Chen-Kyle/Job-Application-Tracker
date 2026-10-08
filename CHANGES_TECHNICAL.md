@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Collapsible dashboard filter controls
+
+- Request: hide quick filters, Clear filters and Pending steps first under a filter icon button.
+- Moved existing controls into a native details disclosure beside status selector, with filter SVG and visible Filters label. Menu collapsed initially; choices retain their handlers, persisted state and reminder-only pending-sort visibility. Popup styled as distinct theme-aware panel.
+- Files: dashboard.html, styles/dashboard.css and both logs.
+- Validation: Node suite/path checks and diff check. No live browser test performed.
+
 ## 2026-10-07 — Public beta progress and launch checklist
 
 - Request: update progress toward public beta and create the next-action checklist.

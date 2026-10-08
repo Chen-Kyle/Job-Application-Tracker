@@ -10,6 +10,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-07
 
+- Moved quick filters and Pending steps first into a collapsed Filters icon menu in the dashboard toolbar.
+
 - Updated beta readiness in the project log and added a prioritized public beta launch checklist covering testing, privacy, Google authorization and store submission.
 
 - Added Needs action, Upcoming interviews and Awaiting response quick filters; dashboard sorting, search and filters now persist across reloads, separately for sample mode.

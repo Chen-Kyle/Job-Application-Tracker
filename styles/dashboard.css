@@ -152,3 +152,11 @@ footer { margin-top: 20px; }
 .quick-filters button { font-size: 13px; }
 .quick-filters button[aria-pressed="true"] { background: var(--accent); color: white; border-color: var(--accent); }
 .quick-filters button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.dashboard-filter-menu { position: relative; margin: 0; }
+.dashboard-filter-menu > summary { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); cursor: pointer; list-style: none; font-size: 14px; }
+.dashboard-filter-menu > summary::-webkit-details-marker { display: none; }
+.dashboard-filter-menu > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.dashboard-filter-menu[open] > summary { background: var(--hover); }
+.dashboard-filter-menu .quick-filters { position: absolute; top: calc(100% + 8px); right: 0; z-index: 6; display: grid; min-width: 230px; max-width: calc(100vw - 48px); padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgb(0 0 0 / 15%); }
+.dashboard-filter-menu .quick-filters button { text-align: left; }
