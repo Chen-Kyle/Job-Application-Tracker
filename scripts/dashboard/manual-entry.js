@@ -57,7 +57,7 @@
     for (const control of form.elements) control.disabled = true;
     try {
       if (sampleMode) {
-        if (samples.some((item) => item.url === job.url))
+        if (samples.some((item) => JobStore.listingKey(item.url) === JobStore.listingKey(job.url)))
           throw new Error("This job link is already saved.");
         samples.push({
           ...job,

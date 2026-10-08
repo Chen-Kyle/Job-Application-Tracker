@@ -284,7 +284,7 @@ async function renderJobs() {
       try {
         await JobStore.remove(job.id);
         await renderJobs();
-        message.textContent = "Job removed. You can save it again anytime.";
+        message.textContent = "Job removed. Use Undo application deletion to restore it.";
       } catch {
         remove.disabled = false;
         message.textContent = "Could not remove the job. Please try again.";
@@ -346,6 +346,8 @@ async function initialize() {
     role.value = result.result.role;
     company.value = result.result.company;
     url.value = result.result.url;
+    if ((await JobStore.list()).some(job => JobStore.listingKey(job.url) === JobStore.listingKey(url.value)))
+      message.textContent = "This listing is already tracked. Saving it again will not create a duplicate.";
   } catch {
     message.textContent =
       "Page details unavailable. You can enter the job details manually.";

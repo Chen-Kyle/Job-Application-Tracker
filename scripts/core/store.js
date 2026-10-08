@@ -25,7 +25,7 @@ globalThis.JobStore = (() => {
     if (!statuses.includes(status)) throw new Error("Unknown status");
     return locked(async () => {
       const jobs = await list();
-      if (jobs.some((existing) => existing.url === job.url)) return false;
+      if (jobs.some((existing) => listingKey(existing.url) === listingKey(job.url))) return false;
       jobs.push({
         ...job,
         status,
@@ -185,12 +185,47 @@ globalThis.JobStore = (() => {
       } else await chrome.storage.local.set({ jobs });
     });
   }
+  // Strip only known tracking parameters; preserve job-identifying query values.
+  function listingKey(value) {
+    try {
+      const url = new URL(value);
+      url.hash = "";
+      for (const key of [...url.searchParams.keys()])
+        if (/^(utm_.+|gh_src|source|src|ref|referrer|trackingId|trk|mc_cid|mc_eid)$/i.test(key)) url.searchParams.delete(key);
+      url.searchParams.sort();
+      url.pathname = url.pathname.replace(/\/$/, "") || "/";
+      return url.href;
+    } catch { return value; }
+  }
   async function remove(id) {
     return locked(async () => {
       const jobs = await list();
+      const job = jobs.find(item => item.id === id);
+      if (!job) return;
+      const { applicationDeletionUndo = [] } = await chrome.storage.local.get("applicationDeletionUndo");
       await chrome.storage.local.set({
-        jobs: jobs.filter((job) => job.id !== id),
+        jobs: jobs.filter(item => item.id !== id),
+        applicationDeletionUndo: [...applicationDeletionUndo, structuredClone(job)].slice(-20),
       });
+    });
+  }
+  async function deletionUndoCount() {
+    const {applicationDeletionUndo = []} = await chrome.storage.local.get("applicationDeletionUndo");
+    const jobs = await list();
+    return applicationDeletionUndo.filter(job => !jobs.some(item => item.id === job.id || listingKey(item.url) === listingKey(job.url))).length;
+  }
+  async function undoApplicationDeletion() {
+    return locked(async () => {
+      const jobs = await list();
+      const {applicationDeletionUndo = []} = await chrome.storage.local.get("applicationDeletionUndo");
+      while (applicationDeletionUndo.length) {
+        const job = applicationDeletionUndo.pop();
+        if (jobs.some(item => item.id === job.id || listingKey(item.url) === listingKey(job.url))) continue;
+        await chrome.storage.local.set({jobs:[...jobs,job],applicationDeletionUndo});
+        return job;
+      }
+      await chrome.storage.local.set({applicationDeletionUndo});
+      return null;
     });
   }
   async function dismissEmail(id) {
@@ -467,6 +502,9 @@ globalThis.JobStore = (() => {
     add,
     updateStatus,
     remove,
+    listingKey,
+    deletionUndoCount,
+    undoApplicationDeletion,
     dismissEmail,
     undoEmailApproval,
     emailUndoCount,

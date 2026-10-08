@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-07 — Application deletion undo and duplicate detection
+
+- Request: recover accidentally deleted applications and warn about already tracked listings.
+- Store deletion now atomically retains up to 20 full application snapshots in local storage. Dashboard/popup Undo application deletion button restores the newest recoverable record, including history, notes, next steps, email activity and recruiter conversations. Sample deletion uses an isolated in-memory stack. Undo skips entries conflicting with a newly saved ID/link; recovery survives reload for real data and remains excluded from backups.
+- Shared listingKey strips fragments, trailing slash and common tracking parameters, sorts query parameters, preserves identifying query values. Store/popup/manual-entry sample checks prevent duplicate saves. Popup warns on opening a tracked listing and existing submit warnings remain. Matching is URL-based; distinct platform URLs for the same role are not assumed duplicates.
+- Files: store.js, deletion-undo.js, dashboard.js, manual-entry.js, popup.js, dashboard/popup HTML and CSS, application-recovery.test.cjs and both logs.
+- Validation: Node suite covers full snapshot round-trip across reload, tracking variants, distinct IDs and resave conflicts; diff checks. No live browser test performed. Recovery uses an explicit button; application deletion does not intercept native text undo.
+
 ## 2026-10-07 — Restore reminder save confirmation
 
 - Request: add back the saved message for next-step reminders.

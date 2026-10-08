@@ -292,7 +292,7 @@ function render() {
         return;
       deleteButton.disabled = true;
       try {
-        if (demo) samples = samples.filter((item) => item.id !== job.id);
+        if (demo) { ApplicationDeletionUI.removed(job); samples = samples.filter((item) => item.id !== job.id); }
         else await JobStore.remove(job.id);
         await refresh();
         $("#message").textContent =
