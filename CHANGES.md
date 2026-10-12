@@ -12,6 +12,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-12
 
+- Added five real sample-dashboard screenshots and an illustrated quick-start PDF with short explanations.
+
 - Added a short quick-start guide for using the installed extension.
 
 ## 2026-10-08

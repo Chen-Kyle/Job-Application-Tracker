@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-12 — Actual screenshots for usage guide
+
+- Request: real screenshots of using the extension and explanations.
+- Captured dashboard, job details, edit mode, email suggestions and analytics by opening dashboard.html?sample=1 in isolated headless Chrome and interacting through Chrome DevTools Protocol. No image generation or fabricated interface screenshots used.
+- Added PNG assets in docs/images/quick-start, expanded docs/QUICK_START.md with captions, and created root job-tracker-quick-start-guide.pdf. Screenshots clearly labeled actual sample UI with fictional jobs/emails; no live Gmail lookup or installed-extension popup capture claimed.
+- Validation: browser showed six sample jobs; all five captures completed. Inspected edit/email screenshots and checked Markdown asset links and git diff whitespace. No application code changed.
+- Files: five PNGs, quick-start Markdown/PDF and both logs.
+
 ## 2026-10-12 — Sample usage quick-start guide
 
 - Request: an easy-to-understand sample guide for using the actual extension.

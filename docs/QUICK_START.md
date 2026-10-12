@@ -41,3 +41,37 @@ Turn on **Next-step reminders** in Settings to highlight pending tasks. **Pendin
 Download a **JSON backup** from the dashboard to preserve your jobs and settings. Google Sheets export creates a separate spreadsheet snapshot.
 
 Need help or found a bug? Email **kylechenapps@gmail.com**.
+
+## See it in action
+
+These are actual browser captures of the extension’s sample dashboard, using fictional jobs and emails. Gmail search requires a connected account and is not demonstrated here.
+
+### Your dashboard
+
+![Dashboard with sample applications](images/quick-start/dashboard.png)
+
+Each row is a job. Change its status as you make progress, search for a role or company, or use Filters to narrow the list. Click the role to see its details.
+
+### Job details
+
+![Details for a sample job](images/quick-start/job-details.png)
+
+See the job’s next steps, dates, recruiter conversations and email history together. Use the pencil icon to edit the job.
+
+### Edit a job
+
+![Job editing screen](images/quick-start/edit-job.png)
+
+Edit the role or company and scroll down for notes, dates and email activity. Click Save changes when finished; Cancel discards pending edits.
+
+### Review an email
+
+![Sample email suggestions](images/quick-start/email-review.png)
+
+The first sample suggests changing Juniper Labs from Saved to Applied. The dropdown starts at Applied: approve it if correct, choose another status, or dismiss the email.
+
+### Check your progress
+
+![Analytics with sample application counts](images/quick-start/analytics.png)
+
+Analytics shows applications over time, current outcomes and unfinished next steps. Choose Day, Week or Month to change the chart grouping.
