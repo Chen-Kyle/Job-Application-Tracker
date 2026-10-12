@@ -2,6 +2,16 @@
 
 Already installed? Here’s how to use it.
 
+## Contents
+
+- [Save a job](#1-save-a-job)
+- [Open your dashboard](#2-open-your-dashboard)
+- [Track your progress](#3-track-your-progress)
+- [Review email updates](#4-review-email-updates-optional)
+- [Find what needs attention](#5-find-what-needs-attention)
+- [Keep a copy](#keep-a-copy)
+- [Screenshots and explanations](#see-it-in-action)
+
 ## 1. Save a job
 
 Open a job listing in Chrome. Click the puzzle-piece icon beside the address bar, then **Job Application Tracker**.

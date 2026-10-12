@@ -12,6 +12,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-12
 
+- Added a clickable contents page and illustrated save-your-first-job instructions to the quick-start PDF.
+
 - Added five real sample-dashboard screenshots and an illustrated quick-start PDF with short explanations.
 
 - Added a short quick-start guide for using the installed extension.

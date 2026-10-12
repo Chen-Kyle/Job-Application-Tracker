@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-12 — Quick-start contents and first job
+
+- Request: add table of contents and explain how to save a job initially.
+- Expanded usage PDF to seven pages with six internal section links, back-to-contents links and an opening save-job walkthrough using the prior annotated extension-menu image. Covers opening a listing, extension menu, checking/correcting fields, Save job, Open dashboard and bookmarking; distinguishes saving from applying. Added Markdown contents links.
+- Files: quick-start PDF, docs/QUICK_START.md and both logs.
+- Validation: regenerated PDF with seven-page count and internal destination references; checked page-fit assertion for new save-job page and diff whitespace. No new UI captures or browser tests performed.
+
 ## 2026-10-12 — Actual screenshots for usage guide
 
 - Request: real screenshots of using the extension and explanations.
