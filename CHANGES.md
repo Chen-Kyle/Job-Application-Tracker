@@ -4,10 +4,15 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## Table of contents
 
+- [2026-10-12](#2026-10-12)
 - [2026-10-08](#2026-10-08)
 - [2026-10-07](#2026-10-07)
 - [2026-10-06](#2026-10-06)
 - [Progress through 2026-10-06](#progress-through-2026-10-06)
+
+## 2026-10-12
+
+- Added a short quick-start guide for using the installed extension.
 
 ## 2026-10-08
 

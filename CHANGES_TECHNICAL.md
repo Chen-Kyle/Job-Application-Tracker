@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-12 — Sample usage quick-start guide
+
+- Request: an easy-to-understand sample guide for using the actual extension.
+- Added docs/QUICK_START.md covering saving listings, opening/bookmarking the dashboard, tracking status, editing details, reviewing/manual email attachment, filters/reminders and backups. Includes a short example and explains that saving a listing does not submit an application.
+- Files: docs/QUICK_START.md and both logs; short-log date TOC updated.
+- Validation: reviewed wording against README and existing implemented workflows; git diff --check. No code changes or browser testing.
+
 ## 2026-10-08 — GitHub ZIP update guide
 
 - Request: create an update guide using the existing installation screenshots.
