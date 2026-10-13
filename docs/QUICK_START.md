@@ -54,8 +54,6 @@ Need help or found a bug? Email **kylechenapps@gmail.com**.
 
 ## See it in action
 
-These are actual browser captures of the extension’s sample dashboard, using fictional jobs and emails. Gmail search requires a connected account and is not demonstrated here.
-
 ### Your dashboard
 
 ![Dashboard with sample applications](images/quick-start/dashboard.png)

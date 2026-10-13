@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-12 — Remove screenshot explanation blocks
+
+- Request: remove About these screenshots sections throughout the guide.
+- Removed repeated screenshot explanation blocks and the contents-page About the pictures block from the PDF, plus the equivalent introductory screenshot note in Markdown. Retained instructional captions and section links.
+- Files: quick-start PDF, docs/QUICK_START.md and both logs.
+- Validation: regenerated PDF and checked diff whitespace; no application code changed.
+
 ## 2026-10-12 — Quick-start contents and first job
 
 - Request: add table of contents and explain how to save a job initially.
