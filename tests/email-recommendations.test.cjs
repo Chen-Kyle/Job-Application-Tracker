@@ -23,3 +23,24 @@ test("real confirmations and interviews survive recommendation footers", () => {
 test("ordinary recruiter activity remains eligible", () => {
   assert.ok(context.EmailMatcher.analyze(message("An update on your application at Example."), [job]));
 });
+test("new job matches and preference-based recommendations are excluded", () => {
+  for (const text of [
+    "Handshake New job match. Software Engineer at Example. Recently posted",
+    "A new role at Example matches your preferences. Software Engineer. Internship",
+    "A new position at Example matches your preferences. Software Engineer",
+    "New job matches: Software Engineer at Example",
+  ]) {
+    for (const email of [message(text), { ...message(""), bodyText: text }, { ...message(""), subject: text }]) {
+      assert.equal(context.EmailMatcher.analyze(email, [job]), null, text);
+      assert.equal(context.EmailMatcher.match(email, [job]), null, text);
+    }
+  }
+});
+test("application updates survive new job match footers", () => {
+  for (const [text, status] of [
+    ["Thanks for applying. New job match: a role at Example matches your preferences", "Applied"],
+    ["Interview invitation. A new role at Example matches your preferences", "Interviewing"],
+  ]) {
+    assert.equal(context.EmailMatcher.analyze(message(text), [job]).status, status);
+  }
+});

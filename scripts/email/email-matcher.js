@@ -130,7 +130,7 @@ globalThis.EmailMatcher = (() => {
   // Explicit confirmations still qualify when a footer also advertises jobs.
   function isRecommendation(message) {
     const content = `${message.subject || ""} ${message.bodyText || message.snippet || ""}`;
-    const recommendation = /\b(?:jobs? (?:that match your profile|recommended for you|you may (?:like|be interested in))|recommended jobs?|job recommendations?|job alerts?|new jobs? (?:for you|matching)|based on your (?:profile|title and location))\b/i.test(content);
+    const recommendation = /\b(?:jobs? (?:that match your profile|recommended for you|you may (?:like|be interested in))|recommended jobs?|job recommendations?|job alerts?|new jobs? (?:for you|matching|match(?:es)?)|(?:role|job|position)\b[^.!?\r\n]{0,200}\bmatches your preferences|based on your (?:profile|title and location))\b/i.test(content);
     return recommendation && !classify(content);
   }
   function analyzeStatus(message, jobs) {

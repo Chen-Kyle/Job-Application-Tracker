@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-18 — Exclude additional job recommendation templates
+
+- Request: exclude job recommendations mistakenly suggested as application activity.
+- `scripts/email/email-matcher.js`: expand recommendation detection to new-job-match wording and role/job/position descriptions that match recipient preferences. Preserve explicit status confirmations through the existing classification exception; no sender-specific blocklist.
+- `tests/email-recommendations.test.cjs`: use fictional examples to cover snippets, full bodies, subjects, singular/plural match notifications, and genuine confirmations/interviews with recommendation footers. No personal email contents recorded.
+- `CHANGES.md`: add matching summary and dated contents link.
+- Validation: reproduced the preference-template false positive before the fix; all 51 Node tests pass afterward, including script parsing and asset/path checks. Web-guidance search returned no applicable text-classification guide. Diff whitespace checked before commit.
+- Limits: no authenticated browser/Gmail test performed. Existing queued suggestions are not retroactively removed and can be dismissed. Rule-based filtering may need additional wording coverage in future.
+
 ## 2026-10-12 — Remove screenshot explanation blocks
 
 - Request: remove About these screenshots sections throughout the guide.
