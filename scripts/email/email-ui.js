@@ -343,9 +343,7 @@ globalThis.EmailUI = (() => {
             reason: "Fictional sample email. Try approving, dismissing, undoing, or choosing a different status." }] : [];
         });
     } else {
-      suggestions = (data.emailSuggestions || []).filter(
-        (item) => item.review === "pending",
-      );
+      suggestions = EmailMatcher.pendingSuggestions(data.emailSuggestions || []);
       currentJobs = (data.jobs || []).map((job) => ({
         ...job,
         status: job.status || "Saved",

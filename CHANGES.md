@@ -4,12 +4,17 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## Table of contents
 
+- [2026-10-19](#2026-10-19)
 - [2026-10-18](#2026-10-18)
 - [2026-10-12](#2026-10-12)
 - [2026-10-08](#2026-10-08)
 - [2026-10-07](#2026-10-07)
 - [2026-10-06](#2026-10-06)
 - [Progress through 2026-10-06](#progress-through-2026-10-06)
+
+## 2026-10-19
+
+- Hide old recommendation/task notifications from pending email review and exclude general career promotions from new suggestions.
 
 ## 2026-10-18
 

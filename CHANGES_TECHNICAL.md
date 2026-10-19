@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-19 — Recheck saved suggestions and exclude career promotions
+
+- Request: prevent previously saved automated notifications and general career promotions from appearing as application suggestions.
+- `scripts/email/email-matcher.js`: add career-promotion wording to recommendation exclusions while retaining explicit status-update exceptions. Add shared pendingSuggestions filtering to recheck stored previews against current exclusions.
+- `dashboard.html`, `scripts/email/email-ui.js`: load the shared matcher before email UI and use it for pending cards/counts, including suggestions saved before filter changes. Stored records, prior approvals and undo history remain intact; no migration or mailbox changes.
+- `tests/email-recommendations.test.cjs`, `tests/project-paths.test.cjs`: fictional marketing and genuine-update cases, persisted queue filtering/nonmutation, and matcher dependency ordering.
+- Updated both logs and dated contents link. Validation: all 55 Node tests pass, including script syntax and local assets/imports; reviewed diff and whitespace. Required web-guidance search returned no applicable filtering guide.
+- Limits: no live browser/Gmail test performed. Existing dashboards must be refreshed after extension reload. Filtering uses stored previews, so wording outside retained snippets may need additional coverage. Already approved activity is not retroactively removed. No personal email contents recorded.
+
 ## 2026-10-18 — Exclude ChatGPT task notifications
 
 - Request: prevent automated task-result emails from being detected as application activity.

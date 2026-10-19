@@ -135,7 +135,8 @@ globalThis.EmailMatcher = (() => {
     const address = (from.match(/<([^<>]+)>\s*$/)?.[1] || from).trim().toLowerCase();
     if (address === "noreply@tm.openai.com") return true;
     const content = `${message.subject || ""} ${message.bodyText || message.snippet || ""}`;
-    const recommendation = /\b(?:jobs? (?:that match your profile|recommended for you|you may (?:like|be interested in))|recommended jobs?|job recommendations?|job alerts?|new jobs? (?:for you|matching|match(?:es)?)|(?:role|job|position)\b[^.!?\r\n]{0,200}\bmatches your preferences|based on your (?:profile|title and location))\b/i.test(content);
+    const marketing = /\b(?:your next big career opportunity awaits|ready to take your career to the next level|find where you belong|explore (?:our )?career opportunities|join our talent community)\b/i.test(content);
+    const recommendation = marketing || /\b(?:jobs? (?:that match your profile|recommended for you|you may (?:like|be interested in))|recommended jobs?|job recommendations?|job alerts?|new jobs? (?:for you|matching|match(?:es)?)|(?:role|job|position)\b[^.!?\r\n]{0,200}\bmatches your preferences|based on your (?:profile|title and location))\b/i.test(content);
     return recommendation && !classify(content);
   }
   function analyzeStatus(message, jobs) {
@@ -282,5 +283,12 @@ globalThis.EmailMatcher = (() => {
   function searchTerms(jobs) {
     return [...new Set(jobs.flatMap(companyNames))];
   }
-  return { match, analyze, classify, relevantCompany, searchTerms };
+  // Recheck persisted suggestions: they may predate the current exclusion rules.
+  // Preserve their stored review/undo history; only filter what awaits review.
+  function pendingSuggestions(suggestions = []) {
+    return suggestions.filter(
+      (item) => item.review === "pending" && !isRecommendation(item),
+    );
+  }
+  return { match, analyze, classify, relevantCompany, searchTerms, pendingSuggestions };
 })();

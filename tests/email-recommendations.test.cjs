@@ -59,3 +59,30 @@ test("task wording and similar sender names do not block employer updates", () =
     assert.equal(context.EmailMatcher.analyze(email, [job]).status, "Applied");
   }
 });
+test("career promotions are excluded without blocking employer application updates", () => {
+  for (const text of [
+    "Your next big career opportunity awaits at Example",
+    "Ready to take your career to the next level with Example? Find where you belong: Engineering, Finance, Marketing",
+    "Explore our career opportunities at Example. Software Engineer",
+    "Join our talent community at Example. Software Engineer",
+  ]) {
+    const email = { ...message(text), from: "Talent <talent@careers.example.com>" };
+    assert.equal(context.EmailMatcher.analyze(email, [job]), null);
+    assert.equal(context.EmailMatcher.match(email, [job]), null);
+    const realUpdate = { ...email, snippet: `Thanks for applying. ${text}` };
+    assert.equal(context.EmailMatcher.analyze(realUpdate, [job]).status, "Applied");
+  }
+});
+test("persisted pending suggestions are rechecked without changing review history", () => {
+  const queue = [
+    { ...message("New match: Software Engineer at Example"), from: "ChatGPT <noreply@tm.openai.com>", id: "task", review: "pending" },
+    { ...message("Your next big career opportunity awaits at Example"), id: "promotion", review: "pending", needsSelection: true },
+    { ...message("An update on your application at Example"), id: "recruiter", review: "pending" },
+    { ...message("Interview invitation"), id: "interview", review: "pending" },
+    { ...message("Your next big career opportunity awaits at Example"), id: "old-approved", review: "approved" },
+    { ...message("Thanks for applying"), id: "dismissed", review: "dismissed" },
+  ];
+  const before = JSON.stringify(queue);
+  assert.deepEqual(Array.from(context.EmailMatcher.pendingSuggestions(queue), item => item.id), ["recruiter", "interview"]);
+  assert.equal(JSON.stringify(queue), before);
+});
