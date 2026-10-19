@@ -17,15 +17,28 @@ function extractJob() {
     if (types.includes("JobPosting")) postings.push(value);
     Object.values(value).forEach(visit);
   }
-  for (const script of document.querySelectorAll(
-    'script[type="application/ld+json"]',
-  )) {
-    try {
-      visit(JSON.parse(script.textContent));
-    } catch {
-      /* Ignore malformed metadata. */
+  const visitedDocuments = new Set();
+  function readPostings(page, depth = 0) {
+    if (!page || visitedDocuments.has(page) || depth > 3) return;
+    visitedDocuments.add(page);
+    for (const script of page.querySelectorAll('script[type="application/ld+json"]')) {
+      try {
+        visit(JSON.parse(script.textContent));
+      } catch {
+        /* Ignore malformed metadata. */
+      }
+    }
+    // iCIMS and other careers portals can wrap their JobPosting in a frame.
+    // Only inspect documents the browser already permits us to access.
+    for (const frame of page.querySelectorAll("iframe")) {
+      try {
+        readPostings(frame.contentDocument, depth + 1);
+      } catch {
+        /* Cross-origin or unavailable frames must not break top-page capture. */
+      }
     }
   }
+  readPostings(document);
   const job = postings[0];
   const clean = (value) => (typeof value === "string" ? value.trim() : "");
   if (/(^|\.)joinhandshake\.com$/i.test(location.hostname)) {

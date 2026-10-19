@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-19 — Embedded iCIMS job metadata
+
+- Request: fix missing employer autofill on an iCIMS listing using a general approach.
+- Root cause: the outer careers wrapper has no JobPosting; the same-origin embedded job document contains the structured employer and role.
+- `scripts/popup/popup.js`: read JobPosting metadata from accessible iframe documents as well as the top page. Preserve top-page posting priority, guard unavailable/cross-origin documents, deduplicate documents and cap traversal depth. No additional permissions, network calls or employer-specific rules.
+- `tests/job-extraction.test.cjs`: cover embedded/nested postings, blocked/unloaded frames, top-level priority and cyclic documents. Both logs updated; existing contents link retained.
+- Validation: downloaded the public wrapper and embedded HTML; actual extraction function against downloaded frame JSON-LD in a mocked DOM returns BerryDunn and the correct internship title. All 61 Node tests pass; reviewed diff and whitespace. Required guidance search returned no applicable metadata extraction guide.
+- Limits: no live Chrome popup test performed. Frames must already be loaded and accessible under same-origin rules; cross-origin frames remain unsupported. Existing records are not retroactively edited.
+
 ## 2026-10-19 — Greenhouse employer extraction fallback
 
 - Request: fix missing company capture on Greenhouse with a general solution rather than an employer-specific exception.

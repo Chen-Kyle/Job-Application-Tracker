@@ -5,7 +5,7 @@ const path = require("node:path");
 const vm = require("node:vm");
 const source = fs.readFileSync(path.join(__dirname, "../scripts/popup/popup.js"), "utf8");
 const extraction = source.slice(source.indexOf("function extractJob()"), source.indexOf("function validUrl("));
-function extract({ title, ogTitle = "", hostname = "job-boards.greenhouse.io", employer = "", siteName = "Greenhouse" }) {
+function extract({ title, ogTitle = "", hostname = "job-boards.greenhouse.io", employer = "", siteName = "Greenhouse", frames = [] }) {
   const role = "Software Engineering Intern";
   const context = vm.createContext({
     URL,
@@ -14,6 +14,7 @@ function extract({ title, ogTitle = "", hostname = "job-boards.greenhouse.io", e
       title,
       body: { innerText: "" },
       querySelectorAll(selector) {
+        if (selector === "iframe") return frames;
         return selector === 'script[type="application/ld+json"]' && employer
           ? [{ textContent: JSON.stringify({ "@type": "JobPosting", title: role, hiringOrganization: { name: employer } }) }]
           : [];
@@ -46,4 +47,27 @@ test("title sources are checked independently and structured employer data still
 test("missing employer stays blank instead of guessing from a Greenhouse slug", () => {
   assert.equal(extract({ title: "Intern", ogTitle: "Intern" }).company, "");
   assert.equal(extract({ title: "Job Application for Intern at Greenhouse" }).company, "");
+});
+function jobFrame(employer, role = "Consulting Internship", frames = []) {
+  return { contentDocument: { querySelectorAll(selector) {
+    if (selector === "iframe") return frames;
+    return [{ textContent: JSON.stringify({ "@type": "JobPosting", title: role, hiringOrganization: { name: employer } }) }];
+  } } };
+}
+test("iCIMS wrapper reads employer and role from embedded structured job data", () => {
+  const job = extract({ hostname: "careers-example.icims.com", title: "Example Careers", frames: [jobFrame("Example Consulting")] });
+  assert.equal(job.company, "Example Consulting");
+  assert.equal(job.role, "Consulting Internship");
+  assert.equal(job.url, "https://careers-example.icims.com/example/jobs/123456");
+});
+test("unavailable and cross-origin frames do not prevent accessible frame extraction", () => {
+  const blocked = { get contentDocument() { throw new Error("SecurityError"); } };
+  assert.equal(extract({ title: "Careers", frames: [blocked, { contentDocument: null }, jobFrame("Example Labs")] }).company, "Example Labs");
+  assert.equal(extract({ title: "Careers", employer: "Top Employer", frames: [jobFrame("Frame Employer")] }).company, "Top Employer");
+});
+test("frame traversal supports nested documents and stops cycles", () => {
+  const nested = { contentDocument: { querySelectorAll: selector => selector === "iframe" ? [jobFrame("Nested Employer")] : [] } };
+  assert.equal(extract({ title: "Careers", frames: [nested] }).company, "Nested Employer");
+  const cycle = { contentDocument: { querySelectorAll: selector => selector === "iframe" ? [cycle] : [] } };
+  assert.equal(extract({ title: "Careers", siteName: "", frames: [cycle] }).company, "");
 });

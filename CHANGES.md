@@ -14,6 +14,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-19
 
+- Added company and role capture from accessible embedded job frames, including iCIMS career-page wrappers.
+
 - Fixed company capture on Greenhouse listings whose social title omits the employer; now checks the browser title too.
 
 - Hide old recommendation/task notifications from pending email review and exclude general career promotions from new suggestions.
