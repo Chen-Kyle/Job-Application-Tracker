@@ -44,3 +44,18 @@ test("application updates survive new job match footers", () => {
     assert.equal(context.EmailMatcher.analyze(message(text), [job]).status, status);
   }
 });
+test("ChatGPT task notifications are excluded even when they quote application wording", () => {
+  for (const from of ["ChatGPT <noreply@tm.openai.com>", "noreply@tm.openai.com", "ChatGPT <NOREPLY@TM.OPENAI.COM>"]) {
+    for (const text of ["New match: Example — Software Engineer. Employer posting and application", "Thanks for applying to Software Engineer at Example"]) {
+      const email = { ...message(text), from, subject: "[Task Update] Internship search results" };
+      assert.equal(context.EmailMatcher.analyze(email, [job]), null);
+      assert.equal(context.EmailMatcher.match(email, [job]), null);
+    }
+  }
+});
+test("task wording and similar sender names do not block employer updates", () => {
+  for (const from of ["ChatGPT <recruiter@example.com>", "noreply@tm.openai.com.example.com", "Recruiter <jobs@example.com>"]) {
+    const email = { ...message("Thanks for applying to Software Engineer at Example"), from, subject: "[Task Update] Application received" };
+    assert.equal(context.EmailMatcher.analyze(email, [job]).status, "Applied");
+  }
+});

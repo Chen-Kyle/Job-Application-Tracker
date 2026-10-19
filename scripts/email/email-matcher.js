@@ -129,6 +129,11 @@ globalThis.EmailMatcher = (() => {
   // Recommendation wording alone is not evidence of an application update.
   // Explicit confirmations still qualify when a footer also advertises jobs.
   function isRecommendation(message) {
+    // Automated ChatGPT notifications describe task results, not employer activity.
+    // Check the actual address, not the display name or a substring of the domain.
+    const from = String(message.from || "").trim();
+    const address = (from.match(/<([^<>]+)>\s*$/)?.[1] || from).trim().toLowerCase();
+    if (address === "noreply@tm.openai.com") return true;
     const content = `${message.subject || ""} ${message.bodyText || message.snippet || ""}`;
     const recommendation = /\b(?:jobs? (?:that match your profile|recommended for you|you may (?:like|be interested in))|recommended jobs?|job recommendations?|job alerts?|new jobs? (?:for you|matching|match(?:es)?)|(?:role|job|position)\b[^.!?\r\n]{0,200}\bmatches your preferences|based on your (?:profile|title and location))\b/i.test(content);
     return recommendation && !classify(content);

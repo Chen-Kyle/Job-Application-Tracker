@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-18 — Exclude ChatGPT task notifications
+
+- Request: prevent automated task-result emails from being detected as application activity.
+- `scripts/email/email-matcher.js`: exclude the exact automated ChatGPT notification sender before status classification, including when notifications quote application-confirmation wording. Normalize address case and support display-name and bare-address formats. Do not block employer mail based on display names or task-related subject wording.
+- `tests/email-recommendations.test.cjs`: fictional regression cases cover sender formats, quoted confirmations, and similarly named senders that remain eligible.
+- Updated both change logs; the existing date contents link remains valid.
+- Validation: all 53 Node tests pass, including parsing/path checks; diff whitespace checked. No authenticated browser/Gmail testing performed.
+- Limits: existing queued suggestions require dismissal; sender exclusion applies to automatic matching, not manual email attachment. No personal email contents recorded.
+
 ## 2026-10-18 — Exclude additional job recommendation templates
 
 - Request: exclude job recommendations mistakenly suggested as application activity.

@@ -13,6 +13,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-18
 
+- Exclude automated ChatGPT task notifications from application email suggestions.
+
 - Exclude new-job-match and preference-based job recommendations from application email suggestions, while preserving genuine application updates.
 
 ## 2026-10-12
