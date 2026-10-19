@@ -216,18 +216,17 @@ function extractJob() {
     return "";
   }
   function companyFromPageTitle() {
-    const title =
-      clean(document.querySelector('meta[property="og:title"]')?.content) ||
-      clean(document.title);
-    const name = title
-      .match(/^Job Application for .+ at (.{2,120})$/i)?.[1]
-      ?.trim();
-    return name &&
-      !/^(?:greenhouse|dayforce|handshake|workday)(?:\s+(?:jobs|hcm))?$/i.test(
-        name,
-      )
-      ? name
-      : "";
+    // Greenhouse social titles can contain only the role even when the browser
+    // title names the employer. A nonempty social title must not block fallback.
+    for (const title of [
+      clean(document.querySelector('meta[property="og:title"]')?.content),
+      clean(document.title),
+    ]) {
+      const name = title.match(/^Job Application for .+ at (.{2,120})$/i)?.[1]?.trim();
+      if (name && !/^(?:greenhouse|dayforce|handshake|workday)(?:\s+(?:jobs|hcm))?$/i.test(name))
+        return name;
+    }
+    return "";
   }
   const siteName = clean(
     document.querySelector('meta[property="og:site_name"]')?.content,
@@ -239,8 +238,8 @@ function extractJob() {
       document.title,
     company:
       clean(job?.hiringOrganization?.name) ||
-      companyFromAboutSection() ||
       companyFromPageTitle() ||
+      companyFromAboutSection() ||
       (/^(?:dayforce|greenhouse|handshake|workday)(?:\s+(?:jobs|hcm))*$/i.test(
         siteName,
       )

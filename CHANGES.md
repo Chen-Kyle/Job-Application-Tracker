@@ -14,6 +14,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-19
 
+- Fixed company capture on Greenhouse listings whose social title omits the employer; now checks the browser title too.
+
 - Hide old recommendation/task notifications from pending email review and exclude general career promotions from new suggestions.
 
 ## 2026-10-18

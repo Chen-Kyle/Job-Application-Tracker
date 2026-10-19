@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-19 — Greenhouse employer extraction fallback
+
+- Request: fix missing company capture on Greenhouse with a general solution rather than an employer-specific exception.
+- Root cause: a role-only og:title prevented checking document.title, which included the employer in the standard Job Application for … at … format.
+- `scripts/popup/popup.js`: independently check both title sources; prioritize explicit title employer evidence over heuristic company-introduction parsing while keeping structured hiringOrganization data first. No permissions or network calls added to capture.
+- `tests/job-extraction.test.cjs`: regression cases for modern/legacy/EU Greenhouse hosts, multiple company names, independent title sources, structured-data priority, and safe blank fallback. Both logs updated; existing dated contents link retained.
+- Validation: regression reproduced before fix; all 58 Node tests pass afterward. Downloaded public listing HTML and ran the actual extraction function against its title/metadata in a mocked DOM, confirming Muon Space and the correct role/link. Diff whitespace checked. Required guidance search found no applicable extraction guide.
+- Limits: no live Chrome popup test performed. Custom templates without supported employer metadata may still require manual correction; company names are not guessed from URL slugs. Existing saved records are not retroactively changed.
+
 ## 2026-10-19 — Recheck saved suggestions and exclude career promotions
 
 - Request: prevent previously saved automated notifications and general career promotions from appearing as application suggestions.
