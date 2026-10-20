@@ -23,6 +23,26 @@ test("real confirmations and interviews survive recommendation footers", () => {
 test("ordinary recruiter activity remains eligible", () => {
   assert.ok(context.EmailMatcher.analyze(message("An update on your application at Example."), [job]));
 });
+test("job application receipts qualify and request selection until employer is identified", () => {
+  const receipt = {
+    ...message("We received your job application for Software Engineer - 98765432."),
+    subject: "Your recent job application for Software Engineer - 98765432",
+    from: "workflow@notifications.recruiting.invalid",
+  };
+  const preview = context.EmailMatcher.analyze(receipt, [job]);
+  assert.equal(preview?.status, "Applied");
+  assert.equal(preview.needsSelection, true);
+  const full = context.EmailMatcher.analyze({ ...receipt, bodyText: `${receipt.snippet} Regards, Example Talent Acquisition Team` }, [job]);
+  assert.equal(full.status, "Applied");
+  assert.equal(full.jobId, job.id);
+  assert.equal(full.needsSelection, false);
+  for (const wording of ["We have received your job application", "We've received your job application", "We’ve received your job application"]) {
+    assert.equal(context.EmailMatcher.classify(wording), "Applied");
+  }
+  for (const wording of ["We have not received your job application", "We will receive your job application", "We received your profile"]) {
+    assert.equal(context.EmailMatcher.classify(wording), null);
+  }
+});
 test("new job matches and preference-based recommendations are excluded", () => {
   for (const text of [
     "Handshake New job match. Software Engineer at Example. Recently posted",

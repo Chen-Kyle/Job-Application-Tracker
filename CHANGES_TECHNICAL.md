@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-19 — Recognize job application receipt wording
+
+- Request: detect a missed application receipt sent through a recruiting platform.
+- `scripts/email/email-matcher.js`: allow the optional word job in received-your-application confirmations, retaining existing employer matching and review safeguards. Recognition lets the existing worker full-body fallback run when the preview lacks employer identity.
+- `tests/email-recommendations.test.cjs`: fictional regression covers unidentified preview requiring selection, employer identity resolved from body/signature, have/contraction variants and negative/future/non-application wording. No supplied personal email contents recorded.
+- Both logs updated; dated contents link retained. Validation: reproduced missed classification before fix; all 62 Node tests pass, including syntax/assets and background rescan regression. Diff whitespace checked; guidance search returned no applicable text-classification guide.
+- Limits: no authenticated Gmail/browser testing performed. Previously examined messages require a user rescan. A saved application and adequate identity evidence are still required for a unique match; ambiguous matches remain reviewable.
+
 ## 2026-10-19 — Embedded iCIMS job metadata
 
 - Request: fix missing employer autofill on an iCIMS listing using a general approach.

@@ -75,7 +75,7 @@ globalThis.EmailMatcher = (() => {
       ],
       [
         "Applied",
-        /\b((?:thank you|thanks) for (?:applying|your application)|we(?: have|['’]ve)? received your application|you have successfully applied|application (?:has been |was )?(?:received|submitted)|application (?:has been |was )?sent to|application confirmation)\b/i,
+        /\b((?:thank you|thanks) for (?:applying|your application)|we(?: have|['’]ve)? received your (?:job )?application|you have successfully applied|application (?:has been |was )?(?:received|submitted)|application (?:has been |was )?sent to|application confirmation)\b/i,
       ],
     ];
     let statuses = patterns
