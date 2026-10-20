@@ -5,7 +5,7 @@ const path = require("node:path");
 const vm = require("node:vm");
 const source = fs.readFileSync(path.join(__dirname, "../scripts/popup/popup.js"), "utf8");
 const extraction = source.slice(source.indexOf("function extractJob()"), source.indexOf("function validUrl("));
-function extract({ title, ogTitle = "", hostname = "job-boards.greenhouse.io", employer = "", siteName = "Greenhouse", frames = [] }) {
+function extract({ title, ogTitle = "", hostname = "job-boards.greenhouse.io", employer = "", siteName = "Greenhouse", frames = [], logos = [] }) {
   const role = "Software Engineering Intern";
   const context = vm.createContext({
     URL,
@@ -15,6 +15,7 @@ function extract({ title, ogTitle = "", hostname = "job-boards.greenhouse.io", e
       body: { innerText: "" },
       querySelectorAll(selector) {
         if (selector === "iframe") return frames;
+        if (selector.startsWith("img.logo")) return logos.map(name => ({ getAttribute: () => name }));
         return selector === 'script[type="application/ld+json"]' && employer
           ? [{ textContent: JSON.stringify({ "@type": "JobPosting", title: role, hiringOrganization: { name: employer } }) }]
           : [];
@@ -70,4 +71,16 @@ test("frame traversal supports nested documents and stops cycles", () => {
   assert.equal(extract({ title: "Careers", frames: [nested] }).company, "Nested Employer");
   const cycle = { contentDocument: { querySelectorAll: selector => selector === "iframe" ? [cycle] : [] } };
   assert.equal(extract({ title: "Careers", siteName: "", frames: [cycle] }).company, "");
+});
+test("employer careers pages use logo names corroborated by the title", () => {
+  for (const separator of [":", "|", "—", "–", "-"]) {
+    assert.equal(extract({ title: `A. B. Example Research ${separator} Summer Internships`, logos: ["A.\u00a0B.\u00a0Example Research"] }).company, "A. B. Example Research");
+  }
+  assert.equal(extract({ title: "Example Labs: Careers", logos: ["Example Labs"] }).company, "Example Labs");
+  assert.equal(extract({ title: "Example Labs: Careers", logos: ["Example Labs"], employer: "Structured Employer" }).company, "Structured Employer");
+});
+test("branding fallback rejects uncorroborated logos and non-careers pages", () => {
+  for (const [title, logos] of [["Summer Internships", ["Other Employer"]], ["Example Labs: Our Products", ["Example Labs"]], ["Careers: Internships", ["Careers"]], ["Example Labs: Careers", []]]) {
+    assert.equal(extract({ title, logos, siteName: "" }).company, "");
+  }
 });

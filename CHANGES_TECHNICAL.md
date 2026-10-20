@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-19 — Corroborated employer branding fallback
+
+- Request: capture a missing employer name on an employer-owned internship page without JobPosting metadata.
+- `scripts/popup/popup.js`: add a conservative generic fallback using logo alt text only when it agrees with a delimited employer prefix in a careers/internship page title. Normalize whitespace including nonbreaking spaces. Preserve structured employer data and explicit job-title employer priority; reject generic branding and unrelated logos. No company/domain hardcoding or added permissions.
+- `tests/job-extraction.test.cjs`: cover title delimiters, nonbreaking spaces, structured employer priority, missing/mismatched logos, generic labels, and non-careers pages. Both logs updated with existing dated contents link retained.
+- Validation: inspected downloaded public page HTML; actual extraction function using its title/logo attributes in a mocked DOM returns D. E. Shaw Research. All 64 Node tests pass, including syntax/path checks. Diff whitespace checked. Required guidance search returned no applicable metadata guide.
+- Limits: no live Chrome popup test performed. Pages without corroborating metadata may still require manual company entry; existing saved records are unchanged.
+
 ## 2026-10-19 — Recognize job application receipt wording
 
 - Request: detect a missed application receipt sent through a recruiting platform.

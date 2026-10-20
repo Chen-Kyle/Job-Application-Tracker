@@ -14,6 +14,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-19
 
+- Added company-name capture from employer logos corroborated by careers-page titles, covering employer-owned internship pages.
+
 - Recognize application receipts saying “We received your job application,” including confirmations from recruiting platforms.
 
 - Added company and role capture from accessible embedded job frames, including iCIMS career-page wrappers.

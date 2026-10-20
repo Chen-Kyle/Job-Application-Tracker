@@ -241,6 +241,19 @@ function extractJob() {
     }
     return "";
   }
+  function companyFromBranding() {
+    const title = clean(document.title).replace(/\s+/g, " ");
+    if (!/\b(?:internships?|careers?|jobs?|joining|opportunities)\b/i.test(title)) return "";
+    for (const logo of document.querySelectorAll('img.logo[alt], img[class*="logo"][alt], img[src*="logo"][alt]')) {
+      const name = clean(logo.getAttribute("alt")).replace(/\s+/g, " ");
+      if (name.length < 2 || name.length > 120 || /^(?:logo|company|careers?|greenhouse|icims|workday)$/i.test(name)) continue;
+      // Require two independent signals: a named logo and a matching title prefix.
+      // Do not infer an employer from arbitrary images or a domain slug.
+      if (title.toLowerCase().startsWith(name.toLowerCase()) && /^\s*[:|–—-]\s*\S/.test(title.slice(name.length)))
+        return name;
+    }
+    return "";
+  }
   const siteName = clean(
     document.querySelector('meta[property="og:site_name"]')?.content,
   );
@@ -252,6 +265,7 @@ function extractJob() {
     company:
       clean(job?.hiringOrganization?.name) ||
       companyFromPageTitle() ||
+      companyFromBranding() ||
       companyFromAboutSection() ||
       (/^(?:dayforce|greenhouse|handshake|workday)(?:\s+(?:jobs|hcm))*$/i.test(
         siteName,
