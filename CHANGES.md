@@ -15,6 +15,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-21
 
+- Fixed phantom Gmail notifications in Settings by counting only suggestions visible for review on the dashboard.
+
 - Added Blush and rose (light) and Charcoal and amber (dark) themes to real/sample settings, with backup and restore support.
 
 - Confirmed the Activity column removal and deleted its temporary local layout backup.

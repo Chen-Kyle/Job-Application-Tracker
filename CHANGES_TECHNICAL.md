@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Consistent settings email badge
+
+- Request: fix Settings showing two pending notifications that disappear upon opening Gmail review.
+- Root cause: settings counted raw pending records while dashboard excluded recommendation/task notifications using shared filtering.
+- `settings.html`, `scripts/settings/settings-sidebar.js`: load the shared matcher before sidebar rendering and count EmailMatcher.pendingSuggestions, matching dashboard review cards, badge visibility and accessible summary. Preserve stored review history.
+- `tests/settings-email-badge.test.cjs`: reproduce excluded records yielding zero visible count and verify storage updates display a genuine pending suggestion. `tests/project-paths.test.cjs`: enforce matcher-before-sidebar dependency. Both logs updated; existing dated contents link retained.
+- Validation: all 66 Node tests pass, including integration-style settings render and script/asset checks; diff reviewed and whitespace checked. Guidance lookup performed. No live Chrome testing performed. Refresh Settings after extension reload to load the new dependency.
+
 ## 2026-10-21 — Two additional appearance themes
 
 - Request: add two color schemes.

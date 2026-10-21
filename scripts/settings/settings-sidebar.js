@@ -9,9 +9,7 @@
     const { emailConnector = {}, emailSuggestions = [] } =
       await chrome.storage.local.get(["emailConnector", "emailSuggestions"]);
     if (current !== version) return;
-    const count = emailSuggestions.filter(
-      (item) => item.review === "pending",
-    ).length;
+    const count = EmailMatcher.pendingSuggestions(emailSuggestions).length;
     const badge = document.querySelector("#gmail-review-count");
     badge.textContent = count;
     badge.hidden = count === 0;

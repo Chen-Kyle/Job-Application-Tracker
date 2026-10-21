@@ -57,6 +57,7 @@ test("root pages reference existing local assets and preserve script dependency 
     );
     before("scripts/email/email-preferences.js", "scripts/email/email-ui.js");
     before("scripts/email/email-matcher.js", "scripts/email/email-ui.js");
+    before("scripts/email/email-matcher.js", "scripts/settings/settings-sidebar.js");
     before("scripts/backup/backup.js", "scripts/backup/backup-ui.js");
     before("scripts/core/store.js", "scripts/popup/popup.js");
   }
