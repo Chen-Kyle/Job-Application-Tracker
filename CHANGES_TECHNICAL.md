@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Two additional appearance themes
+
+- Request: add two color schemes.
+- `styles/themes.css`: define rose light and amber dark palettes, native color-scheme values and picker swatches using existing theme variables. Fixed contrasting foregrounds retain Chrome 120 compatibility.
+- `settings.html`, `sample-settings.html`: add named radio options in both settings views. `scripts/core/theme.js` and `scripts/backup/backup.js`: accept both theme IDs for persistence and backup validation. Both change logs updated; existing dated contents link retained.
+- Validation: all 65 existing Node tests pass; checked new IDs in both pickers and allowlists, and programmatically verified text/card, muted/card, accent/card, button/accent and sidebar-text/sidebar-item contrast at least 4.5:1 for both palettes. Guidance read; diff whitespace checked. No live browser visual testing performed. Existing theme choice/default remain unchanged until a new theme is selected.
+
 ## 2026-10-21 — Delete temporary Activity layout backup
 
 - Request: delete the Activity-column removal backup and retain the column removal.

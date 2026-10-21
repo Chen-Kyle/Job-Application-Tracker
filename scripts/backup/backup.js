@@ -1,7 +1,7 @@
 // JSON backup validation, export/restore and the settings-page backup controls.
 // See scripts/README.md for page entry points and dependency order.
 globalThis.JobBackup = (() => {
-  const themes = ["green", "violet", "blue", "dark", "terracotta"];
+  const themes = ["green", "violet", "blue", "dark", "terracotta", "rose", "amber"];
   const statuses = [
     "Saved",
     "Applied",

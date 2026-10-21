@@ -1,7 +1,7 @@
 // Shared application storage and appearance preferences.
 // See scripts/README.md for page entry points and dependency order.
 (() => {
-  const schemes = new Set(["green", "violet", "blue", "dark", "terracotta"]);
+  const schemes = new Set(["green", "violet", "blue", "dark", "terracotta", "rose", "amber"]);
   const extension = Boolean(
     globalThis.chrome?.storage?.local && globalThis.chrome?.runtime?.id,
   );

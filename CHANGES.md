@@ -15,6 +15,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-21
 
+- Added Blush and rose (light) and Charcoal and amber (dark) themes to real/sample settings, with backup and restore support.
+
 - Confirmed the Activity column removal and deleted its temporary local layout backup.
 
 - Changed the next-step indicator dot to red.

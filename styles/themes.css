@@ -41,6 +41,26 @@
   --focus: #43876d; --notice: #e5efcc; --soft-border: #cbdc9e;
   --accent: #246b4d; --accent-hover: #1b513a; --surface: #f8faf9;
 }
+:root[data-theme="rose"] {
+  color-scheme: light;
+  --text: #33232b; --page: #fff5f7; --card: #ffffff;
+  --sidebar: #4c1830; --sidebar-hover: #79364f; --sidebar-item: #63233f;
+  --sidebar-border: #a9657e; --sidebar-text: #f6dce6; --badge: #fbcfe0;
+  --muted: #795260; --border: #e8cbd5; --hover: #fce7ef;
+  --focus: #be185d; --notice: #fce7ef; --soft-border: #f4b8cf;
+  --accent: #be185d; --accent-hover: #9d174d; --surface: #fff0f5;
+  --button-text: #ffffff;
+}
+:root[data-theme="amber"] {
+  color-scheme: dark;
+  --text: #faf5eb; --page: #191816; --card: #272521;
+  --sidebar: #151411; --sidebar-hover: #484033; --sidebar-item: #342f26;
+  --sidebar-border: #74634b; --sidebar-text: #e7d9c2; --badge: #fde68a;
+  --muted: #c9bda9; --border: #5c5345; --hover: #3b352b;
+  --focus: #fbbf24; --notice: #44371e; --soft-border: #806535;
+  --accent: #fbbf24; --accent-hover: #fcd34d; --surface: #302c25;
+  --button-text: #211a0c;
+}
 input, select { background: var(--card); color: var(--text); }
 .approve-email, body > form button, body > #dashboard { color: var(--button-text); }
 #settings { scroll-margin-top: 24px; }
@@ -177,3 +197,6 @@ input, select { background: var(--card); color: var(--text); }
 .manual-email-result { display: grid; gap: 6px; width: 100%; text-align: left; margin-top: 10px; overflow-wrap: anywhere; }
 .manual-email-result[aria-pressed="true"] { border-color: var(--accent); background: var(--hover); }
 .manual-email-result span { font-size: 13px; }
+
+.swatch-rose { background: linear-gradient(135deg, #4c1830 50%, #be185d 50%); }
+.swatch-amber { background: linear-gradient(135deg, #191816 50%, #fbbf24 50%); }
