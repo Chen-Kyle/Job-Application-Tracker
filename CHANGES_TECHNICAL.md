@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Top-positioned Add next step button
+
+- Request: move Add next step above all next steps and make it a button.
+- `dashboard.html`: replace the details/summary disclosure with a native button and hidden form, and place the editor before the list. `scripts/dashboard/job-details.js`: toggle form visibility with aria-expanded/aria-controls, focus the Action input on opening, and collapse when leaving edit mode. Existing edit/save workflow retained. `styles/themes.css`: adjust editor spacing above the list. Both logs updated; existing date link retained.
+- Validation: all 66 existing Node tests pass, including script/asset checks; diff whitespace reviewed. Required web-guidance search performed. No live browser visual testing performed.
+
 ## 2026-10-21 — Consistent settings email badge
 
 - Request: fix Settings showing two pending notifications that disappear upon opening Gmail review.

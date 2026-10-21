@@ -102,15 +102,16 @@
     <div id="job-company-editor" class="inline-job-editor" hidden><label for="edit-job-company">Company</label><input id="edit-job-company" form="job-details-edit-form" maxlength="200"></div>
     <a id="job-description-link" target="_blank" rel="noopener noreferrer">Open job description ↗</a>
     <div id="job-link-editor" class="inline-job-editor" hidden><label for="edit-job-url">Job description link</label><input id="edit-job-url" form="job-details-edit-form" type="url" required></div>
-    <section class="job-details-section"><h3>Next steps</h3><div id="job-next-steps"></div>
-      <details class="next-step-editor" hidden><summary>Add a next step</summary>
-        <form id="next-step-form">
+    <section class="job-details-section"><h3>Next steps</h3>
+      <div class="next-step-editor" hidden><button id="add-next-step" type="button" aria-expanded="false" aria-controls="next-step-form">Add next step</button>
+        <form id="next-step-form" hidden>
           <label for="next-step-title">Action</label><input id="next-step-title" required maxlength="300" placeholder="Complete assessment or schedule interview">
           <label for="next-step-deadline">Deadline (optional)</label><input id="next-step-deadline" type="date">
           <label for="next-step-email">Source email link (optional)</label><input id="next-step-email" type="url" placeholder="https://mail.google.com/…">
           <button type="submit">Add next step</button>
         </form>
-      </details>
+      </div>
+      <div id="job-next-steps"></div>
       <p id="next-step-message" role="status" aria-live="polite"></p>
     </section>
     <dl id="job-details-facts"></dl>

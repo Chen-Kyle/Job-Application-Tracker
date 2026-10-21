@@ -150,7 +150,7 @@ input, select { background: var(--card); color: var(--text); }
 .next-step input { margin-top: 6px; width: 18px; height: 18px; flex-shrink: 0; }
 .next-step.completed label span { text-decoration: line-through; color: var(--muted); }
 .next-step-remove { font-size: 13px; padding: 4px 8px; }
-.next-step-editor { max-width: none; margin-top: 18px; }
+.next-step-editor { max-width: none; margin: 14px 0 18px; }
 #next-step-form label { display: block; font-size: 14px; margin: 14px 0 6px; }
 #next-step-form input { display: block; width: 100%; }
 #next-step-form button { margin-top: 16px; }

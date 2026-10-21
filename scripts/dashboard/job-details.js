@@ -348,6 +348,10 @@ globalThis.JobDetails = (() => {
     ])
       el(id).hidden = Boolean(editSnapshot);
     dialog.querySelector(".next-step-editor").hidden = !editSnapshot;
+    if (!editSnapshot) {
+      el("next-step-form").hidden = true;
+      el("add-next-step").setAttribute("aria-expanded", "false");
+    }
     el("job-notes").textContent = job.notes || "No notes yet.";
     el("job-notes").hidden = Boolean(editSnapshot);
     el("job-notes-editor").hidden = !editSnapshot;
@@ -832,6 +836,12 @@ globalThis.JobDetails = (() => {
     } finally {
       button.disabled = false;
     }
+  });
+  el("add-next-step").addEventListener("click", () => {
+    const form = el("next-step-form");
+    form.hidden = !form.hidden;
+    el("add-next-step").setAttribute("aria-expanded", String(!form.hidden));
+    if (!form.hidden) el("next-step-title").focus();
   });
   el("next-step-form").addEventListener("submit", async (event) => {
     event.preventDefault();
