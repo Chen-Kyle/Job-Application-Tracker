@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Remove Activity column with restoration backup
+
+- Request: try removing the Activity column and keep a backup to undo the layout change.
+- `dashboard.html`, `scripts/dashboard/dashboard.js`: remove the Activity header and row cell/rendering. Retain underlying status history, email activity, and job-details views. No application data changes.
+- Before editing, copied both affected files to ignored local `backups/2026-10-21-before-removing-activity-column/`, with RESTORE.md instructions. Prior layout also exists in Git commit d393720. Backup is not published; restoring full snapshots after future edits can replace those edits.
+- Both logs updated; existing dated contents link retained. Validation: all 65 Node tests pass, including JavaScript parsing and page asset checks; diff reviewed and whitespace checked. Required web-guidance search performed. No live browser visual test performed.
+
 ## 2026-10-21 — Next-step indicators and deadline ordering
 
 - Request: show a small dot for needed next steps and order Action needed results by urgency.

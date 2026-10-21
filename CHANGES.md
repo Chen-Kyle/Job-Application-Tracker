@@ -15,6 +15,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-21
 
+- Removed the dashboard Activity column; saved a local layout backup for easy restoration. Activity remains available in job details.
+
 - Added a small next-step dot beside application roles. Needs action now sorts by earliest unfinished deadline and displays that deadline, with undated actions last.
 
 ## 2026-10-19

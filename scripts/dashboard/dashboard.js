@@ -275,41 +275,6 @@ function render() {
       statusUpdate.textContent = "Next step deadline";
       statusDate.textContent = deadline ? date(`${deadline}T12:00:00`) : "No deadline";
     }
-    const activity = document.createElement("td");
-    const visibleHistory = (job.statusHistory || []).filter(
-      (event) => !event.activityDeletedAt,
-    );
-    if (visibleHistory.length) {
-      const details = document.createElement("details");
-      const summary = document.createElement("summary");
-      summary.textContent = `${visibleHistory.length} status ${visibleHistory.length === 1 ? "change" : "changes"}`;
-      const list = document.createElement("ul");
-      list.className = "history";
-      for (const event of [...visibleHistory].reverse()) {
-        const item = document.createElement("li");
-        item.textContent = `${event.from} → ${event.to} · ${date(event.at)} · `;
-        const emailUrl = EmailLinks.history(event);
-        if (emailUrl) {
-          const email = document.createElement("a");
-          email.textContent = "Email";
-          email.href = emailUrl;
-          email.target = "_blank";
-          email.rel = "noopener noreferrer";
-          email.setAttribute(
-            "aria-label",
-            `Open email for ${event.to} update to ${job.role}`,
-          );
-          item.append(email);
-        } else {
-          item.append(event.source === "email" ? "Email" : "Manual");
-        }
-        list.append(item);
-      }
-      details.append(summary, list);
-      activity.append(details);
-    } else {
-      activity.textContent = "Saved from a listing";
-    }
     const actions = document.createElement("td");
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
@@ -340,7 +305,7 @@ function render() {
       }
     });
     actions.append(deleteButton);
-    row.append(roleCell, statusCell, dates, activity, actions);
+    row.append(roleCell, statusCell, dates, actions);
     $("#rows").append(row);
   }
   globalThis.Analytics?.render();
