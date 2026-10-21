@@ -29,5 +29,12 @@ globalThis.StepReminders = (() => {
     const count = `${tasks.length} next step${tasks.length === 1 ? "" : "s"}`;
     return { ...reminder, label: tasks[0].deadline && deadlineDay(tasks[0].deadline) !== null ? `${count} · ${reminder.label}` : count };
   }
-  return { describe, pending, ordered, summary };
+  function nextDeadline(job) {
+    return ordered(pending(job)).find(task => deadlineDay(task.deadline) !== null)?.deadline || null;
+  }
+  function compareJobs(a, b) {
+    const earliest = job => deadlineDay(nextDeadline(job)) ?? Infinity;
+    return earliest(a) - earliest(b) || 0;
+  }
+  return { describe, pending, ordered, summary, nextDeadline, compareJobs };
 })();

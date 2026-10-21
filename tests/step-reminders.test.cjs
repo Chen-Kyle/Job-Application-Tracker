@@ -7,6 +7,19 @@ const context = vm.createContext({});
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../scripts/dashboard/step-reminders.js'),'utf8'),context);
 const reminders = context.StepReminders;
 const now = new Date(2026,9,7,23,59);
+test('action filter orders earliest unfinished deadlines first and undated last',()=>{
+ const jobs = [
+  {id:'undated',nextSteps:[{}]},
+  {id:'later',nextSteps:[{deadline:'2026-11-01'}]},
+  {id:'soon',nextSteps:[{deadline:'2026-10-30'},{deadline:'2026-10-22'},{deadline:'2026-01-01',completed:true}]},
+  {id:'invalid',nextSteps:[{deadline:'2026-02-30'}]},
+  {id:'overdue',nextSteps:[{deadline:'2026-10-20'}]},
+ ];
+ assert.deepEqual([...jobs].sort(reminders.compareJobs).map(j=>j.id),['overdue','soon','later','undated','invalid']);
+ assert.equal(reminders.nextDeadline(jobs[2]),'2026-10-22');
+ assert.equal(reminders.nextDeadline(jobs[0]),null);
+ assert.equal(reminders.compareJobs(jobs[0],jobs[3]),0);
+});
 test('calendar deadlines distinguish overdue, today, tomorrow and undated steps',()=>{
  for(const [deadline,label] of [['2026-10-06','Overdue'],['2026-10-07','Due today'],['2026-10-08','Due tomorrow'],['2026-10-10','Due in 3 days'],[null,'Pending · No deadline'],['2026-02-30','Pending · No deadline']])
   assert.equal(reminders.describe({deadline},now).label,label);

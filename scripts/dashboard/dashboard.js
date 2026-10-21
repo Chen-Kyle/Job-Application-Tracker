@@ -163,13 +163,13 @@ function render() {
   // Role and Company share a column, so update its sort state once.
   for (const column of ["role", "status", "dates"]) {
     const heading = $(`#${column}-heading`);
-    const selected = jobSort.key === column || (column === "role" && jobSort.key === "company");
+    const selected = quickFilter !== "needs-action" && (jobSort.key === column || (column === "role" && jobSort.key === "company"));
     if (selected) heading.setAttribute("aria-sort", jobSort.direction);
     else heading.removeAttribute("aria-sort");
   }
   for (const key of ["role", "company", "status", "dates"]) {
     const button = $(`[data-sort="${key}"]`);
-    const selected = jobSort.key === key;
+    const selected = quickFilter !== "needs-action" && jobSort.key === key;
     button.querySelector(".sort-direction").textContent = selected
       ? (jobSort.direction === "ascending" ? " ↑" : " ↓") : "";
     const next = JobSort.toggle(jobSort, key);
@@ -179,7 +179,9 @@ function render() {
         ? `Sort by latest status change, ${next.direction === "descending" ? "newest" : "oldest"} first`
         : `Sort by ${key}, ${next.direction}`);
   }
-  for (const job of visible.sort((a, b) => JobSort.compare(a, b, { ...jobSort, pendingFirst: remindersEnabled && pendingStepsFirst }))) {
+  for (const job of visible.sort((a, b) =>
+    (quickFilter === "needs-action" ? StepReminders.compareJobs(a, b) : 0) ||
+    JobSort.compare(a, b, { ...jobSort, pendingFirst: remindersEnabled && pendingStepsFirst }))) {
     const row = document.createElement("tr");
     const roleCell = document.createElement("td");
     const entry = document.createElement("button");
@@ -193,6 +195,14 @@ function render() {
     const role = document.createElement("span");
     role.className = "role";
     role.textContent = job.role;
+    if (StepReminders.pending(job).length) {
+      const dot = document.createElement("span");
+      dot.className = "next-step-dot";
+      dot.setAttribute("aria-hidden", "true");
+      role.append(dot);
+      entry.title = "Next step needed";
+      entry.setAttribute("aria-label", `${entry.getAttribute("aria-label")}. Next step needed`);
+    }
     const company = document.createElement("span");
     company.className = "company";
     company.textContent = job.company || "Company not specified";
@@ -260,6 +270,11 @@ function render() {
     const statusDate = document.createElement("div");
     statusDate.textContent = date(JobSort.statusDate(job));
     dates.append(statusUpdate, statusDate);
+    if (quickFilter === "needs-action") {
+      const deadline = StepReminders.nextDeadline(job);
+      statusUpdate.textContent = "Next step deadline";
+      statusDate.textContent = deadline ? date(`${deadline}T12:00:00`) : "No deadline";
+    }
     const activity = document.createElement("td");
     const visibleHistory = (job.statusHistory || []).filter(
       (event) => !event.activityDeletedAt,

@@ -4,6 +4,7 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## Table of contents
 
+- [2026-10-21](#2026-10-21)
 - [2026-10-19](#2026-10-19)
 - [2026-10-18](#2026-10-18)
 - [2026-10-12](#2026-10-12)
@@ -11,6 +12,10 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 - [2026-10-07](#2026-10-07)
 - [2026-10-06](#2026-10-06)
 - [Progress through 2026-10-06](#progress-through-2026-10-06)
+
+## 2026-10-21
+
+- Added a small next-step dot beside application roles. Needs action now sorts by earliest unfinished deadline and displays that deadline, with undated actions last.
 
 ## 2026-10-19
 

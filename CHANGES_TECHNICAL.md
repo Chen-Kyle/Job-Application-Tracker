@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Next-step indicators and deadline ordering
+
+- Request: show a small dot for needed next steps and order Action needed results by urgency.
+- `scripts/dashboard/dashboard.js`, `styles/dashboard.css`: add a 7px theme-colored role dot whenever unfinished tasks exist, with a tooltip and accessible button description. While Needs action is active, prioritize earliest unfinished deadline and display it in Dates; remove misleading active column-sort indicators. Existing column preferences are retained for other views and tie-breaking.
+- `scripts/dashboard/step-reminders.js`: shared nextDeadline and compareJobs helpers ignore completed tasks and invalid dates, place overdue/earlier dates first and undated tasks last.
+- `tests/step-reminders.test.cjs`: verify multiple tasks, completed/invalid dates, overdue/upcoming order and undated ties. Both logs and contents navigation updated.
+- Validation: all 65 Node tests pass, including syntax/assets; reviewed diff and whitespace. Required web-guidance lookup performed. No live Chrome visual testing performed.
+- Limits: dot reflects existing nextSteps data; no new deadline inference. Existing reminder feature settings still govern access to the Needs action filter. Saved job data/order are unchanged.
+
 ## 2026-10-19 — Corroborated employer branding fallback
 
 - Request: capture a missing employer name on an employer-owned internship page without JobPosting metadata.
