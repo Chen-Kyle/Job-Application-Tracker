@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Delete temporary Activity layout backup
+
+- Request: delete the Activity-column removal backup and retain the column removal.
+- Deleted only ignored local backups/2026-10-21-before-removing-activity-column/, including its snapshots and restoration note. Dashboard code remains unchanged. Both logs updated; existing dated contents link retained.
+- Validation: confirmed backup directory no longer exists and Activity header/row cell remain absent; diff whitespace checked. No application data deleted; no browser test needed for backup cleanup. Earlier log entries describe the backup when it existed.
+
 ## 2026-10-21 — Red next-step dot
 
 - Request: make the next-step dot red.

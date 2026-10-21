@@ -15,6 +15,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-21
 
+- Confirmed the Activity column removal and deleted its temporary local layout backup.
+
 - Changed the next-step indicator dot to red.
 
 - Moved the next-step dot to the left of job names and added matching left spacing to roles and companies.
