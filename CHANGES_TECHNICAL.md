@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Remove application deletion undo button
+
+- Request: remove the Undo application deletion button and explain undo stack limits.
+- `dashboard.html`, `popup.html`: stop loading its UI controller. `scripts/dashboard/dashboard.js`: remove sample deletion callback to unloaded controller. `scripts/popup/popup.js`: remove message directing users to the removed control. Stored recovery functions/history remain unchanged; no other undo behavior modified. Both logs updated; date navigation retained.
+- Audit: real application-deletion recovery is capped at 20 snapshots; email and job-details undo arrays have no fixed item caps. Draft history resets when editing ends; in-memory histories reset with page reload.
+- Validation: all 66 existing Node tests pass, including deletion recovery and script/asset checks; reviewed diff and whitespace. Guidance lookup performed; no browser visual test performed.
+
 ## 2026-10-21 — Top-positioned Add next step button
 
 - Request: move Add next step above all next steps and make it a button.

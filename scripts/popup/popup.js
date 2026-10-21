@@ -319,7 +319,7 @@ async function renderJobs() {
       try {
         await JobStore.remove(job.id);
         await renderJobs();
-        message.textContent = "Job removed. Use Undo application deletion to restore it.";
+        message.textContent = "Job removed.";
       } catch {
         remove.disabled = false;
         message.textContent = "Could not remove the job. Please try again.";
