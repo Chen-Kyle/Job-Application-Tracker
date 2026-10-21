@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Red next-step dot
+
+- Request: make the next-step dot red.
+- `styles/dashboard.css`: set its background to #dc2626. Both change logs updated; existing dated contents link retained.
+- Validation: reviewed the one-property CSS change and diff whitespace. No browser visual test performed; no logic changes or new tests needed.
+
 ## 2026-10-21 — Left-side next-step indicator gutter
 
 - Request: enlarge left spacing for role/company names so the action indicator can sit on the left.

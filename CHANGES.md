@@ -15,6 +15,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-21
 
+- Changed the next-step indicator dot to red.
+
 - Moved the next-step dot to the left of job names and added matching left spacing to roles and companies.
 
 - Removed the dashboard Activity column; saved a local layout backup for easy restoration. Activity remains available in job details.

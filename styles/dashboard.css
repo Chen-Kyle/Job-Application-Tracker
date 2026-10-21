@@ -133,7 +133,7 @@ footer { margin-top: 20px; }
 .needs-action:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 #rows .job-details-trigger { padding-inline-start: 28px; }
 #rows .job-details-trigger .role { position: relative; }
-.next-step-dot { position: absolute; inset-inline-start: -22px; top: 0.5em; width: 7px; height: 7px; border-radius: 50%; background: var(--text); }
+.next-step-dot { position: absolute; inset-inline-start: -22px; top: 0.5em; width: 7px; height: 7px; border-radius: 50%; background: #dc2626; }
 .step-reminder { display: inline-block; width: fit-content; padding: 4px 9px; border-radius: 6px; font-size: 12px; font-weight: 600; background: var(--hover); color: var(--text); }
 .job-details-trigger .step-reminder { margin-top: 8px; }
 .step-reminder.overdue { background: #fee2e2; color: #991b1b; }
