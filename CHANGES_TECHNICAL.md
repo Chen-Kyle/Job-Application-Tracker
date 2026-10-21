@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Twenty-action undo limits
+
+- Request: implement a 20-action cap for previously uncapped undo histories.
+- `scripts/core/store.js`: shared bounded pushUndo helper; cap all email approval, review-only and dismissal writes, limit displayed undo counts and trim legacy persisted stacks before undo, preventing older entries from resurfacing after repeated undo. Existing deletion history already caps at 20.
+- `scripts/dashboard/job-details.js`, `scripts/email/email-ui.js`: use bounded pushes for panel/draft snapshots and sample email actions. Each independent stack retains its own latest 20 actions; native text-field undo remains browser-managed.
+- `tests/application-recovery.test.cjs`: verify newest-20 ordering, 25 dismissals followed by exhaustion at 20 undos, and oversized legacy history trimming with out-of-window ID rejection. Both logs updated; existing date link retained.
+- Validation: all 69 Node tests pass; inspected all affected stack push sites, reviewed diff and whitespace. Guidance lookup performed. No live browser test performed. Legacy stored email records are physically trimmed on the next undo or email action; counts apply the cap immediately.
+
 ## 2026-10-21 — Remove application deletion undo button
 
 - Request: remove the Undo application deletion button and explain undo stack limits.

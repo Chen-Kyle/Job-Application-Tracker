@@ -43,7 +43,7 @@ globalThis.JobDetails = (() => {
   }
   async function updateTasks(id, change) {
     if (editSnapshot && editSnapshot.id === id) {
-      draftUndo.push(structuredClone(editSnapshot.draft));
+      JobStore.pushUndo(draftUndo, structuredClone(editSnapshot.draft));
       editSnapshot.draft.nextSteps = change(editSnapshot.draft.nextSteps || []);
       await render();
       return;
@@ -56,7 +56,7 @@ globalThis.JobDetails = (() => {
       job.nextSteps = change(job.nextSteps || []);
       snapshot = { before, after: structuredClone(job) };
     } else snapshot = await JobStore.updateNextSteps(id, change);
-    panelUndo.push({ kind: "snapshot", ...snapshot, demo });
+    JobStore.pushUndo(panelUndo, { kind: "snapshot", ...snapshot, demo });
     await refresh();
   }
   function renderTasks(job) {
@@ -306,7 +306,7 @@ globalThis.JobDetails = (() => {
       if (selected !== job.id || editSnapshot !== recruiterSnapshot)
         throw Error("This panel changed. Try again.");
       if (editSnapshot) {
-        draftUndo.push(structuredClone(editSnapshot.draft));
+        JobStore.pushUndo(draftUndo, structuredClone(editSnapshot.draft));
         editSnapshot.draft.recruiterContacts = contacts;
         await render();
       } else {
@@ -327,7 +327,7 @@ globalThis.JobDetails = (() => {
             },
             job.updatedAt || job.savedAt,
           );
-        panelUndo.push({ kind: "snapshot", ...snapshot, demo });
+        JobStore.pushUndo(panelUndo, { kind: "snapshot", ...snapshot, demo });
         await refresh();
       }
     });
@@ -582,7 +582,7 @@ globalThis.JobDetails = (() => {
   }
   async function deleteActivity(event) {
     if (activityBusy || !editSnapshot) return;
-    draftUndo.push(structuredClone(editSnapshot.draft));
+    JobStore.pushUndo(draftUndo, structuredClone(editSnapshot.draft));
     const draftEvent = event.emailActivityId
       ? editSnapshot.draft.emailActivity.find(
           (item) => item.id === event.emailActivityId,
@@ -825,7 +825,7 @@ globalThis.JobDetails = (() => {
       }
       resetManualEmail();
       if (undoEntry)
-        panelUndo.push({ kind: "snapshot", ...undoEntry, demo: snapshot.demo });
+        JobStore.pushUndo(panelUndo, { kind: "snapshot", ...undoEntry, demo: snapshot.demo });
       if (selected === snapshot.id) {
         event.target.hidden = true;
         editSnapshot = null;

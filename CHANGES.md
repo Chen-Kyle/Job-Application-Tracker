@@ -15,6 +15,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-21
 
+- Limited email and job-details undo histories to the latest 20 actions per stack.
+
 - Removed the Undo application deletion button from the dashboard and popup.
 
 - Moved Add next step above the next-step list and changed it to a button that opens the form in edit mode.

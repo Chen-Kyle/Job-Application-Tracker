@@ -472,7 +472,7 @@ globalThis.EmailUI = (() => {
               : {}),
             ...(suggestion.needsSelection ? selections.get(suggestion.id) : {}),
           });
-        sampleUndo.push({
+        JobStore.pushUndo(sampleUndo, {
           suggestionId: suggestion.id,
           job: decision === "approved" ? structuredClone(job) : null,
         });

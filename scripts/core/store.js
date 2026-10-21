@@ -2,6 +2,11 @@
 // See scripts/README.md for page entry points and dependency order.
 // Shared application records. Email changes are applied only after user review.
 globalThis.JobStore = (() => {
+  const UNDO_LIMIT = 20;
+  function pushUndo(stack, entry) {
+    stack.push(entry);
+    if (stack.length > UNDO_LIMIT) stack.splice(0, stack.length - UNDO_LIMIT);
+  }
   const statuses = [
     "Saved",
     "Applied",
@@ -86,7 +91,7 @@ globalThis.JobStore = (() => {
         suggestion.review = "approved";
         suggestion.jobId = id;
         suggestion.reviewedAt = new Date().toISOString();
-        emailApprovalUndo.push({
+        pushUndo(emailApprovalUndo, {
           kind: "review-only",
           suggestion: pending,
           afterSuggestion: structuredClone(suggestion),
@@ -172,7 +177,7 @@ globalThis.JobStore = (() => {
         suggestion.review = "approved";
         suggestion.automatic = Boolean(approval.automatic);
         suggestion.reviewedAt = at;
-        emailApprovalUndo.push({
+        pushUndo(emailApprovalUndo, {
           before,
           after: structuredClone(job),
           suggestion: pending,
@@ -241,7 +246,7 @@ globalThis.JobStore = (() => {
       const before = structuredClone(suggestion);
       suggestion.review = "dismissed";
       suggestion.reviewedAt = new Date().toISOString();
-      emailApprovalUndo.push({
+      pushUndo(emailApprovalUndo, {
         kind: "dismissed",
         suggestion: before,
         afterSuggestion: structuredClone(suggestion),
@@ -250,6 +255,7 @@ globalThis.JobStore = (() => {
     });
   }
   function emailUndoCount(jobs, entries, suggestions = null) {
+    entries = entries.slice(-UNDO_LIMIT);
     const snapshots = new Map(
       jobs.map((job) => [
         job.id,
@@ -295,6 +301,10 @@ globalThis.JobStore = (() => {
           "emailApprovalUndo",
           "emailSuggestions",
         ]);
+      if (emailApprovalUndo.length > UNDO_LIMIT) {
+        emailApprovalUndo.splice(0, emailApprovalUndo.length - UNDO_LIMIT);
+        await chrome.storage.local.set({ emailApprovalUndo });
+      }
       const undoIndex = id
         ? emailApprovalUndo.findLastIndex((item) => item.suggestion.id === id)
         : emailApprovalUndo.length - 1;
@@ -524,6 +534,7 @@ globalThis.JobStore = (() => {
     dismissEmail,
     undoEmailApproval,
     emailUndoCount,
+    pushUndo,
     updateNextSteps,
     updateDetails,
     setEmailActivityDeleted,
