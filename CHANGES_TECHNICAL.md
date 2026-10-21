@@ -10,6 +10,13 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-21 — Left-side next-step indicator gutter
+
+- Request: enlarge left spacing for role/company names so the action indicator can sit on the left.
+- `styles/dashboard.css`: reserve 28px of inline-start padding for every dashboard job button, align role/company/reminder content together, and position the existing 7px dot in the left gutter beside the first role line. Scoped selector overrides shared theme button padding. Existing accessible next-step description remains intact.
+- Both logs updated; existing dated contents link retained.
+- Validation: all 65 existing Node tests pass, including script/asset checks; reviewed CSS cascade and diff whitespace. Required guidance search performed. No live browser visual test performed. The earlier Activity-column backup remains available; this adjustment is separately reversible in Git.
+
 ## 2026-10-21 — Remove Activity column with restoration backup
 
 - Request: try removing the Activity column and keep a backup to undo the layout change.
