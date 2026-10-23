@@ -80,5 +80,6 @@ test("manifest worker and its relative imports resolve", () => {
   // Evaluate the actual import statement without invoking authenticated services.
   const source = fs.readFileSync(worker, "utf8");
   vm.runInContext(source.match(/importScripts\([\s\S]*?\);/)[0], context);
-  assert.ok(fs.existsSync(path.join(root, manifest.action.default_popup)));
+  assert.equal(manifest.action.default_popup, undefined);
+  assert.ok(fs.existsSync(path.join(root, "popup.html")));
 });

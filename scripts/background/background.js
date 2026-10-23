@@ -2,6 +2,7 @@
 // See scripts/README.md for page entry points and dependency order.
 // Worker imports resolve relative to this file, not manifest.json.
 importScripts(
+  "../popup/window-launcher.js",
   "../recruiters/recruiter-data.js",
   "../recruiters/recruiter-gmail.js",
   "../recruiters/recruiter-contacts.js",

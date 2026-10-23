@@ -4,6 +4,7 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## Table of contents
 
+- [2026-10-23](#2026-10-23)
 - [2026-10-21](#2026-10-21)
 - [2026-10-19](#2026-10-19)
 - [2026-10-18](#2026-10-18)
@@ -12,6 +13,10 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 - [2026-10-07](#2026-10-07)
 - [2026-10-06](#2026-10-06)
 - [Progress through 2026-10-06](#progress-through-2026-10-06)
+
+## 2026-10-23
+
+- Clicking the extension icon now opens a draggable, resizable save-job window directly, capturing the original webpage.
 
 ## 2026-10-21
 

@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-23 — Open draggable save-job window directly
+
+- Request: open a movable save-job interface immediately from the extension icon, without an extra detach button.
+- `manifest.json`: remove action.default_popup so toolbar clicks reach the service worker. `scripts/background/background.js` imports new `scripts/popup/window-launcher.js`, which registers a top-level action listener and creates a native popup window with the invoking tab ID.
+- `scripts/popup/popup.js`, `styles/popup.css`: read the validated sourceTab parameter and capture that tab rather than the newly focused extension window; allow the save form to resize. Reuse original activeTab grant, with no additional permissions. Missing/navigated source tabs retain manual-entry fallback. No detached-button or temporary draft storage is used.
+- `tests/movable-window.test.cjs`, `tests/project-paths.test.cjs`: verify native action window creation, invalid-tab rejection, original-tab capture and manifest/worker dependency consistency. Both logs and date navigation updated.
+- Validation: all 71 Node tests pass, including script/asset/import checks; reviewed diff and whitespace. Official Chrome window/popup docs and required guidance lookup consulted. No live Chrome window test performed.
+- Limits: the window is a separate OS-managed window, not a draggable toolbar bubble. Each click opens a new save window; it stays tied to the original tab. Reload the extension to activate the changed manifest. Replaces the uncommitted intermediate detach-button draft.
+
 ## 2026-10-21 — Twenty-action undo limits
 
 - Request: implement a 20-action cap for previously uncapped undo histories.
