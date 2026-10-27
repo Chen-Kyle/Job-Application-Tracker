@@ -284,63 +284,8 @@ function validUrl(value) {
   }
 }
 
-// Saved job whose company is being edited, with its unsaved text.
-let editingCompany = null;
-
-function companyEditor(job) {
-  const editor = document.createElement("form");
-  editor.className = "company-editor";
-  const input = document.createElement("input");
-  input.className = "company-input";
-  input.maxLength = 200;
-  input.placeholder = "Company name";
-  input.value = editingCompany.value;
-  input.setAttribute("aria-label", `Company for ${job.role}`);
-  input.addEventListener("input", () => {
-    editingCompany.value = input.value;
-  });
-  const saveCompany = document.createElement("button");
-  saveCompany.type = "submit";
-  saveCompany.className = "job-action";
-  saveCompany.textContent = "Save";
-  const cancel = document.createElement("button");
-  cancel.type = "button";
-  cancel.className = "job-action";
-  cancel.textContent = "Cancel";
-  cancel.addEventListener("click", async () => {
-    editingCompany = null;
-    await renderJobs();
-  });
-  editor.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    saveCompany.disabled = true;
-    try {
-      await JobStore.updateDetails(
-        job.id,
-        { role: job.role, company: input.value, expectedJob: job },
-        job.updatedAt || job.savedAt,
-      );
-      editingCompany = null;
-      await renderJobs();
-      message.textContent = "Company updated.";
-    } catch (error) {
-      saveCompany.disabled = false;
-      message.textContent =
-        error?.message || "Could not update the company. Please try again.";
-    }
-  });
-  const actions = document.createElement("div");
-  actions.className = "job-actions";
-  actions.append(saveCompany, cancel);
-  editor.append(input, actions);
-  return editor;
-}
-
 async function renderJobs() {
   const jobs = await JobStore.list();
-  const refocus = document.activeElement?.classList.contains("company-input");
-  if (editingCompany && !jobs.some((job) => job.id === editingCompany.id))
-    editingCompany = null;
   document.querySelector("#count").textContent = jobs.length;
   document.querySelector("#empty").hidden = jobs.length > 0;
   const list = document.querySelector("#jobs");
@@ -380,28 +325,34 @@ async function renderJobs() {
         message.textContent = "Could not remove the job. Please try again.";
       }
     });
-    if (editingCompany?.id === job.id) {
-      item.append(link, companyEditor(job));
-      list.append(item);
-      continue;
-    }
-    const edit = document.createElement("button");
-    edit.type = "button";
-    edit.className = "job-action";
-    edit.textContent = "Edit company";
-    edit.setAttribute("aria-label", `Edit company for saved job: ${job.role}`);
-    edit.addEventListener("click", async () => {
-      editingCompany = { id: job.id, value: job.company || "" };
-      await renderJobs();
-      list.querySelector(".company-input")?.focus();
-    });
-    const actions = document.createElement("div");
-    actions.className = "job-actions";
-    actions.append(edit, remove);
-    item.append(link, details, actions);
+    item.append(link, details, remove);
     list.append(item);
   }
-  if (refocus) list.querySelector(".company-input")?.focus();
+}
+
+// Saving a tracked listing again applies the entered company to the original job.
+async function updateSavedCompany(jobUrl) {
+  const existing = (await JobStore.list()).find(
+    (job) => JobStore.listingKey(job.url) === JobStore.listingKey(jobUrl),
+  );
+  if (!existing) return "This job link is already saved.";
+  let updated;
+  try {
+    updated = await JobStore.updateDetails(
+      existing.id,
+      { role: existing.role, company: company.value, expectedJob: existing },
+      existing.updatedAt || existing.savedAt,
+    );
+  } catch (error) {
+    if (/changed while/.test(error?.message))
+      return "This job just changed elsewhere. Please save again.";
+    throw error;
+  }
+  if (!updated) return "This job is already saved with this company.";
+  await renderJobs();
+  return updated.after.company
+    ? `Company updated to ${updated.after.company} for this saved job.`
+    : "Company cleared for this saved job.";
 }
 
 form.addEventListener("submit", async (event) => {
@@ -422,13 +373,14 @@ form.addEventListener("submit", async (event) => {
       savedAt: new Date().toISOString(),
     });
     if (!added) {
-      message.textContent = "This job link is already saved.";
+      message.textContent = await updateSavedCompany(jobUrl.href);
       return;
     }
     await renderJobs();
     message.textContent = "Job saved!";
-  } catch {
-    message.textContent = "Could not save the job. Please try again.";
+  } catch (error) {
+    message.textContent =
+      error?.message || "Could not save the job. Please try again.";
   } finally {
     save.disabled = false;
   }
@@ -455,8 +407,12 @@ async function initialize() {
     role.value = result.result.role;
     company.value = result.result.company;
     url.value = result.result.url;
-    if ((await JobStore.list()).some(job => JobStore.listingKey(job.url) === JobStore.listingKey(url.value)))
-      message.textContent = "This listing is already tracked. Saving it again will not create a duplicate.";
+    const tracked = (await JobStore.list()).find(job => JobStore.listingKey(job.url) === JobStore.listingKey(url.value));
+    if (tracked) {
+      // Show the saved company so saving again keeps any earlier correction.
+      if (tracked.company) company.value = tracked.company;
+      message.textContent = "This listing is already tracked. Save job updates its company.";
+    }
   } catch {
     message.textContent =
       "Page details unavailable. You can enter the job details manually.";

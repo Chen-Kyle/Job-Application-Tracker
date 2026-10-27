@@ -17,6 +17,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-27
 
+- Removed the popup's Edit company button. Instead, clicking Save job on a listing you already saved now changes that job's company to what's in the Company field. Reopening the popup on that listing shows your corrected company.
+
 - Saved jobs in the toolbar popup now have an Edit company button, so you can fix a company name right after saving.
 
 ## 2026-10-23

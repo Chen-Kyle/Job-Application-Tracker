@@ -10,6 +10,14 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-27 — Resave updates an existing job's company
+
+- Request: remove the popup Edit company button; when Save job is clicked on an already-saved listing, apply the entered company to that original job.
+- `scripts/popup/popup.js`, `styles/popup.css`: restored to their pre-button versions (4446c18), then: when JobStore.add reports a duplicate, find the job by the shared listingKey and call JobStore.updateDetails with its existing role and the rendered job as expectedJob, changing only company (trimmed; blank clears it). Messages report the update, an unchanged company, or a concurrent change. On opening a tracked listing, the Company field is prefilled with the saved company (when present) so resaving does not revert an earlier correction; the notice now says Save job updates its company. Store errors such as the 200-character limit are shown.
+- `tests/popup-company-edit.test.cjs` removed. `tests/popup-resave-company.test.cjs`: runs the actual store and popup scripts against a stub page to verify company-only replacement through a tracking-parameter URL variant, no duplicate creation, unchanged-company message, corrected-company prefill, and normal new-job saves.
+- Validation: all 72 Node tests pass, including syntax/asset checks; diff whitespace checked. No live Chrome popup test performed; reload the extension to pick up the change.
+- Limits: resaving updates only the company; role and link edits remain in the dashboard job panel. No job-details undo entry is recorded for this update.
+
 ## 2026-10-27 — Edit company from the toolbar popup
 
 - Request: change a job's company name after saving it from the extension popup on the listing page.
