@@ -6,8 +6,6 @@ const company = document.querySelector("#company");
 const url = document.querySelector("#url");
 const save = document.querySelector("#save");
 const message = document.querySelector("#message");
-const sourceTab = new URLSearchParams(location.search).get("sourceTab");
-if (sourceTab !== null) document.body.classList.add("movable-window");
 
 // Runs only in the page the user opens the extension on.
 function extractJob() {
@@ -369,13 +367,10 @@ async function initialize() {
     message.textContent = "Could not load saved jobs.";
   }
   try {
-    let tab;
-    if (sourceTab !== null) {
-      if (!/^\d+$/.test(sourceTab) || !Number.isSafeInteger(Number(sourceTab))) throw Error("Invalid source tab");
-      tab = await chrome.tabs.get(Number(sourceTab));
-    } else {
-      [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    }
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
     if (!tab || !validUrl(tab.url)) throw new Error("Unsupported page");
     url.value = tab.url;
     role.value = tab.title || "";

@@ -22,5 +22,3 @@ a { color: var(--accent); font-weight: 600; }
 #undo-application-deletion[hidden] { display: none; }
 
 .job-link-domain { font-size: 12px; font-weight: normal; overflow-wrap: anywhere; }
-
-body.movable-window { width: 100%; min-width: 280px; }

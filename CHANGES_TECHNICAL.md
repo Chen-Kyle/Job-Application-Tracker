@@ -10,6 +10,12 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-23 — Restore original toolbar popup
+
+- Request: return to the version before any movable-window implementation.
+- Restored manifest.json, scripts/background/background.js, scripts/popup/popup.js, styles/popup.css and tests/project-paths.test.cjs exactly from ffefe28. Removed scripts/popup/window-launcher.js and tests/movable-window.test.cjs. No unrelated user edits changed; history preserved with a new commit.
+- Both logs updated; prior entries remain historical. Validation: all 69 original Node tests pass, restored files match the pre-feature commit, and diff whitespace checked. No live Chrome testing performed. Reload the extension to restore action.default_popup behavior.
+
 ## 2026-10-23 — Open draggable save-job window directly
 
 - Request: open a movable save-job interface immediately from the extension icon, without an extra detach button.

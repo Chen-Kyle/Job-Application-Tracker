@@ -16,6 +16,8 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## 2026-10-23
 
+- Restored the original toolbar save-job popup and removed the movable-window implementation.
+
 - Clicking the extension icon now opens a draggable, resizable save-job window directly, capturing the original webpage.
 
 ## 2026-10-21
