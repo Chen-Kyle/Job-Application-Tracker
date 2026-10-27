@@ -10,6 +10,15 @@ This is the detailed engineering record for assistant-made changes. See `CHANGES
 - Update the short log with a brief matching entry. Do not include tokens, private keys, personal email contents, or backup data.
 - Entries below are a retrospective baseline, not a commit-by-commit history. The initial work spans October 4–6; exact dates of earlier individual changes were not recorded.
 
+## 2026-10-27 — Edit company from the toolbar popup
+
+- Request: change a job's company name after saving it from the extension popup on the listing page.
+- `scripts/popup/popup.js`: each saved job gains an Edit company button that swaps in an inline input (200-character limit) with Save/Cancel. Saving calls the existing JobStore.updateDetails with the job's current role and the rendered job as expectedJob, so edits made elsewhere (dashboard, email approval) are rejected rather than overwritten; blank clears the company. The unsaved draft and focus survive storage-triggered re-renders. The dashboard job panel's existing company editing is unchanged.
+- `styles/popup.css`: theme-colored outline action buttons in a shared row with Remove; compact editor input.
+- `tests/popup-company-edit.test.cjs`: verifies the popup's update call changes only company/updatedAt on a page-saved job, trims, allows blank, enforces the length limit, and rejects stale edits. Both logs and date navigation updated.
+- Validation: all 71 Node tests pass, including syntax/asset checks; diff whitespace checked. No live Chrome popup test performed; reload the extension to pick up the change.
+- Limits: the popup edits only the company; role and link remain editable in the dashboard job panel. Popup edits do not add a job-details undo entry.
+
 ## 2026-10-23 — Restore original toolbar popup
 
 - Request: return to the version before any movable-window implementation.

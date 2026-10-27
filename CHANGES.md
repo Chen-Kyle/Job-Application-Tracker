@@ -4,6 +4,7 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 
 ## Table of contents
 
+- [2026-10-27](#2026-10-27)
 - [2026-10-23](#2026-10-23)
 - [2026-10-21](#2026-10-21)
 - [2026-10-19](#2026-10-19)
@@ -13,6 +14,10 @@ Newest entries first. Details are in `CHANGES_TECHNICAL.md`; future ideas remain
 - [2026-10-07](#2026-10-07)
 - [2026-10-06](#2026-10-06)
 - [Progress through 2026-10-06](#progress-through-2026-10-06)
+
+## 2026-10-27
+
+- Saved jobs in the toolbar popup now have an Edit company button, so you can fix a company name right after saving.
 
 ## 2026-10-23
 

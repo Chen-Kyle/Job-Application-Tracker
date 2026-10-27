@@ -284,8 +284,63 @@ function validUrl(value) {
   }
 }
 
+// Saved job whose company is being edited, with its unsaved text.
+let editingCompany = null;
+
+function companyEditor(job) {
+  const editor = document.createElement("form");
+  editor.className = "company-editor";
+  const input = document.createElement("input");
+  input.className = "company-input";
+  input.maxLength = 200;
+  input.placeholder = "Company name";
+  input.value = editingCompany.value;
+  input.setAttribute("aria-label", `Company for ${job.role}`);
+  input.addEventListener("input", () => {
+    editingCompany.value = input.value;
+  });
+  const saveCompany = document.createElement("button");
+  saveCompany.type = "submit";
+  saveCompany.className = "job-action";
+  saveCompany.textContent = "Save";
+  const cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.className = "job-action";
+  cancel.textContent = "Cancel";
+  cancel.addEventListener("click", async () => {
+    editingCompany = null;
+    await renderJobs();
+  });
+  editor.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    saveCompany.disabled = true;
+    try {
+      await JobStore.updateDetails(
+        job.id,
+        { role: job.role, company: input.value, expectedJob: job },
+        job.updatedAt || job.savedAt,
+      );
+      editingCompany = null;
+      await renderJobs();
+      message.textContent = "Company updated.";
+    } catch (error) {
+      saveCompany.disabled = false;
+      message.textContent =
+        error?.message || "Could not update the company. Please try again.";
+    }
+  });
+  const actions = document.createElement("div");
+  actions.className = "job-actions";
+  actions.append(saveCompany, cancel);
+  editor.append(input, actions);
+  return editor;
+}
+
 async function renderJobs() {
   const jobs = await JobStore.list();
+  const refocus = document.activeElement?.classList.contains("company-input");
+  if (editingCompany && !jobs.some((job) => job.id === editingCompany.id))
+    editingCompany = null;
   document.querySelector("#count").textContent = jobs.length;
   document.querySelector("#empty").hidden = jobs.length > 0;
   const list = document.querySelector("#jobs");
@@ -325,9 +380,28 @@ async function renderJobs() {
         message.textContent = "Could not remove the job. Please try again.";
       }
     });
-    item.append(link, details, remove);
+    if (editingCompany?.id === job.id) {
+      item.append(link, companyEditor(job));
+      list.append(item);
+      continue;
+    }
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.className = "job-action";
+    edit.textContent = "Edit company";
+    edit.setAttribute("aria-label", `Edit company for saved job: ${job.role}`);
+    edit.addEventListener("click", async () => {
+      editingCompany = { id: job.id, value: job.company || "" };
+      await renderJobs();
+      list.querySelector(".company-input")?.focus();
+    });
+    const actions = document.createElement("div");
+    actions.className = "job-actions";
+    actions.append(edit, remove);
+    item.append(link, details, actions);
     list.append(item);
   }
+  if (refocus) list.querySelector(".company-input")?.focus();
 }
 
 form.addEventListener("submit", async (event) => {
